@@ -11,11 +11,11 @@ public class GlyphInstance {
         
     }
     
-    Glyph glyph;
+    public Glyph glyph;
 
-    OutputPin outputPin;
+    public OutputPin outputPin;
     
-    List<InputPin> inputPins;
+    public List<InputPin> inputPins;
     
-    Object payload;
+    public GlyphPayload payload;
 }

@@ -1,8 +1,131 @@
 package xylo_datapacks.energy_manipulation.glyphs;
 
+import xylo_datapacks.energy_manipulation.EnergyManipulation;
+import xylo_datapacks.energy_manipulation.glyphs.pins.*;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValueType;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
 public class Glyph {
 
+    public OutputPinDefinition outputPinDefinition;
+    public List<InputPinDefinition> inputPinDefinitions;
+    public InputPinMode inputPinMode;
+    
     public Glyph() {
-        
+        outputPinDefinition = new OutputPinDefinition();
+        inputPinDefinitions = new ArrayList<>();
+        inputPinMode = InputPinMode.NONE;
     }
+
+    public void RegisterPinDefinition(String pinName, Predicate<Glyph> nodeFilter) {
+        if (inputPinMode == InputPinMode.NONE) {
+            EnergyManipulation.LOGGER.warn("Cannot register a pin definition if inputPinMode is not set for this Glyph!");
+            return;
+        }
+
+        if (inputPinMode == InputPinMode.VALUE) {
+            EnergyManipulation.LOGGER.warn("Trying to register a Glyph pin, while no pin is expected!");
+            return;
+        }
+
+        InputPinDefinition inputPinDefinition = new InputPinDefinition(pinName);
+        inputPinDefinition.nodeFilter = nodeFilter;
+
+        inputPinDefinitions.add(inputPinDefinition);
+    }
+    
+    /*================================================================================================================*/
+    // Instantiation
+    
+    public GlyphInstance instantiate(GlyphValueType outputValueType) {
+        
+        // do not allow creation if we cannot support output value type
+        if (outputPinDefinition.valueTypeCompatibilityPredicate.test(outputValueType)) {
+            EnergyManipulation.LOGGER.warn("Trying to instantiate a GlyphInstance with a non supported output pin type!");
+            return null;
+        }
+
+        // Create new instance
+        GlyphInstance glyphInstance = new GlyphInstance();
+
+        // Create input pins
+        if (inputPinMode == InputPinMode.STANDARD) {
+            inputPinDefinitions.forEach(inputPinDefinition -> {
+                InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
+                glyphInstance.inputPins.add(newInputPin);
+            });
+        }
+        
+        // Create output pin and set value type
+        glyphInstance.outputPin = new OutputPin(new WeakReference<>(glyphInstance));
+        glyphInstance.outputPin.valueType = outputValueType;
+        
+        // Custom initialization for pins
+        initializePins(glyphInstance);
+        refreshPins(glyphInstance);
+        
+        // Create payload
+        glyphInstance.payload = createPayload(glyphInstance);
+        initializePayload(glyphInstance);
+        
+        return glyphInstance;
+    }
+    
+    public void initializePins(GlyphInstance glyphInstance) {}
+
+    /** Called every time a pin connection changes. */
+    public void refreshPins(GlyphInstance glyphInstance) {}
+
+    public GlyphPayload createPayload(GlyphInstance glyphInstance) {
+        return new GlyphPayload();
+    }
+
+    public void initializePayload(GlyphInstance glyphInstance) {}
+
+    // ~Instantiation
+    /*================================================================================================================*/
+
+    /*================================================================================================================*/
+    // PinManagement
+    
+    public void addPin(GlyphInstance glyphInstance) {
+        if (inputPinMode != InputPinMode.ARRAY) {
+            EnergyManipulation.LOGGER.warn("Cannot add pins if inputPinMode is not ARRAY!");
+            return;
+        }
+
+        InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
+        glyphInstance.inputPins.add(newInputPin);
+        refreshPins(glyphInstance);
+    }
+
+    public void removePin(GlyphInstance glyphInstance, int index) {
+        if (inputPinMode != InputPinMode.ARRAY) {
+            EnergyManipulation.LOGGER.warn("Cannot remove pins if inputPinMode is not ARRAY!");
+            return;
+        }
+
+        glyphInstance.inputPins.remove(index);
+        refreshPins(glyphInstance);
+    }
+
+    public void insertPin(GlyphInstance glyphInstance, int index) {
+        if (inputPinMode != InputPinMode.ARRAY) {
+            EnergyManipulation.LOGGER.warn("Cannot insert pins if inputPinMode is not ARRAY!");
+            return;
+        }
+
+        InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
+        glyphInstance.inputPins.add(index, newInputPin);
+        refreshPins(glyphInstance);
+    }
+
+    // ~PinManagement
+    /*================================================================================================================*/
+    
+    
 }
