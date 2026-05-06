@@ -12,7 +12,7 @@ public class InputPin {
     }
 
     public WeakReference<GlyphInstance> owner;
-    public GlyphValueType valueType;
+    public GlyphValueType valueType; // TODO: set value type
 
     /** We keep a reference to the connected glyph directly since they only have one output pin. 
      * This way we avoid having to make the output pin responsible for keeping a glyph in memory. */

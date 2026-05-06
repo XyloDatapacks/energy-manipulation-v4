@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 public class OutputPinDefinition {
 
     public OutputPinDefinition() {
-        valueTypeCompatibilityPredicate = glyph -> true;
+        this.valueTypeCompatibilityPredicate = glyph -> true;
     }
 
     /** Used to verify that this pin can provide a value type. */

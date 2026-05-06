@@ -9,4 +9,6 @@ public class GlyphsRegistry {
     static public DebugPrintGlyph DEBUG_PRINT_GLYPH = new DebugPrintGlyph();
     
     static public StringValueType STRING_VALUE_TYPE = new StringValueType();
+    
+    public void initialize() {}
 }

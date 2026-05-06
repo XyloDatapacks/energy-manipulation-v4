@@ -8,7 +8,7 @@ public class InputPinDefinition {
 
     public InputPinDefinition(String pinName) {
         this.pinName = pinName;
-        nodeFilter = glyph -> true;
+        this.nodeFilter = glyph -> true;
     }
 
     public String pinName;

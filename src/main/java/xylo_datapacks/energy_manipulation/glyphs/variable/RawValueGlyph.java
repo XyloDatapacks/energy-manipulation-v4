@@ -14,7 +14,7 @@ public class RawValueGlyph extends Glyph {
     public RawValueGlyph() {
         super();
 
-        inputPinMode = InputPinMode.VALUE;
+        this.inputPinMode = InputPinMode.VALUE;
     }
 
     @Override

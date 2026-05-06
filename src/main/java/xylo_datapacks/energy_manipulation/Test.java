@@ -7,7 +7,9 @@ import xylo_datapacks.energy_manipulation.glyphs.runnable.DebugPrintGlyph;
 
 public class Test {
 
-    static void main() {
+    public static void main(String[] args) {
+        GlyphsRegistry glyphsRegistry = new GlyphsRegistry();
+        glyphsRegistry.initialize();
         ExecutionContext executionContext = new ExecutionContext();
         
         GlyphInstance debugPrint = GlyphsRegistry.DEBUG_PRINT_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);

@@ -13,7 +13,7 @@ public class DebugPrintGlyph extends Glyph {
     public DebugPrintGlyph() {
         super();
         
-        inputPinMode = InputPinMode.STANDARD;
+        this.inputPinMode = InputPinMode.STANDARD;
         RegisterPinDefinition(DEBUG_STRING_PIN, glyph -> true);
     }
 

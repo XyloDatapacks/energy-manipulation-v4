@@ -18,9 +18,9 @@ public class Glyph {
     public InputPinMode inputPinMode;
     
     public Glyph() {
-        outputPinDefinition = new OutputPinDefinition();
-        inputPinDefinitions = new ArrayList<>();
-        inputPinMode = InputPinMode.NONE;
+        this.outputPinDefinition = new OutputPinDefinition();
+        this.inputPinDefinitions = new ArrayList<>();
+        this.inputPinMode = InputPinMode.NONE;
     }
 
     public void RegisterPinDefinition(String pinName, Predicate<Glyph> nodeFilter) {
@@ -46,13 +46,13 @@ public class Glyph {
     public GlyphInstance instantiate(GlyphValueType outputValueType) {
         
         // do not allow creation if we cannot support output value type
-        if (outputPinDefinition.valueTypeCompatibilityPredicate.test(outputValueType)) {
+        if (!outputPinDefinition.valueTypeCompatibilityPredicate.test(outputValueType)) {
             EnergyManipulation.LOGGER.warn("Trying to instantiate a GlyphInstance with a non supported output pin type!");
             return null;
         }
 
         // Create new instance
-        GlyphInstance glyphInstance = new GlyphInstance();
+        GlyphInstance glyphInstance = new GlyphInstance(this);
 
         // Create input pins
         if (inputPinMode == InputPinMode.STANDARD) {
@@ -113,7 +113,7 @@ public class Glyph {
     }
 
     public Optional<InputPin> getInputPin(GlyphInstance glyphInstance, int pinIndex) {
-         if (pinIndex > 0 && pinIndex < glyphInstance.inputPins.size()) {
+         if (pinIndex >= 0 && pinIndex < glyphInstance.inputPins.size()) {
             return Optional.ofNullable(glyphInstance.inputPins.get(pinIndex));
          }
          return Optional.empty();
@@ -182,7 +182,7 @@ public class Glyph {
             return;
         }
         
-        if (!(pinIndex > 0 && pinIndex < glyphInstance.inputPins.size())) {
+        if (!(pinIndex >= 0 && pinIndex < glyphInstance.inputPins.size())) {
             EnergyManipulation.LOGGER.warn("Cannot connect a GlyphInstance to a non existent input pin!");
             return;
         }
@@ -212,20 +212,21 @@ public class Glyph {
 
     public GlyphValue evaluatePin(ExecutionContext executionContext, GlyphInstance glyphInstance, String pinName) {
         Optional<InputPin> targetPin = getInputPin(glyphInstance, pinName);
-        if (targetPin.isEmpty() || targetPin.get().connectedGlyph == null) {
-            return new GlyphValue();
-        }
-
-        return execute(executionContext, targetPin.get().connectedGlyph);
+        return evaluatePin_Internal(executionContext, glyphInstance, targetPin.orElse(null));
     }
 
     public GlyphValue evaluatePin(ExecutionContext executionContext, GlyphInstance glyphInstance, int pinIndex) {
         Optional<InputPin> targetPin = getInputPin(glyphInstance, pinIndex);
-        if (targetPin.isEmpty() || targetPin.get().connectedGlyph == null) {
+        return evaluatePin_Internal(executionContext, glyphInstance, targetPin.orElse(null));
+    }
+
+    protected GlyphValue evaluatePin_Internal(ExecutionContext executionContext, GlyphInstance glyphInstance, InputPin targetPin) {
+        if (targetPin == null || targetPin.connectedGlyph == null) {
             return new GlyphValue();
         }
 
-        return execute(executionContext, targetPin.get().connectedGlyph);
+        GlyphInstance instanceAtPin = targetPin.connectedGlyph;
+        return instanceAtPin.glyph.execute(executionContext, instanceAtPin);
     }
 
     // ~Execution
