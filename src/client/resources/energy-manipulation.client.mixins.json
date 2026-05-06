@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "xylo_datapacks.energy_manipulation.client.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"ExampleClientMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
