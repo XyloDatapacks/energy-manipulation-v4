@@ -1,11 +1,18 @@
 package xylo_datapacks.energy_manipulation.glyphs.valueType;
 
+import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
+
 public class StringValueType extends GlyphValueType {
-    class StringGlyphValue extends GlyphValue {
+    class StringGlyphValue extends BaseGlyphValue {
         StringGlyphValue(String value) {
             this.value = value;
         }
-        
+
+        @Override
+        public GlyphValueType getValueType() {
+            return GlyphsRegistry.STRING_VALUE_TYPE;
+        }
+
         public String value;
     }
 

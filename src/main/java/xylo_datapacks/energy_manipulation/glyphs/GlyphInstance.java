@@ -1,5 +1,6 @@
 package xylo_datapacks.energy_manipulation.glyphs;
 
+import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphPayload;
 import xylo_datapacks.energy_manipulation.glyphs.pins.InputPin;
 import xylo_datapacks.energy_manipulation.glyphs.pins.OutputPin;
 

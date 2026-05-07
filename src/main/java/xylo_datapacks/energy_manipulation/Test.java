@@ -14,7 +14,7 @@ public class Test {
         
         GlyphInstance stringPrint = GlyphsRegistry.PRINT_STRING_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE);
         GlyphInstance rawValue = GlyphsRegistry.RAW_VALUE_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
-        rawValue.payload.content = GlyphsRegistry.STRING_VALUE_TYPE.makeStringGlyphValue("hello world!");
+        GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(rawValue, GlyphsRegistry.STRING_VALUE_TYPE.makeStringGlyphValue("hello world!"));
         
         stringPrint.glyph.connectGlyph(stringPrint, PrintStringGlyph.STRING_PIN, rawValue);
         stringPrint.glyph.execute(executionContext, stringPrint);

@@ -17,7 +17,7 @@ public class PrintStringGlyph extends Glyph {
         this.inputPinMode = InputPinMode.STANDARD;
         RegisterPinDefinition(STRING_PIN, glyph -> true);
         outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> { 
-            return valueType != null && valueType.equals(GlyphsRegistry.EXECUTION_VALUE_TYPE); 
+            return valueType != null && valueType == GlyphsRegistry.EXECUTION_VALUE_TYPE; 
         };
     }
 

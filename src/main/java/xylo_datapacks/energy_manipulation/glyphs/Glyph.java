@@ -1,6 +1,7 @@
 package xylo_datapacks.energy_manipulation.glyphs;
 
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
+import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphPayload;
 import xylo_datapacks.energy_manipulation.glyphs.pins.*;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValueType;
@@ -88,7 +89,7 @@ public class Glyph {
     public void refreshPins(GlyphInstance glyphInstance) {}
 
     public GlyphPayload createPayload(GlyphInstance glyphInstance) {
-        return new GlyphPayload();
+        return null;
     }
 
     public void initializePayload(GlyphInstance glyphInstance) {}
@@ -186,7 +187,7 @@ public class Glyph {
         }
         
         // Check for matching value type in input pin and output pin 
-        if (inputPin.get().valueType == null || !inputPin.get().valueType.equals(glyphToConnect.outputPin.valueType)) {
+        if (inputPin.get().valueType == null || (inputPin.get().valueType != glyphToConnect.outputPin.valueType)) {
             return false;
         }
         
