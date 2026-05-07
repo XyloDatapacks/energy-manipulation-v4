@@ -3,7 +3,6 @@ package xylo_datapacks.energy_manipulation.glyphs;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphPayload;
 import xylo_datapacks.energy_manipulation.glyphs.pins.*;
-import xylo_datapacks.energy_manipulation.glyphs.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValueType;
 
@@ -11,6 +10,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class Glyph {
@@ -126,17 +126,17 @@ public class Glyph {
          return Optional.empty();
     }
 
-    public Optional<InputPinDefinition> getInputPinDefinition(GlyphInstance glyphInstance, String pinName) {
+    public Optional<InputPinDefinition> getInputPinDefinition(String pinName) {
         int pinIndex = getInputPinIndex(pinName);
-        return getInputPinDefinition(glyphInstance, pinIndex);
+        return getInputPinDefinition(pinIndex);
     }
 
-    public Optional<InputPinDefinition> getInputPinDefinition(GlyphInstance glyphInstance, int pinIndex) {
+    public Optional<InputPinDefinition> getInputPinDefinition(int pinIndex) {
         if (inputPinMode != InputPinMode.ARRAY) {
             pinIndex = 0;
         }
         
-        if (pinIndex >= 0 && pinIndex < glyphInstance.inputPins.size()) {
+        if (pinIndex >= 0 && pinIndex < inputPinDefinitions.size()) {
             return Optional.ofNullable(inputPinDefinitions.get(pinIndex));
         }
         return Optional.empty();
@@ -182,7 +182,7 @@ public class Glyph {
     
     protected boolean canConnectToPin_Internal(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
         Optional<InputPin> inputPin = getInputPin(glyphInstance, pinIndex);
-        Optional<InputPinDefinition> inputPinDefinition = getInputPinDefinition(glyphInstance, pinIndex);
+        Optional<InputPinDefinition> inputPinDefinition = getInputPinDefinition(pinIndex);
         if (inputPin.isEmpty() || inputPinDefinition.isEmpty()) {
             return false;
         }
@@ -199,48 +199,40 @@ public class Glyph {
             
         return true;
     }
-    
-    public static void connectGlyphStatic(GlyphInstance glyphInstance, String pinName, GlyphInstance glyphToConnect) {
-        glyphInstance.glyph.connectGlyph(glyphInstance, pinName, glyphToConnect);
-    }
 
-    public static void connectGlyphStatic(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
-        glyphInstance.glyph.connectGlyph(glyphInstance, pinIndex, glyphToConnect);
-    }
-
-    public void connectGlyph(GlyphInstance glyphInstance, String pinName, GlyphInstance glyphToConnect) {
+    public boolean connectGlyph(GlyphInstance glyphInstance, String pinName, GlyphInstance glyphToConnect) {
         if (inputPinMode != InputPinMode.STANDARD) {
             EnergyManipulation.LOGGER.warn("Cannot connect a GlyphInstance by pinName if inputPinMode is not STANDARD!");
-            return;
+            return false;
         }
         
         int pinIndex = getInputPinIndex(pinName);
-        connectGlyph_Internal(glyphInstance, pinIndex, glyphToConnect);
+        return connectGlyph_Internal(glyphInstance, pinIndex, glyphToConnect);
     }
 
-    public void connectGlyph(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
+    public boolean connectGlyph(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
         if (inputPinMode != InputPinMode.ARRAY) {
             EnergyManipulation.LOGGER.warn("Cannot connect a GlyphInstance by pinIndex if inputPinMode is not ARRAY!");
-            return;
+            return false;
         }
-       
-        connectGlyph_Internal(glyphInstance, pinIndex, glyphToConnect);
+        
+        return connectGlyph_Internal(glyphInstance, pinIndex, glyphToConnect);
     }
 
-    protected void connectGlyph_Internal(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
+    protected boolean connectGlyph_Internal(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
         if (!hasInputPins(glyphInstance)) {
             EnergyManipulation.LOGGER.warn("Cannot connect a GlyphInstance to one with no input pins!");
-            return;
+            return false;
         }
         
         if (!(pinIndex >= 0 && pinIndex < glyphInstance.inputPins.size())) {
             EnergyManipulation.LOGGER.warn("Cannot connect a GlyphInstance to a non existent input pin!");
-            return;
+            return false;
         }
         
         if (!canConnectToPin_Internal(glyphInstance, pinIndex, glyphToConnect)) {
             EnergyManipulation.LOGGER.warn("Cannot connect GlyphInstance to specified input pin, as they are not compatible!");
-            return;
+            return false;
         }
         
         InputPin targetPin = glyphInstance.inputPins.get(pinIndex);
@@ -250,6 +242,7 @@ public class Glyph {
         refreshPins(glyphInstance);
 
         OnConnected(glyphToConnect);
+        return true;
     }
     
     public void OnConnected(GlyphInstance glyphInstance) {
@@ -305,5 +298,67 @@ public class Glyph {
     }
 
     // ~Execution
+    /*================================================================================================================*/
+
+    /*================================================================================================================*/
+    // StaticHelpers
+    
+    /** @param callback consumer passing as parameter the newly created GlyphInstance. */
+    public static boolean connectNewGlyphWithCallbackStatic(GlyphInstance glyphInstance, String pinName, Glyph glyphToCreate, Consumer<GlyphInstance> callback) {
+        if (connectNewGlyphStatic(glyphInstance, pinName, glyphToCreate)) {
+            callback.accept(glyphInstance.glyph.getInputPin(glyphInstance, pinName).get().connectedGlyph);
+            return true;
+        }
+        return false;
+    }
+
+    /** @param callback consumer passing as parameter the newly created GlyphInstance. */
+    public static boolean connectNewGlyphWithCallbackStatic(GlyphInstance glyphInstance, int pinIndex, Glyph glyphToCreate, Consumer<GlyphInstance> callback) {
+        if (connectNewGlyphStatic(glyphInstance, pinIndex, glyphToCreate)) {
+            callback.accept(glyphInstance.glyph.getInputPin(glyphInstance, pinIndex).get().connectedGlyph);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean connectNewGlyphStatic(GlyphInstance glyphInstance, String pinName, Glyph glyphToCreate) {
+        Optional<InputPin> targetPin = glyphInstance.glyph.getInputPin(glyphInstance, pinName);
+        if (targetPin.isEmpty()) {
+            return false;
+        }
+
+        GlyphValueType desiredValueType = targetPin.get().valueType;
+        GlyphInstance glyphToConnect = glyphToCreate.instantiate(desiredValueType);
+        if (glyphToConnect == null) {
+            return false;
+        }
+
+        return connectGlyphStatic(glyphInstance, pinName, glyphToConnect);
+    }
+
+    public static boolean connectNewGlyphStatic(GlyphInstance glyphInstance, int pinIndex, Glyph glyphToCreate) {
+        Optional<InputPin> targetPin = glyphInstance.glyph.getInputPin(glyphInstance, pinIndex);
+        if (targetPin.isEmpty()) {
+            return false;
+        }
+
+        GlyphValueType desiredValueType = targetPin.get().valueType;
+        GlyphInstance glyphToConnect = glyphToCreate.instantiate(desiredValueType);
+        if (glyphToConnect == null) {
+            return false;
+        }
+
+        return connectGlyphStatic(glyphInstance, pinIndex, glyphToConnect);
+    }
+
+    public static boolean connectGlyphStatic(GlyphInstance glyphInstance, String pinName, GlyphInstance glyphToConnect) {
+        return glyphInstance.glyph.connectGlyph(glyphInstance, pinName, glyphToConnect);
+    }
+
+    public static boolean connectGlyphStatic(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
+        return glyphInstance.glyph.connectGlyph(glyphInstance, pinIndex, glyphToConnect);
+    }
+
+    // ~StaticHelpers
     /*================================================================================================================*/
 }

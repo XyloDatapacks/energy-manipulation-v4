@@ -33,23 +33,23 @@ public class Test {
 
         // A + B
         GlyphInstance sumStringPrint = GlyphsRegistry.PRINT_STRING_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE);
-        GlyphInstance toStringOperation = GlyphsRegistry.OPERATION_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
-        GlyphInstance toStringOperator = GlyphsRegistry.INT_TO_STRING_OPERATOR_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
-        GlyphInstance sumOperation = GlyphsRegistry.OPERATION_GLYPH.instantiate(GlyphsRegistry.INT_VALUE_TYPE);
-        GlyphInstance sumOperator = GlyphsRegistry.SUM_OPERATOR_GLYPH.instantiate(GlyphsRegistry.INT_VALUE_TYPE);
-        
-        GlyphInstance rawNumberA = GlyphsRegistry.RAW_VALUE_GLYPH.instantiate(GlyphsRegistry.INT_VALUE_TYPE);
-        GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(rawNumberA, GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(7));
-
-        GlyphInstance rawNumberB = GlyphsRegistry.RAW_VALUE_GLYPH.instantiate(GlyphsRegistry.INT_VALUE_TYPE);
-        GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(rawNumberB, GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(12));
-
-        Glyph.connectGlyphStatic(sumStringPrint, PrintStringGlyph.STRING_PIN, toStringOperation);
-        Glyph.connectGlyphStatic(toStringOperation, OperationGlyph.OPERATOR_PIN, toStringOperator);
-        Glyph.connectGlyphStatic(toStringOperator, IntToString.INT_VALUE_PIN, sumOperation);
-        Glyph.connectGlyphStatic(sumOperation, OperationGlyph.OPERATOR_PIN, sumOperator);
-        Glyph.connectGlyphStatic(sumOperator, SumOperatorGlyph.FIRST_VALUE_PIN, rawNumberA);
-        Glyph.connectGlyphStatic(sumOperator, SumOperatorGlyph.SECOND_VALUE_PIN, rawNumberB);
+        Glyph.connectNewGlyphWithCallbackStatic(sumStringPrint, PrintStringGlyph.STRING_PIN, GlyphsRegistry.OPERATION_GLYPH, toStringOperation -> {
+            
+            Glyph.connectNewGlyphWithCallbackStatic(toStringOperation, OperationGlyph.OPERATOR_PIN, GlyphsRegistry.INT_TO_STRING_OPERATOR_GLYPH, toStringOperator -> {
+                Glyph.connectNewGlyphWithCallbackStatic(toStringOperator, IntToString.INT_VALUE_PIN, GlyphsRegistry.OPERATION_GLYPH, sumOperation -> {
+                   
+                    Glyph.connectNewGlyphWithCallbackStatic(sumOperation, OperationGlyph.OPERATOR_PIN, GlyphsRegistry.SUM_OPERATOR_GLYPH, sumOperator -> {
+                        Glyph.connectNewGlyphWithCallbackStatic(sumOperator, SumOperatorGlyph.FIRST_VALUE_PIN, GlyphsRegistry.RAW_VALUE_GLYPH, fistNum -> {
+                            GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(fistNum, GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(4));
+                        });
+    
+                        Glyph.connectNewGlyphWithCallbackStatic(sumOperator, SumOperatorGlyph.SECOND_VALUE_PIN, GlyphsRegistry.RAW_VALUE_GLYPH, secondNum -> {
+                            GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(secondNum, GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(12));
+                        });
+                    });
+                });
+            });
+        });
 
         Glyph.executeStatic(executionContext, sumStringPrint);
     }
