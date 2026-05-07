@@ -10,7 +10,7 @@ public class ExecutionValueType extends GlyphValueType {
 
         @Override
         public GlyphValueType getValueType() {
-            return GlyphsRegistry.INT_VALUE_TYPE;
+            return GlyphsRegistry.EXECUTION_VALUE_TYPE;
         }
         
         public int value;
