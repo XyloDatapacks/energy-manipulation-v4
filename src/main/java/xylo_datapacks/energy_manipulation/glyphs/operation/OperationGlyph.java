@@ -14,7 +14,7 @@ public class OperationGlyph extends Glyph {
         super();
 
         this.inputPinMode = InputPinMode.STANDARD;
-        RegisterPinDefinition(OPERATOR_PIN, glyph -> true);
+        RegisterPinDefinition(OPERATOR_PIN, glyph -> true); // TODO: use compatibility filter to make operators the only accepted values and not let operators be chosen as possible values
         outputPinDefinition.valueTypeCompatibilityPredicate = GlyphValueType::hasOperations;
     }
 

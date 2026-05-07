@@ -4,6 +4,7 @@ import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyphs.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyphs.Glyph;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
+import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphGenericPayload;
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphPayload;
 import xylo_datapacks.energy_manipulation.glyphs.pins.InputPinMode;
@@ -66,6 +67,7 @@ public class RawValueGlyph extends Glyph {
 
     @Override
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
-        return getPayloadValue(glyphInstance).orElse(new GlyphValue());
+        return getPayloadValue(glyphInstance)
+                .orElse(GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("RawValueGlyph could not return its payload as it is malformed!"));
     }
 }

@@ -266,6 +266,7 @@ public class Glyph {
         return glyphInstance.glyph.execute(executionContext, glyphInstance); 
     }
     
+    /** @return an object derived from GlyphValue. It must NEVER be null, instead use GlyphValue or ExecutionErrorGlyphValue in case of exceptions */
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         return new GlyphValue();
     }
@@ -287,8 +288,16 @@ public class Glyph {
 
         GlyphInstance instanceAtPin = targetPin.connectedGlyph;
         GlyphValue glyphValue = instanceAtPin.glyph.execute(executionContext, instanceAtPin);
-        
-        if (glyphValue == null || !glyphValue.isOfType(targetPin.valueType)) {
+
+        if (glyphValue == null) {
+            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in null GlyphValue. This behaviour is unsupported!", instanceAtPin.glyph.getClass().toString(), glyphInstance.glyph.getClass().toString());
+            return new GlyphValue();
+        }
+
+        if (glyphValue.isOfType(GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE)) {
+            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in the following error: {}", instanceAtPin.glyph.getClass().toString(), glyphInstance.glyph.getClass().toString(), glyphValue.getDebugString());
+        }
+        else if (!glyphValue.isOfType(targetPin.valueType)) {
             EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in incompatible value type! Make sure \"execute\" method returns the same value type as the instance's outputPin.", instanceAtPin.glyph.getClass().toString(), glyphInstance.glyph.getClass().toString());
         }
         

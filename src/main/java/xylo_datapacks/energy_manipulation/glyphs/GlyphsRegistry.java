@@ -3,10 +3,7 @@ package xylo_datapacks.energy_manipulation.glyphs;
 import xylo_datapacks.energy_manipulation.glyphs.operation.OperationGlyph;
 import xylo_datapacks.energy_manipulation.glyphs.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyphs.runnable.PrintStringGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.valueType.BoolValueType;
-import xylo_datapacks.energy_manipulation.glyphs.valueType.ExecutionValueType;
-import xylo_datapacks.energy_manipulation.glyphs.valueType.IntValueType;
-import xylo_datapacks.energy_manipulation.glyphs.valueType.StringValueType;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.*;
 import xylo_datapacks.energy_manipulation.glyphs.variable.RawValueGlyph;
 
 public class GlyphsRegistry {
@@ -19,6 +16,7 @@ public class GlyphsRegistry {
     static public BoolValueType BOOL_VALUE_TYPE = new BoolValueType();
     static public IntValueType INT_VALUE_TYPE = new IntValueType();
     static public ExecutionValueType EXECUTION_VALUE_TYPE = new ExecutionValueType();
+    static public ExecutionErrorValueType EXECUTION_ERROR_VALUE_TYPE = new ExecutionErrorValueType();
     
     public void initialize() {}
 }

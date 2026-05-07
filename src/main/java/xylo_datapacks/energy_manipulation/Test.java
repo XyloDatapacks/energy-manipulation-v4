@@ -7,6 +7,7 @@ import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphGenericPayload;
 import xylo_datapacks.energy_manipulation.glyphs.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyphs.runnable.PrintStringGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.variable.RawValueGlyph;
 
 public class Test {
 
@@ -21,6 +22,7 @@ public class Test {
         GlyphInstance debugGlyph_rawValue = GlyphsRegistry.DEBUG_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
         GlyphInstance rawValue = GlyphsRegistry.RAW_VALUE_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
         GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(rawValue, GlyphsRegistry.STRING_VALUE_TYPE.makeStringGlyphValue("hello world!"));
+        // ((GlyphGenericPayload)rawValue.payload).content = GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(3);
         
         Glyph.connectGlyphStatic(debugGlyph_print, DebugGlyph.INPUT_PIN, stringPrint);
         Glyph.connectGlyphStatic(stringPrint, PrintStringGlyph.STRING_PIN, debugGlyph_rawValue);
