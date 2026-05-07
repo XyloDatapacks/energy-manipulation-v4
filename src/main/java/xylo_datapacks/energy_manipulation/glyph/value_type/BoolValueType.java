@@ -4,7 +4,10 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
 
 public class BoolValueType extends GlyphValueType implements ComparableGlyphValueInterface {
+    
     class BoolGlyphValue extends BaseGlyphValue {
+        public boolean value;
+        
         BoolGlyphValue(boolean value) {
             this.value = value;
         }
@@ -18,8 +21,6 @@ public class BoolValueType extends GlyphValueType implements ComparableGlyphValu
         public String getDebugString() {
             return value ? "true" : "false";
         }
-
-        public boolean value;
     }
 
     public GlyphValue makeBoolGlyphValue(boolean value) {

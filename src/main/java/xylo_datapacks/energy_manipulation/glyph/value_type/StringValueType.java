@@ -5,7 +5,10 @@ import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.Compa
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringGlyphValueInterface;
 
 public class StringValueType extends GlyphValueType implements StringGlyphValueInterface, ComparableGlyphValueInterface {
+    
     class StringGlyphValue extends BaseGlyphValue {
+        public String value;
+        
         StringGlyphValue(String value) {
             this.value = value;
         }
@@ -19,8 +22,6 @@ public class StringValueType extends GlyphValueType implements StringGlyphValueI
         public String getDebugString() {
             return value;
         }
-
-        public String value;
     }
 
     public GlyphValue makeStringGlyphValue(String value) {

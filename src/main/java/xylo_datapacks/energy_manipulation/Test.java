@@ -13,8 +13,7 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.Pr
 public class Test {
 
     public static void main(String[] args) {
-        GlyphsRegistry glyphsRegistry = new GlyphsRegistry();
-        glyphsRegistry.initialize();
+        GlyphsRegistry.register();
         ExecutionContext executionContext = new ExecutionContext();
 
         // Print a string

@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GlyphInstance {
+
+    public Glyph glyph;
+
+    public OutputPin outputPin;
+
+    public List<InputPin> inputPins;
+
+    public GlyphPayload payload;
     
     public GlyphInstance(Glyph glyph) {
         this.glyph = glyph;
         this.inputPins = new ArrayList<>();
     }
-    
-    public Glyph glyph;
-
-    public OutputPin outputPin;
-    
-    public List<InputPin> inputPins;
-    
-    public GlyphPayload payload;
 }

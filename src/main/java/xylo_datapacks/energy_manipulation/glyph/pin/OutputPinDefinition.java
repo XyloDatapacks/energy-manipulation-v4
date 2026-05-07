@@ -6,10 +6,10 @@ import java.util.function.Predicate;
 
 public class OutputPinDefinition {
 
+    /** Used to verify that this pin can provide a value type. */
+    public Predicate<GlyphValueType> valueTypeCompatibilityPredicate;
+    
     public OutputPinDefinition() {
         this.valueTypeCompatibilityPredicate = glyph -> true;
     }
-
-    /** Used to verify that this pin can provide a value type. */
-    public Predicate<GlyphValueType> valueTypeCompatibilityPredicate;
 }

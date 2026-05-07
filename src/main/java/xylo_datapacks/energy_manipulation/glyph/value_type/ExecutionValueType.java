@@ -3,7 +3,10 @@ package xylo_datapacks.energy_manipulation.glyph.value_type;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 
 public class ExecutionValueType extends GlyphValueType {
+    
     class ExecutionGlyphValue extends BaseGlyphValue {
+        public int value;
+        
         ExecutionGlyphValue(int value) {
             this.value = value;
         }
@@ -17,8 +20,6 @@ public class ExecutionValueType extends GlyphValueType {
         public String getDebugString() {
             return value > 0 ? "success (" + value + ")" : "failure";
         }
-
-        public int value;
     }
 
     public GlyphValue makeExecutionGlyphValue(int value) {

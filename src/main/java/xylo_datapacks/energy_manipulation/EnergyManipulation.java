@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 
 public class EnergyManipulation implements ModInitializer {
 	public static final String MOD_ID = "energy-manipulation";
@@ -19,6 +20,7 @@ public class EnergyManipulation implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
+		GlyphsRegistry.register();
 		EnergyManipulationCommands.register();
 		LOGGER.info("Hello Fabric world!");
 	}

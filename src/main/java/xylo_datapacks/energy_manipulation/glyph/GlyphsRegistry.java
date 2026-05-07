@@ -22,5 +22,8 @@ public class GlyphsRegistry {
     static public ExecutionValueType EXECUTION_VALUE_TYPE = new ExecutionValueType();
     static public ExecutionErrorValueType EXECUTION_ERROR_VALUE_TYPE = new ExecutionErrorValueType();
     
-    public void initialize() {}
+    public static void register() {
+        
+    }
 }
+

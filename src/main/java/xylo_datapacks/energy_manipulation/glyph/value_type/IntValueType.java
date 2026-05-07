@@ -6,7 +6,10 @@ import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.Numer
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.SortableGlyphValueInterface;
 
 public class IntValueType extends GlyphValueType implements NumericGlyphValueInterface, ComparableGlyphValueInterface, SortableGlyphValueInterface {
+   
     class IntGlyphValue extends BaseGlyphValue {
+        public int value;
+        
         IntGlyphValue(int value) {
             this.value = value;
         }
@@ -20,8 +23,6 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
         public String getDebugString() {
             return String.valueOf(value);
         }
-
-        public int value;
     }
 
     public GlyphValue makeIntGlyphValue(int value) {
