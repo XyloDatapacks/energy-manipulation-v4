@@ -4,10 +4,11 @@ import xylo_datapacks.energy_manipulation.glyphs.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyphs.Glyph;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphGenericPayload;
+import xylo_datapacks.energy_manipulation.glyphs.operation.OperationGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.operation.operator.IntToString;
+import xylo_datapacks.energy_manipulation.glyphs.operation.operator.SumOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyphs.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyphs.runnable.PrintStringGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.variable.RawValueGlyph;
 
 public class Test {
 
@@ -16,18 +17,40 @@ public class Test {
         glyphsRegistry.initialize();
         ExecutionContext executionContext = new ExecutionContext();
 
-        GlyphInstance debugGlyph_print = GlyphsRegistry.DEBUG_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE);
+        // Print a string
+        GlyphInstance debugStringPrint = GlyphsRegistry.DEBUG_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE);
         GlyphInstance stringPrint = GlyphsRegistry.PRINT_STRING_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE);
         
-        GlyphInstance debugGlyph_rawValue = GlyphsRegistry.DEBUG_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
-        GlyphInstance rawValue = GlyphsRegistry.RAW_VALUE_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
-        GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(rawValue, GlyphsRegistry.STRING_VALUE_TYPE.makeStringGlyphValue("hello world!"));
-        // ((GlyphGenericPayload)rawValue.payload).content = GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(3);
+        GlyphInstance rawString = GlyphsRegistry.RAW_VALUE_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
+        GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(rawString, GlyphsRegistry.STRING_VALUE_TYPE.makeStringGlyphValue("hello world!"));
+        // ((GlyphGenericPayload)rawString.payload).content = GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(3);
         
-        Glyph.connectGlyphStatic(debugGlyph_print, DebugGlyph.INPUT_PIN, stringPrint);
-        Glyph.connectGlyphStatic(stringPrint, PrintStringGlyph.STRING_PIN, debugGlyph_rawValue);
-        Glyph.connectGlyphStatic(debugGlyph_rawValue, DebugGlyph.INPUT_PIN, rawValue);
+        Glyph.connectGlyphStatic(debugStringPrint, DebugGlyph.INPUT_PIN, stringPrint);
+        Glyph.connectGlyphStatic(stringPrint, PrintStringGlyph.STRING_PIN, rawString);
 
-        Glyph.executeStatic(executionContext, debugGlyph_print);
+        Glyph.executeStatic(executionContext, debugStringPrint);
+
+
+        // A + B
+        GlyphInstance sumStringPrint = GlyphsRegistry.PRINT_STRING_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE);
+        GlyphInstance toStringOperation = GlyphsRegistry.OPERATION_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
+        GlyphInstance toStringOperator = GlyphsRegistry.INT_TO_STRING_OPERATOR_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
+        GlyphInstance sumOperation = GlyphsRegistry.OPERATION_GLYPH.instantiate(GlyphsRegistry.INT_VALUE_TYPE);
+        GlyphInstance sumOperator = GlyphsRegistry.SUM_OPERATOR_GLYPH.instantiate(GlyphsRegistry.INT_VALUE_TYPE);
+        
+        GlyphInstance rawNumberA = GlyphsRegistry.RAW_VALUE_GLYPH.instantiate(GlyphsRegistry.INT_VALUE_TYPE);
+        GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(rawNumberA, GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(7));
+
+        GlyphInstance rawNumberB = GlyphsRegistry.RAW_VALUE_GLYPH.instantiate(GlyphsRegistry.INT_VALUE_TYPE);
+        GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(rawNumberB, GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(12));
+
+        Glyph.connectGlyphStatic(sumStringPrint, PrintStringGlyph.STRING_PIN, toStringOperation);
+        Glyph.connectGlyphStatic(toStringOperation, OperationGlyph.OPERATOR_PIN, toStringOperator);
+        Glyph.connectGlyphStatic(toStringOperator, IntToString.INT_VALUE_PIN, sumOperation);
+        Glyph.connectGlyphStatic(sumOperation, OperationGlyph.OPERATOR_PIN, sumOperator);
+        Glyph.connectGlyphStatic(sumOperator, SumOperatorGlyph.FIRST_VALUE_PIN, rawNumberA);
+        Glyph.connectGlyphStatic(sumOperator, SumOperatorGlyph.SECOND_VALUE_PIN, rawNumberB);
+
+        Glyph.executeStatic(executionContext, sumStringPrint);
     }
 }
