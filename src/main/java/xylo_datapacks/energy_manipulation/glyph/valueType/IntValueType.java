@@ -1,0 +1,118 @@
+package xylo_datapacks.energy_manipulation.glyph.valueType;
+
+import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
+import xylo_datapacks.energy_manipulation.glyph.valueType.value_interface.ComparableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.valueType.value_interface.NumericGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.valueType.value_interface.SortableGlyphValueInterface;
+
+public class IntValueType extends GlyphValueType implements NumericGlyphValueInterface, ComparableGlyphValueInterface, SortableGlyphValueInterface {
+    class IntGlyphValue extends BaseGlyphValue {
+        IntGlyphValue(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public GlyphValueType getValueType() {
+            return GlyphsRegistry.INT_VALUE_TYPE;
+        }
+
+        @Override
+        public String getDebugString() {
+            return String.valueOf(value);
+        }
+
+        public int value;
+    }
+
+    public GlyphValue makeIntGlyphValue(int value) {
+        return new IntGlyphValue(value);
+    }
+    
+    public int getIntGlyphValue(GlyphValue glyphValue) {
+        if (glyphValue instanceof IntGlyphValue) {
+            return ((IntGlyphValue) glyphValue).value;
+        }
+        return 0;
+    }
+
+    @Override
+    public GlyphValue MakeDefaulted() {
+        return makeIntGlyphValue(0);
+    }
+
+    @Override
+    public boolean hasOperations() {
+        return true;
+    }
+
+    @Override
+    public boolean hasValueSelector() { return true; }
+
+    /*================================================================================================================*/
+    // Interfaces
+    
+    @Override
+    public GlyphValue add(GlyphValue a, GlyphValue b) {
+        int numberA = getIntGlyphValue(a);
+        int numberB = getIntGlyphValue(b);
+        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(numberA + numberB);
+    }
+
+    @Override
+    public GlyphValue subtract(GlyphValue a, GlyphValue b) {
+        int numberA = getIntGlyphValue(a);
+        int numberB = getIntGlyphValue(b);
+        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(numberA - numberB);
+    }
+
+    @Override
+    public GlyphValue multiply(GlyphValue a, GlyphValue b) {
+        int numberA = getIntGlyphValue(a);
+        int numberB = getIntGlyphValue(b);
+        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(numberA * numberB);
+    }
+
+    @Override
+    public GlyphValue divide(GlyphValue a, GlyphValue b) {
+        int numberA = getIntGlyphValue(a);
+        int numberB = getIntGlyphValue(b);
+        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(numberA / numberB);
+    }
+
+    @Override
+    public GlyphValue power(GlyphValue value, GlyphValue exponent) {
+        int numberValue = getIntGlyphValue(value);
+        int numberExponent = getIntGlyphValue(exponent);
+        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(Math.powExact(numberValue, numberExponent));
+    }
+
+    @Override
+    public GlyphValue sqrt(GlyphValue value) {
+        int numberValue = getIntGlyphValue(value);
+        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue((int) Math.sqrt(numberValue)); // casting to int instead of flooring to round toward zero
+    }
+
+    @Override
+    public GlyphValue equals(GlyphValue a, GlyphValue b) {
+        int numberA = getIntGlyphValue(a);
+        int numberB = getIntGlyphValue(b);
+        return GlyphsRegistry.BOOL_VALUE_TYPE.makeBoolGlyphValue(numberA == numberB);
+    }
+
+    @Override
+    public GlyphValue lessThen(GlyphValue a, GlyphValue b) {
+        int numberA = getIntGlyphValue(a);
+        int numberB = getIntGlyphValue(b);
+        return GlyphsRegistry.BOOL_VALUE_TYPE.makeBoolGlyphValue(numberA < numberB);
+    }
+
+    @Override
+    public GlyphValue greaterThan(GlyphValue a, GlyphValue b) {
+        int numberA = getIntGlyphValue(a);
+        int numberB = getIntGlyphValue(b);
+        return GlyphsRegistry.BOOL_VALUE_TYPE.makeBoolGlyphValue(numberA > numberB);
+    }
+
+    // ~Interfaces
+    /*================================================================================================================*/
+}

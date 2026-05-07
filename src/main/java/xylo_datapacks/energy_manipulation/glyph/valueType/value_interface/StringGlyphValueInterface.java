@@ -1,0 +1,12 @@
+package xylo_datapacks.energy_manipulation.glyph.valueType.value_interface;
+
+import xylo_datapacks.energy_manipulation.glyph.valueType.GlyphValue;
+
+public interface StringGlyphValueInterface {
+
+    /** @return StringGlyphValue */
+    public GlyphValue concat(GlyphValue a, GlyphValue b);
+
+    /** @return IntGlyphValue */
+    public GlyphValue length(GlyphValue value);
+}

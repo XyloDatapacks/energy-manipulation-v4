@@ -1,14 +1,14 @@
 package xylo_datapacks.energy_manipulation;
 
-import xylo_datapacks.energy_manipulation.glyphs.ExecutionContext;
-import xylo_datapacks.energy_manipulation.glyphs.Glyph;
-import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
-import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.OperationGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.operator.IntToString;
-import xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.operator.SumOperatorGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.specialized.runnable.runnable.DebugGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.specialized.runnable.runnable.PrintStringGlyph;
+import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
+import xylo_datapacks.energy_manipulation.glyph.Glyph;
+import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
+import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.OperationGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.IntToString;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.SumOperatorGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.DebugGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.PrintStringGlyph;
 
 public class Test {
 
