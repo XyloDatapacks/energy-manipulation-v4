@@ -3,6 +3,7 @@ package xylo_datapacks.energy_manipulation.glyphs;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphPayload;
 import xylo_datapacks.energy_manipulation.glyphs.pins.*;
+import xylo_datapacks.energy_manipulation.glyphs.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValueType;
 
@@ -198,6 +199,14 @@ public class Glyph {
             
         return true;
     }
+    
+    public static void connectGlyphStatic(GlyphInstance glyphInstance, String pinName, GlyphInstance glyphToConnect) {
+        glyphInstance.glyph.connectGlyph(glyphInstance, pinName, glyphToConnect);
+    }
+
+    public static void connectGlyphStatic(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
+        glyphInstance.glyph.connectGlyph(glyphInstance, pinIndex, glyphToConnect);
+    }
 
     public void connectGlyph(GlyphInstance glyphInstance, String pinName, GlyphInstance glyphToConnect) {
         if (inputPinMode != InputPinMode.STANDARD) {
@@ -253,6 +262,10 @@ public class Glyph {
     /*================================================================================================================*/
     // Execution
     
+    public static GlyphValue executeStatic(ExecutionContext executionContext, GlyphInstance glyphInstance) {
+        return glyphInstance.glyph.execute(executionContext, glyphInstance); 
+    }
+    
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         return new GlyphValue();
     }
@@ -273,7 +286,13 @@ public class Glyph {
         }
 
         GlyphInstance instanceAtPin = targetPin.connectedGlyph;
-        return instanceAtPin.glyph.execute(executionContext, instanceAtPin);
+        GlyphValue glyphValue = instanceAtPin.glyph.execute(executionContext, instanceAtPin);
+        
+        if (glyphValue == null || !glyphValue.isOfType(targetPin.valueType)) {
+            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in incompatible value type! Make sure \"execute\" method returns the same value type as the instance's outputPin.", instanceAtPin.glyph.getClass().toString(), glyphInstance.glyph.getClass().toString());
+        }
+        
+        return glyphValue;
     }
 
     // ~Execution

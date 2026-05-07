@@ -32,12 +32,28 @@ public class RawValueGlyph extends Glyph {
     }
 
     public Optional<GlyphValue> getPayloadValue(GlyphInstance glyphInstance) {
-        if (!(getPayload(glyphInstance).content instanceof GlyphValue)) {
+        Object PayloadContent = getPayload(glyphInstance).content;
+        
+        // If payload does not have content yet, return defaulted value.
+        if (PayloadContent == null) {
+            return Optional.of(glyphInstance.outputPin.valueType.MakeDefaulted());
+        }
+        
+        if (PayloadContent instanceof GlyphValue payloadValue) {
+            // If payload content is a GlyphValue, make sure that is the correct type, otherwise return empty.
+            if (!payloadValue.isOfType(glyphInstance.outputPin.valueType)) {
+                EnergyManipulation.LOGGER.warn("Payload from instances of RawValueGlyph must match the outputPin's ValueType!");
+                return Optional.empty();
+            }
+
+            // If the content is the correct type of GlyphValue, return it.
+            return Optional.of(payloadValue);
+        }
+        else {
+            // The payload was not a GlyphValue, so return empty.
             EnergyManipulation.LOGGER.warn("Payload from instances of RawValueGlyph must contain a GlyphValue!");
             return Optional.empty();
         }
-        
-        return Optional.ofNullable((GlyphValue) getPayload(glyphInstance).content);
     }
     
     public void setPayloadValue(GlyphInstance glyphInstance, GlyphValue payloadValue) {
@@ -51,11 +67,6 @@ public class RawValueGlyph extends Glyph {
 
     @Override
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
-        if (getPayload(glyphInstance).content instanceof GlyphValue) {
-            return getPayloadValue(glyphInstance).orElse(new GlyphValue());
-        }
-        
-        EnergyManipulation.LOGGER.warn("Payload contained by instances of RawValueGlyph, must be of type GlyphValue!");
-        return new GlyphValue();
+        return getPayloadValue(glyphInstance).orElse(new GlyphValue());
     }
 }

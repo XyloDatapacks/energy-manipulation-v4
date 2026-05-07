@@ -12,7 +12,12 @@ public class ExecutionValueType extends GlyphValueType {
         public GlyphValueType getValueType() {
             return GlyphsRegistry.EXECUTION_VALUE_TYPE;
         }
-        
+
+        @Override
+        public String getDebugString() {
+            return value > 0 ? "success (" + value + ")" : "failure";
+        }
+
         public int value;
     }
 
@@ -25,5 +30,10 @@ public class ExecutionValueType extends GlyphValueType {
             return ((ExecutionGlyphValue) glyphValue).value;
         }
         return 0;
+    }
+
+    @Override
+    public GlyphValue MakeDefaulted() {
+        return makeExecutionGlyphValue(0);
     }
 }

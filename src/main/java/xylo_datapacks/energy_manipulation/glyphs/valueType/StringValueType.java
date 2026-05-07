@@ -13,6 +13,11 @@ public class StringValueType extends GlyphValueType {
             return GlyphsRegistry.STRING_VALUE_TYPE;
         }
 
+        @Override
+        public String getDebugString() {
+            return value;
+        }
+
         public String value;
     }
 
@@ -25,6 +30,11 @@ public class StringValueType extends GlyphValueType {
             return ((StringGlyphValue) glyphValue).value;
         }
         return "";
+    }
+
+    @Override
+    public GlyphValue MakeDefaulted() {
+        return makeStringGlyphValue("");
     }
 
     @Override

@@ -6,6 +6,7 @@ import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyphs.pins.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyphs.pins.OutputPinDefinition;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.ExecutionValueType;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;
 
 public class PrintStringGlyph extends Glyph {
@@ -34,6 +35,6 @@ public class PrintStringGlyph extends Glyph {
         String string = GlyphsRegistry.STRING_VALUE_TYPE.getStringGlyphValue(stringValue);
         System.out.println(">> " + string);
         
-        return new GlyphValue();
+        return GlyphsRegistry.EXECUTION_VALUE_TYPE.makeExecutionGlyphValue(1);
     }
 }

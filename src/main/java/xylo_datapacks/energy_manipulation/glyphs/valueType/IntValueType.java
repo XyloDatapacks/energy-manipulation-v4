@@ -13,6 +13,11 @@ public class IntValueType extends GlyphValueType {
             return GlyphsRegistry.INT_VALUE_TYPE;
         }
 
+        @Override
+        public String getDebugString() {
+            return String.valueOf(value);
+        }
+
         public int value;
     }
 
@@ -25,6 +30,11 @@ public class IntValueType extends GlyphValueType {
             return ((IntGlyphValue) glyphValue).value;
         }
         return 0;
+    }
+
+    @Override
+    public GlyphValue MakeDefaulted() {
+        return makeIntGlyphValue(0);
     }
 
     @Override
