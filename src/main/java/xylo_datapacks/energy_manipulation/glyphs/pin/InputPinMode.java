@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.glyphs.pins;
+package xylo_datapacks.energy_manipulation.glyphs.pin;
 
 public enum InputPinMode {
     NONE,

@@ -1,12 +1,12 @@
 package xylo_datapacks.energy_manipulation.glyphs;
 
-import xylo_datapacks.energy_manipulation.glyphs.operation.OperationGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.operation.operator.IntToString;
-import xylo_datapacks.energy_manipulation.glyphs.operation.operator.SumOperatorGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.runnable.DebugGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.runnable.PrintStringGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.OperationGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.operator.IntToString;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.operator.SumOperatorGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.runnable.runnable.DebugGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.runnable.runnable.PrintStringGlyph;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.*;
-import xylo_datapacks.energy_manipulation.glyphs.variable.RawValueGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.variable.variable.RawValueGlyph;
 
 public class GlyphsRegistry {
     static public RawValueGlyph RAW_VALUE_GLYPH = new RawValueGlyph();

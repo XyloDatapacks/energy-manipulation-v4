@@ -1,10 +1,9 @@
 package xylo_datapacks.energy_manipulation.glyphs.valueType;
 
-import org.lwjgl.system.ffm.mapping.Mapping;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyphs.valueType.interfaces.ComparableGlyphValueInterface;
-import xylo_datapacks.energy_manipulation.glyphs.valueType.interfaces.NumericGlyphValueInterface;
-import xylo_datapacks.energy_manipulation.glyphs.valueType.interfaces.SortableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.value_interface.ComparableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.value_interface.NumericGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.value_interface.SortableGlyphValueInterface;
 
 public class IntValueType extends GlyphValueType implements NumericGlyphValueInterface, ComparableGlyphValueInterface, SortableGlyphValueInterface {
     class IntGlyphValue extends BaseGlyphValue {

@@ -1,11 +1,11 @@
-package xylo_datapacks.energy_manipulation.glyphs.operation.operator;
+package xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.operator;
 
 import xylo_datapacks.energy_manipulation.glyphs.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyphs.Glyph;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
-import xylo_datapacks.energy_manipulation.glyphs.pins.InputPinMode;
+import xylo_datapacks.energy_manipulation.glyphs.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;
-import xylo_datapacks.energy_manipulation.glyphs.valueType.interfaces.NumericGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.value_interface.NumericGlyphValueInterface;
 
 public class SumOperatorGlyph extends Glyph {
     static public String FIRST_VALUE_PIN = "A";

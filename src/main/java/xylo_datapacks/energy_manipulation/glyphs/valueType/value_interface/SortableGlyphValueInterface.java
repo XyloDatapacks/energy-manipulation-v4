@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.glyphs.valueType.interfaces;
+package xylo_datapacks.energy_manipulation.glyphs.valueType.value_interface;
 
 import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;

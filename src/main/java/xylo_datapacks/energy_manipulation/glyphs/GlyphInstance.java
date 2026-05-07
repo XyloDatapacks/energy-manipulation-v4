@@ -1,8 +1,8 @@
 package xylo_datapacks.energy_manipulation.glyphs;
 
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphPayload;
-import xylo_datapacks.energy_manipulation.glyphs.pins.InputPin;
-import xylo_datapacks.energy_manipulation.glyphs.pins.OutputPin;
+import xylo_datapacks.energy_manipulation.glyphs.pin.InputPin;
+import xylo_datapacks.energy_manipulation.glyphs.pin.OutputPin;
 
 import java.util.ArrayList;
 import java.util.List;

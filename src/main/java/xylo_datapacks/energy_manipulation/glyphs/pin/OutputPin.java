@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.glyphs.pins;
+package xylo_datapacks.energy_manipulation.glyphs.pin;
 
 import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValueType;

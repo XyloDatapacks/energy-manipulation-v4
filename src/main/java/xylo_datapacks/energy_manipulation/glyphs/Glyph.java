@@ -2,7 +2,7 @@ package xylo_datapacks.energy_manipulation.glyphs;
 
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphPayload;
-import xylo_datapacks.energy_manipulation.glyphs.pins.*;
+import xylo_datapacks.energy_manipulation.glyphs.pin.*;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValueType;
 

@@ -4,11 +4,11 @@ import xylo_datapacks.energy_manipulation.glyphs.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyphs.Glyph;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyphs.operation.OperationGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.operation.operator.IntToString;
-import xylo_datapacks.energy_manipulation.glyphs.operation.operator.SumOperatorGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.runnable.DebugGlyph;
-import xylo_datapacks.energy_manipulation.glyphs.runnable.PrintStringGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.OperationGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.operator.IntToString;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.operation.operation.operator.SumOperatorGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.runnable.runnable.DebugGlyph;
+import xylo_datapacks.energy_manipulation.glyphs.specialized.runnable.runnable.PrintStringGlyph;
 
 public class Test {
 

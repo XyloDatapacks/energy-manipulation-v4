@@ -1,12 +1,10 @@
-package xylo_datapacks.energy_manipulation.glyphs.runnable;
+package xylo_datapacks.energy_manipulation.glyphs.specialized.runnable.runnable;
 
 import xylo_datapacks.energy_manipulation.glyphs.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyphs.Glyph;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyphs.pins.InputPinMode;
-import xylo_datapacks.energy_manipulation.glyphs.pins.OutputPinDefinition;
-import xylo_datapacks.energy_manipulation.glyphs.valueType.ExecutionValueType;
+import xylo_datapacks.energy_manipulation.glyphs.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;
 
 public class PrintStringGlyph extends Glyph {

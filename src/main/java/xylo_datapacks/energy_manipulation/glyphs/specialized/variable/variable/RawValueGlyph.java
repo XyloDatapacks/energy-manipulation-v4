@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.glyphs.variable;
+package xylo_datapacks.energy_manipulation.glyphs.specialized.variable.variable;
 
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyphs.ExecutionContext;
@@ -7,7 +7,7 @@ import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphGenericPayload;
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphPayload;
-import xylo_datapacks.energy_manipulation.glyphs.pins.InputPinMode;
+import xylo_datapacks.energy_manipulation.glyphs.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValueType;
 
