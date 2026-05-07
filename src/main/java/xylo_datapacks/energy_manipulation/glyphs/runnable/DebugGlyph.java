@@ -18,9 +18,6 @@ public class DebugGlyph extends Glyph {
 
         this.inputPinMode = InputPinMode.STANDARD;
         RegisterPinDefinition(INPUT_PIN, glyph -> true);
-        outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> {
-            return valueType != null;
-        };
     }
 
     @Override

@@ -38,5 +38,10 @@ public class IntValueType extends GlyphValueType {
     }
 
     @Override
+    public boolean hasOperations() {
+        return true;
+    }
+
+    @Override
     public boolean hasValueSelector() { return true; }
 }

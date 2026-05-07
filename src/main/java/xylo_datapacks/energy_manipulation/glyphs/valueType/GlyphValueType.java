@@ -14,6 +14,8 @@ public abstract class GlyphValueType {
     }
     
     public abstract GlyphValue MakeDefaulted();
+
+    public boolean hasOperations() { return false; }
     
     public boolean hasValueSelector() { return false; }
 }

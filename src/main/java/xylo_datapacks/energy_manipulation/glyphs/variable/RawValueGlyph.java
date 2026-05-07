@@ -8,6 +8,7 @@ import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphGenericPayload;
 import xylo_datapacks.energy_manipulation.glyphs.payload.GlyphPayload;
 import xylo_datapacks.energy_manipulation.glyphs.pins.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValue;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.GlyphValueType;
 
 import java.util.Optional;
 
@@ -17,9 +18,7 @@ public class RawValueGlyph extends Glyph {
         super();
 
         this.inputPinMode = InputPinMode.VALUE;
-        outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> {
-            return valueType != null && valueType.hasValueSelector();
-        };
+        outputPinDefinition.valueTypeCompatibilityPredicate = GlyphValueType::hasValueSelector;
     }
 
     @Override

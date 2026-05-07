@@ -53,7 +53,7 @@ public class Glyph {
     public GlyphInstance instantiate(GlyphValueType outputValueType) {
         
         // do not allow creation if we cannot support output value type
-        if (!outputPinDefinition.valueTypeCompatibilityPredicate.test(outputValueType)) {
+        if (outputValueType == null || !outputPinDefinition.valueTypeCompatibilityPredicate.test(outputValueType)) {
             EnergyManipulation.LOGGER.warn("Trying to instantiate a GlyphInstance with a non supported output pin type!");
             return null;
         }
