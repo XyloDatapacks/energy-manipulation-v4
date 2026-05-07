@@ -255,10 +255,6 @@ public class Glyph {
     /*================================================================================================================*/
     // Execution
     
-    public static GlyphValue executeStatic(ExecutionContext executionContext, GlyphInstance glyphInstance) {
-        return glyphInstance.glyph.execute(executionContext, glyphInstance); 
-    }
-    
     /** @return an object derived from GlyphValue. It must NEVER be null, instead use GlyphValue or ExecutionErrorGlyphValue in case of exceptions */
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         return new GlyphValue();
@@ -298,67 +294,5 @@ public class Glyph {
     }
 
     // ~Execution
-    /*================================================================================================================*/
-
-    /*================================================================================================================*/
-    // StaticHelpers
-    
-    /** @param callback consumer passing as parameter the newly created GlyphInstance. */
-    public static boolean connectNewGlyphWithCallbackStatic(GlyphInstance glyphInstance, String pinName, Glyph glyphToCreate, Consumer<GlyphInstance> callback) {
-        if (connectNewGlyphStatic(glyphInstance, pinName, glyphToCreate)) {
-            callback.accept(glyphInstance.glyph.getInputPin(glyphInstance, pinName).get().connectedGlyph);
-            return true;
-        }
-        return false;
-    }
-
-    /** @param callback consumer passing as parameter the newly created GlyphInstance. */
-    public static boolean connectNewGlyphWithCallbackStatic(GlyphInstance glyphInstance, int pinIndex, Glyph glyphToCreate, Consumer<GlyphInstance> callback) {
-        if (connectNewGlyphStatic(glyphInstance, pinIndex, glyphToCreate)) {
-            callback.accept(glyphInstance.glyph.getInputPin(glyphInstance, pinIndex).get().connectedGlyph);
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean connectNewGlyphStatic(GlyphInstance glyphInstance, String pinName, Glyph glyphToCreate) {
-        Optional<InputPin> targetPin = glyphInstance.glyph.getInputPin(glyphInstance, pinName);
-        if (targetPin.isEmpty()) {
-            return false;
-        }
-
-        GlyphValueType desiredValueType = targetPin.get().valueType;
-        GlyphInstance glyphToConnect = glyphToCreate.instantiate(desiredValueType);
-        if (glyphToConnect == null) {
-            return false;
-        }
-
-        return connectGlyphStatic(glyphInstance, pinName, glyphToConnect);
-    }
-
-    public static boolean connectNewGlyphStatic(GlyphInstance glyphInstance, int pinIndex, Glyph glyphToCreate) {
-        Optional<InputPin> targetPin = glyphInstance.glyph.getInputPin(glyphInstance, pinIndex);
-        if (targetPin.isEmpty()) {
-            return false;
-        }
-
-        GlyphValueType desiredValueType = targetPin.get().valueType;
-        GlyphInstance glyphToConnect = glyphToCreate.instantiate(desiredValueType);
-        if (glyphToConnect == null) {
-            return false;
-        }
-
-        return connectGlyphStatic(glyphInstance, pinIndex, glyphToConnect);
-    }
-
-    public static boolean connectGlyphStatic(GlyphInstance glyphInstance, String pinName, GlyphInstance glyphToConnect) {
-        return glyphInstance.glyph.connectGlyph(glyphInstance, pinName, glyphToConnect);
-    }
-
-    public static boolean connectGlyphStatic(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
-        return glyphInstance.glyph.connectGlyph(glyphInstance, pinIndex, glyphToConnect);
-    }
-
-    // ~StaticHelpers
     /*================================================================================================================*/
 }
