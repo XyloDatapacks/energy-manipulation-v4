@@ -34,6 +34,11 @@ public class Glyph {
             return;
         }
 
+        if (inputPinMode == InputPinMode.ARRAY && !inputPinDefinitions.isEmpty()) {
+            EnergyManipulation.LOGGER.warn("Glyphs with input pin arrays can only register one input pin definition!");
+            return;
+        }
+
         InputPinDefinition inputPinDefinition = new InputPinDefinition(pinName);
         inputPinDefinition.nodeFilter = nodeFilter;
 
@@ -118,6 +123,22 @@ public class Glyph {
          }
          return Optional.empty();
     }
+
+    public Optional<InputPinDefinition> getInputPinDefinition(GlyphInstance glyphInstance, String pinName) {
+        int pinIndex = getInputPinIndex(pinName);
+        return getInputPinDefinition(glyphInstance, pinIndex);
+    }
+
+    public Optional<InputPinDefinition> getInputPinDefinition(GlyphInstance glyphInstance, int pinIndex) {
+        if (inputPinMode != InputPinMode.ARRAY) {
+            pinIndex = 0;
+        }
+        
+        if (pinIndex >= 0 && pinIndex < glyphInstance.inputPins.size()) {
+            return Optional.ofNullable(inputPinDefinitions.get(pinIndex));
+        }
+        return Optional.empty();
+    }
     
     public void addPin(GlyphInstance glyphInstance) {
         if (inputPinMode != InputPinMode.ARRAY) {
@@ -156,6 +177,26 @@ public class Glyph {
 
     /*================================================================================================================*/
     // Connections
+    
+    protected boolean canConnectToPin_Internal(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
+        Optional<InputPin> inputPin = getInputPin(glyphInstance, pinIndex);
+        Optional<InputPinDefinition> inputPinDefinition = getInputPinDefinition(glyphInstance, pinIndex);
+        if (inputPin.isEmpty() || inputPinDefinition.isEmpty()) {
+            return false;
+        }
+        
+        // Check for matching value type in input pin and output pin 
+        if (inputPin.get().valueType == null || !inputPin.get().valueType.equals(glyphToConnect.outputPin.valueType)) {
+            return false;
+        }
+        
+        // Verify that the glyph we are trying to connect is acceptable for this input pin
+        if (!inputPinDefinition.get().nodeFilter.test(glyphToConnect.glyph)) {
+            return false;
+        }
+            
+        return true;
+    }
 
     public void connectGlyph(GlyphInstance glyphInstance, String pinName, GlyphInstance glyphToConnect) {
         if (inputPinMode != InputPinMode.STANDARD) {
@@ -184,6 +225,11 @@ public class Glyph {
         
         if (!(pinIndex >= 0 && pinIndex < glyphInstance.inputPins.size())) {
             EnergyManipulation.LOGGER.warn("Cannot connect a GlyphInstance to a non existent input pin!");
+            return;
+        }
+        
+        if (!canConnectToPin_Internal(glyphInstance, pinIndex, glyphToConnect)) {
+            EnergyManipulation.LOGGER.warn("Cannot connect GlyphInstance to specified input pin, as they are not compatible!");
             return;
         }
         

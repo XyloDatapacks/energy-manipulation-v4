@@ -22,6 +22,13 @@ public class PrintStringGlyph extends Glyph {
     }
 
     @Override
+    public void initializePins(GlyphInstance glyphInstance) {
+        getInputPin(glyphInstance, STRING_PIN).ifPresent(inputPin -> {
+            inputPin.valueType = GlyphsRegistry.STRING_VALUE_TYPE;
+        });
+    }
+
+    @Override
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         GlyphValue stringValue = evaluatePin(executionContext, glyphInstance, STRING_PIN);
         String string = GlyphsRegistry.STRING_VALUE_TYPE.getStringGlyphValue(stringValue);
