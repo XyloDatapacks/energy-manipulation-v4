@@ -1,7 +1,5 @@
 package xylo_datapacks.energy_manipulation.glyphs.valueType;
 
-import xylo_datapacks.energy_manipulation.glyphs.GlyphInstance;
-
 public class StringValueType extends GlyphValueType {
     class StringGlyphValue extends GlyphValue {
         StringGlyphValue(String value) {
@@ -11,14 +9,17 @@ public class StringValueType extends GlyphValueType {
         public String value;
     }
 
-    public GlyphValue MakeStringGlyphValue(String value) {
+    public GlyphValue makeStringGlyphValue(String value) {
         return new StringGlyphValue(value);
     }
     
-    public String GetStringGlyphValue(GlyphValue glyphValue) {
+    public String getStringGlyphValue(GlyphValue glyphValue) {
         if (glyphValue instanceof StringGlyphValue) {
             return ((StringGlyphValue) glyphValue).value;
         }
         return "";
     }
+
+    @Override
+    public boolean hasValueSelector() { return true; }
 }
