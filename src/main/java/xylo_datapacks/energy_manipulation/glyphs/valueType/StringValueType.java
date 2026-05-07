@@ -1,8 +1,10 @@
 package xylo_datapacks.energy_manipulation.glyphs.valueType;
 
 import xylo_datapacks.energy_manipulation.glyphs.GlyphsRegistry;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.interfaces.ComparableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyphs.valueType.interfaces.StringGlyphValueInterface;
 
-public class StringValueType extends GlyphValueType {
+public class StringValueType extends GlyphValueType implements StringGlyphValueInterface, ComparableGlyphValueInterface {
     class StringGlyphValue extends BaseGlyphValue {
         StringGlyphValue(String value) {
             this.value = value;
@@ -44,4 +46,30 @@ public class StringValueType extends GlyphValueType {
 
     @Override
     public boolean hasValueSelector() { return true; }
+    
+    /*================================================================================================================*/
+    // Interfaces
+
+    @Override
+    public GlyphValue equals(GlyphValue a, GlyphValue b) {
+        String stringA = getStringGlyphValue(a);
+        String stringB = getStringGlyphValue(b);
+        return GlyphsRegistry.BOOL_VALUE_TYPE.makeBoolGlyphValue(stringA.equals(stringB));
+    }
+
+    @Override
+    public GlyphValue concat(GlyphValue a, GlyphValue b) {
+        String stringA = getStringGlyphValue(a);
+        String stringB = getStringGlyphValue(b);
+        return makeStringGlyphValue(stringA.concat(stringB));
+    }
+
+    @Override
+    public GlyphValue length(GlyphValue value) {
+        String stringValue = getStringGlyphValue(value);
+        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(stringValue.length());
+    }
+    
+    // ~Interfaces
+    /*================================================================================================================*/
 }
