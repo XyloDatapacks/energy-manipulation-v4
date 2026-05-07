@@ -1,7 +1,7 @@
 package xylo_datapacks.energy_manipulation.glyph.pin;
 
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
-import xylo_datapacks.energy_manipulation.glyph.valueType.GlyphValueType;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 
 import java.lang.ref.WeakReference;
 

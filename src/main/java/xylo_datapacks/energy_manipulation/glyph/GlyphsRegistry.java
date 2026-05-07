@@ -5,7 +5,7 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.SumOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.PrintStringGlyph;
-import xylo_datapacks.energy_manipulation.glyph.valueType.*;
+import xylo_datapacks.energy_manipulation.glyph.value_type.*;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.variable.RawValueGlyph;
 
 public class GlyphsRegistry {

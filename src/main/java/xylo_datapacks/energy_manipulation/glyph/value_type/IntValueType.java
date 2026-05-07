@@ -1,9 +1,9 @@
-package xylo_datapacks.energy_manipulation.glyph.valueType;
+package xylo_datapacks.energy_manipulation.glyph.value_type;
 
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyph.valueType.value_interface.ComparableGlyphValueInterface;
-import xylo_datapacks.energy_manipulation.glyph.valueType.value_interface.NumericGlyphValueInterface;
-import xylo_datapacks.energy_manipulation.glyph.valueType.value_interface.SortableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.NumericGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.SortableGlyphValueInterface;
 
 public class IntValueType extends GlyphValueType implements NumericGlyphValueInterface, ComparableGlyphValueInterface, SortableGlyphValueInterface {
     class IntGlyphValue extends BaseGlyphValue {

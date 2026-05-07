@@ -1,6 +1,6 @@
-package xylo_datapacks.energy_manipulation.glyph.valueType.value_interface;
+package xylo_datapacks.energy_manipulation.glyph.value_type.value_interface;
 
-import xylo_datapacks.energy_manipulation.glyph.valueType.GlyphValue;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 
 public interface StringGlyphValueInterface {
 

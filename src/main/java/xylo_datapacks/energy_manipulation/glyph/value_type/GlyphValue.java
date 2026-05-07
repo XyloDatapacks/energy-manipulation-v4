@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.glyph.valueType;
+package xylo_datapacks.energy_manipulation.glyph.value_type;
 
 public class GlyphValue {
     

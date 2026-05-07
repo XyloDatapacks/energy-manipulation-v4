@@ -4,8 +4,8 @@ import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
-import xylo_datapacks.energy_manipulation.glyph.valueType.GlyphValue;
-import xylo_datapacks.energy_manipulation.glyph.valueType.GlyphValueType;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 
 public class OperationGlyph extends Glyph {
     static public String OPERATOR_PIN = "Operator";

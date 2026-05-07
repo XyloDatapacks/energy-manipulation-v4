@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.glyph.valueType;
+package xylo_datapacks.energy_manipulation.glyph.value_type;
 
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 

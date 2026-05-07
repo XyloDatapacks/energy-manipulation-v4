@@ -3,8 +3,8 @@ package xylo_datapacks.energy_manipulation.glyph;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.payload.GlyphPayload;
 import xylo_datapacks.energy_manipulation.glyph.pin.*;
-import xylo_datapacks.energy_manipulation.glyph.valueType.GlyphValue;
-import xylo_datapacks.energy_manipulation.glyph.valueType.GlyphValueType;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

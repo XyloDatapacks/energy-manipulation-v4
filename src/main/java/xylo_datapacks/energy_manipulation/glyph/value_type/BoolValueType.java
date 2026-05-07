@@ -1,7 +1,7 @@
-package xylo_datapacks.energy_manipulation.glyph.valueType;
+package xylo_datapacks.energy_manipulation.glyph.value_type;
 
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyph.valueType.value_interface.ComparableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
 
 public class BoolValueType extends GlyphValueType implements ComparableGlyphValueInterface {
     class BoolGlyphValue extends BaseGlyphValue {

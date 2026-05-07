@@ -1,8 +1,8 @@
-package xylo_datapacks.energy_manipulation.glyph.valueType;
+package xylo_datapacks.energy_manipulation.glyph.value_type;
 
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyph.valueType.value_interface.ComparableGlyphValueInterface;
-import xylo_datapacks.energy_manipulation.glyph.valueType.value_interface.StringGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringGlyphValueInterface;
 
 public class StringValueType extends GlyphValueType implements StringGlyphValueInterface, ComparableGlyphValueInterface {
     class StringGlyphValue extends BaseGlyphValue {
