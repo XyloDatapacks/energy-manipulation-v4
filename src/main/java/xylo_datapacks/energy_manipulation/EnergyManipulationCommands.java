@@ -14,6 +14,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
+import xylo_datapacks.energy_manipulation.spell_editor.SpellPresetRegistry;
 
 public class EnergyManipulationCommands {
 
@@ -34,8 +35,9 @@ public class EnergyManipulationCommands {
             return 0;
         }
 
-        SpellEditor sessionEditor = new SpellEditor();
-        SpellEditorGui gui = new SpellEditorGui(player, sessionEditor);
+        SpellEditor spellEditor = new SpellEditor();
+        SpellEditorGui gui = new SpellEditorGui(player, spellEditor);
+        spellEditor.Initialize(SpellPresetRegistry.makeSumTest());
         gui.open();
        
         context.getSource().sendSuccess(() -> {

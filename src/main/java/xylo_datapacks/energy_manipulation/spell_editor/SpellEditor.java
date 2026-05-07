@@ -10,14 +10,33 @@ import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
 import java.util.Optional;
 
 public class SpellEditor {
+    public GlyphInstance currentGlyphInstance;
+    public Runnable onInstanceChangedCallback;
     
-    public void printCompatibleGlyphs(GlyphInstance glyphInstance, String pinName) {
-        EnergyManipulation.LOGGER.info("Printing compatible Glyphs for pin [{}] in Glyph [{}]", pinName, glyphInstance.glyph.getClass().getSimpleName());
+    public void Initialize(GlyphInstance glyphInstance) {
+        this.currentGlyphInstance = glyphInstance;
+        onInstanceChangedCallback.run();
+    }
+    
+    public String printCompatibleGlyphs(GlyphInstance glyphInstance, String pinName) {
+        int pinIndex = glyphInstance.glyph.getInputPinIndex(pinName);
+        return printCompatibleGlyphs(glyphInstance, pinIndex);
+    }
+
+    public String printCompatibleGlyphs(GlyphInstance glyphInstance, int pinIndex) {
+        String pinName = glyphInstance.glyph.getInputPinDefinition(pinIndex).get().pinName;
+
+        StringBuilder output = new StringBuilder("Printing compatible Glyphs for pin [" + pinName + "] in Glyph [" + glyphInstance.glyph.getClass().getSimpleName() + "] \n");
+
         GlyphsRegistry.GLYPHS.values().stream()
                 .filter(glyph -> isCompatibleGlyph(glyphInstance, pinName, glyph))
                 .forEach(glyph -> {
-                    EnergyManipulation.LOGGER.info("- {}", glyph.getClass().getSimpleName());
+                    String entry = "- " + glyph.getClass().getSimpleName() + "\n";
+                    output.append(entry);
                 });
+
+        EnergyManipulation.LOGGER.info(output.toString());
+        return output.toString();
     }
     
     public boolean isCompatibleGlyph(GlyphInstance glyphInstance, String pinName, Glyph glyphToTest) {
