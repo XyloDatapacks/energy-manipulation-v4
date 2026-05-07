@@ -2,6 +2,8 @@ package xylo_datapacks.energy_manipulation;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.commands.Commands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,15 @@ public class EnergyManipulation implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
+		registerCommands();
 		LOGGER.info("Hello Fabric world!");
+	}
+	
+	public void registerCommands() {
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			dispatcher.register(Commands.literal("test_command")
+					.executes(EnergyManipulationCommands::executeTestCommand)
+					.then(Commands.literal("sub_command").executes(EnergyManipulationCommands::executeTestSubCommand)));
+		});
 	}
 }
