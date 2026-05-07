@@ -34,7 +34,7 @@ public class DebugGlyph extends Glyph {
         Optional<InputPin> inputPin = getInputPin(glyphInstance, INPUT_PIN);
         
         if (inputPin.isPresent() && inputPin.get().connectedGlyph != null) {
-            EnergyManipulation.LOGGER.info("Executing [{}] with result [{}]", inputPin.get().connectedGlyph.glyph.getClass().toString(), outputValue.getDebugString());
+            EnergyManipulation.LOGGER.info("Executing [{}] with result [{}]", inputPin.get().connectedGlyph.glyph.getClass().getSimpleName(), outputValue.getDebugString());
         }
         
         return outputValue;

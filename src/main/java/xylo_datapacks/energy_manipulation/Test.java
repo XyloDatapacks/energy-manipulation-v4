@@ -1,11 +1,13 @@
 package xylo_datapacks.energy_manipulation;
 
 import xylo_datapacks.energy_manipulation.glyph.*;
+import xylo_datapacks.energy_manipulation.glyph.payload.GlyphGenericPayload;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.OperationGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.IntToString;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.SumOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.PrintStringGlyph;
+import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 
 public class Test {
 
@@ -48,5 +50,10 @@ public class Test {
         });
 
         GlyphUtils.execute(executionContext, sumStringPrint);
+
+
+        SpellEditor spellEditor = new SpellEditor();
+        GlyphInstance debugStringStuff = GlyphsRegistry.DEBUG_GLYPH.instantiate(GlyphsRegistry.STRING_VALUE_TYPE);
+        spellEditor.printCompatibleGlyphs(debugStringStuff, DebugGlyph.INPUT_PIN);
     }
 }

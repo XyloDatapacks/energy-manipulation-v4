@@ -279,15 +279,15 @@ public class Glyph {
         GlyphValue glyphValue = instanceAtPin.glyph.execute(executionContext, instanceAtPin);
 
         if (glyphValue == null) {
-            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in null GlyphValue. This behaviour is unsupported!", instanceAtPin.glyph.getClass().toString(), glyphInstance.glyph.getClass().toString());
+            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in null GlyphValue. This behaviour is unsupported!", instanceAtPin.glyph.getClass().getSimpleName(), glyphInstance.glyph.getClass().getSimpleName());
             return new GlyphValue();
         }
 
         if (glyphValue.isOfType(GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE)) {
-            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in the following error: {}", instanceAtPin.glyph.getClass().toString(), glyphInstance.glyph.getClass().toString(), glyphValue.getDebugString());
+            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in the following error: {}", instanceAtPin.glyph.getClass().getSimpleName(), glyphInstance.glyph.getClass().getSimpleName(), glyphValue.getDebugString());
         }
         else if (!glyphValue.isOfType(targetPin.valueType)) {
-            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in incompatible value type! Make sure \"execute\" method returns the same value type as the instance's outputPin.", instanceAtPin.glyph.getClass().toString(), glyphInstance.glyph.getClass().toString());
+            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in incompatible value type! Make sure \"execute\" method returns the same value type as the instance's outputPin.", instanceAtPin.glyph.getClass().getSimpleName(), glyphInstance.glyph.getClass().getSimpleName());
         }
         
         return glyphValue;
