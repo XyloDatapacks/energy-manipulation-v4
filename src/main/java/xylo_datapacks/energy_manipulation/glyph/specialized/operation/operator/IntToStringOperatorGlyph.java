@@ -8,10 +8,10 @@ import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 
-public class IntToString extends Glyph implements OperatorGlyphInterface {
+public class IntToStringOperatorGlyph extends Glyph implements OperatorGlyphInterface {
     static public String INT_VALUE_PIN = "IntValue";
 
-    public IntToString() {
+    public IntToStringOperatorGlyph() {
         super();
 
         this.inputPinMode = InputPinMode.STANDARD;

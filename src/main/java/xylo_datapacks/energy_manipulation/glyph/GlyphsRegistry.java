@@ -3,7 +3,7 @@ package xylo_datapacks.energy_manipulation.glyph;
 import net.minecraft.resources.Identifier;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperationGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.IntToString;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.IntToStringOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.SumOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.PrintStringGlyph;
@@ -25,7 +25,7 @@ public class GlyphsRegistry {
     static public DebugGlyph DEBUG_GLYPH = registerGlyph("debug_glyph", DebugGlyph::new);
     static public OperationGlyph OPERATION_GLYPH = registerGlyph("operation_glyph", OperationGlyph::new);
     static public SumOperatorGlyph SUM_OPERATOR_GLYPH = registerGlyph("sum_operator_glyph", SumOperatorGlyph::new);
-    static public IntToString INT_TO_STRING_OPERATOR_GLYPH = registerGlyph("int_to_string_operator_glyph", IntToString::new);
+    static public IntToStringOperatorGlyph INT_TO_STRING_OPERATOR_GLYPH = registerGlyph("int_to_string_operator_glyph", IntToStringOperatorGlyph::new);
     
     static public StringValueType STRING_VALUE_TYPE = registerValueType("string_value_type", StringValueType::new);
     static public BoolValueType BOOL_VALUE_TYPE = registerValueType("bool_value_type", BoolValueType::new);

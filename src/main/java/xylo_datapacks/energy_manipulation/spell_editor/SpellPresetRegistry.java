@@ -4,7 +4,7 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperationGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.IntToString;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.IntToStringOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.SumOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.PrintStringGlyph;
 
@@ -15,7 +15,7 @@ public class SpellPresetRegistry {
         GlyphUtils.connectNewGlyphWithCallback(sumStringPrint, PrintStringGlyph.STRING_PIN, GlyphsRegistry.OPERATION_GLYPH, toStringOperation -> {
 
             GlyphUtils.connectNewGlyphWithCallback(toStringOperation, OperationGlyph.OPERATOR_PIN, GlyphsRegistry.INT_TO_STRING_OPERATOR_GLYPH, toStringOperator -> {
-                GlyphUtils.connectNewGlyphWithCallback(toStringOperator, IntToString.INT_VALUE_PIN, GlyphsRegistry.OPERATION_GLYPH, sumOperation -> {
+                GlyphUtils.connectNewGlyphWithCallback(toStringOperator, IntToStringOperatorGlyph.INT_VALUE_PIN, GlyphsRegistry.OPERATION_GLYPH, sumOperation -> {
 
                     GlyphUtils.connectNewGlyphWithCallback(sumOperation, OperationGlyph.OPERATOR_PIN, GlyphsRegistry.SUM_OPERATOR_GLYPH, sumOperator -> {
                         GlyphUtils.connectNewGlyphWithCallback(sumOperator, SumOperatorGlyph.FIRST_VALUE_PIN, GlyphsRegistry.RAW_VALUE_GLYPH, fistNum -> {
