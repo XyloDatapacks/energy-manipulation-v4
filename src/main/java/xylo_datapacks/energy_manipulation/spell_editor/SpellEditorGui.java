@@ -5,7 +5,9 @@ import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
@@ -17,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class SpellEditorGui extends SimpleGui {
+    private final SimpleContainer inputInventory = new SimpleContainer(5);
     static final int PAGE_SIZE = 9*5;
     private final SpellEditor editor;
     private int currentPage;
@@ -38,6 +41,12 @@ public class SpellEditorGui extends SimpleGui {
     }
 
     private void setupToolbar() {
+        this.setSlot(45, new Slot(inputInventory, 0, 0, 0));
+        this.setSlot(46, new Slot(inputInventory, 1, 0, 0));
+        this.setSlot(47, new Slot(inputInventory, 2, 0, 0));
+        this.setSlot(48, new Slot(inputInventory, 3, 0, 0));
+        this.setSlot(49, new Slot(inputInventory, 4, 0, 0));
+        
         this.setSlot(50, new GuiElementBuilder(Items.RED_WOOL)
                 .setName(Component.literal("Cancel"))
                 .setCallback(clickType -> {
