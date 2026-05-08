@@ -10,8 +10,12 @@ import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
+import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
+import xylo_datapacks.energy_manipulation.glyph.specialized.variable.variable.RawValueGlyph;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class SpellEditorGui extends SimpleGui {
     static final int pageSize = 9*5;
@@ -81,30 +85,54 @@ public class SpellEditorGui extends SimpleGui {
     
     public void recursiveCreateSpellGuiElements(GlyphInstance glyphInstance, AtomicInteger currentSlot) {
         // Stop this branch if no glyph instance.
-        if (glyphInstance == null) {
+        if (glyphInstance == null || isOutOfGlyphsDrawingSpace(currentSlot)) {
             return;
         }
+
+        safeAddGlyphGuiElement(currentSlot, () -> generateGlyphDecoratorGuiElement(glyphInstance));
         
         for (int i = 0; i < glyphInstance.inputPins.size(); i++) {
-            // Get new slot index.
-            int slotIndex = currentSlot.getAndIncrement();
-            // If slot index exceeds the last representable index then quit.
-            if (slotIndex >= pageSize * (currentPage + 1)) {
-                return;
-            }
+            int pinIndex = i;
             
-            // Only start generating gui elements if we reached a slot index that is visible.
-            if (slotIndex >= pageSize * (currentPage)) {
-                // Add new element.
-                this.setSlot(slotIndex % pageSize, generatePinGuiElement(glyphInstance, i));
-            }
+            safeAddGlyphGuiElement(currentSlot, () -> generatePinGuiElement(glyphInstance, pinIndex));
             
             // Recursive call for the connected glyph.
             recursiveCreateSpellGuiElements(glyphInstance.inputPins.get(i).connectedGlyph, currentSlot);
+
+            safeAddGlyphGuiElement(currentSlot, () -> generatePinDecoratorGuiElement(glyphInstance, pinIndex));
+        }
+
+        safeAddGlyphGuiElement(currentSlot, () -> generateGlyphPostPinsDecoratorGuiElement(glyphInstance) );
+    }
+    
+    /** @return true if currentSlot is out of bounds. */
+    public boolean isOutOfGlyphsDrawingSpace(AtomicInteger currentSlot) {
+        return currentSlot.get() >= pageSize * (currentPage + 1);
+    }
+    
+    /** Adds a glyph related gui element at the correct slot only if possible / needed. */
+    public void safeAddGlyphGuiElement(AtomicInteger currentSlot, Supplier<Optional<SimpleGuiElement>> supplier) {
+        // Get new slot index.
+        int slotIndex = currentSlot.get();
+        // If slot index exceeds the last representable index then quit.
+        if (isOutOfGlyphsDrawingSpace(currentSlot)) {
+            return;
+        }
+
+        // Only start generating gui elements if we reached a slot index that is visible.
+        if (slotIndex >= pageSize * (currentPage)) {
+            // Add new element.
+            Optional<SimpleGuiElement> optionalElement = supplier.get();
+            if (optionalElement.isPresent()) {
+                this.setSlot(slotIndex % pageSize, optionalElement.get());
+                
+                // If we were able to add the element then increment the current slot.
+                currentSlot.incrementAndGet();
+            }
         }
     }
     
-    public SimpleGuiElement generatePinGuiElement(GlyphInstance glyphInstance, int pinIndex) {
+    public Optional<SimpleGuiElement> generatePinGuiElement(GlyphInstance glyphInstance, int pinIndex) {
         InputPin pinToDisplay = glyphInstance.glyph.getInputPin(glyphInstance, pinIndex).get();
         GlyphInstance connectedGlyphInstance = pinToDisplay.connectedGlyph;
         String connectedGlyphDisplayName = connectedGlyphInstance.glyph.getClass().getSimpleName();
@@ -112,12 +140,64 @@ public class SpellEditorGui extends SimpleGui {
         InputPinDefinition pinDefinitionToDisplay = glyphInstance.glyph.getInputPinDefinition(pinIndex).get();
         String pinDisplayName = pinDefinitionToDisplay.pinName;
         
-        return new GuiElementBuilder(Items.PAPER)
+        return Optional.of(new GuiElementBuilder(Items.PAPER)
                 .setName(Component.literal("Pin: " + pinDisplayName + " | " + connectedGlyphDisplayName))
                 .setCallback(clickType -> {
                     String compatibleGlyphs = editor.printCompatibleGlyphs(glyphInstance, pinIndex);
                     player.sendSystemMessage(Component.literal(compatibleGlyphs));
                 })
-                .build();
+                .build());
+    }
+    
+    public Optional<SimpleGuiElement> generatePinDecoratorGuiElement(GlyphInstance glyphInstance, int pinIndex) {
+        if (glyphInstance.glyph.getInputPinMode() ==  InputPinMode.ARRAY) {
+            return Optional.of(new GuiElementBuilder(Items.MAP)
+                    .setName(Component.literal("+ / -"))
+                    .setCallback(clickType -> {
+                        String outputString = (clickType.isRight ? "Removing pin" : "Adding pin") + " " + pinIndex;
+                        player.sendSystemMessage(Component.literal(outputString));
+                    })
+                    .build());
+        }
+        
+        return Optional.empty();
+    }
+
+    public Optional<SimpleGuiElement> generateGlyphDecoratorGuiElement(GlyphInstance glyphInstance) {
+        if (glyphInstance.glyph.getInputPinMode() ==  InputPinMode.ARRAY) {
+            return Optional.of(new GuiElementBuilder(Items.LIGHT_BLUE_CONCRETE)
+                    .setName(Component.literal("("))
+                    .build());
+        }
+
+        if (glyphInstance.glyph.getInputPinMode() ==  InputPinMode.VALUE) {
+            if (glyphInstance.glyph instanceof RawValueGlyph) {
+                if (glyphInstance.outputPin.valueType.hasValueSelector()) {
+                    return Optional.of(new GuiElementBuilder(Items.REDSTONE_TORCH)
+                            .setName(Component.literal("?"))
+                            .setCallback(clickType -> {
+                                String outputString = "selecting value for " + glyphInstance.glyph.getClass().getSimpleName();
+                                player.sendSystemMessage(Component.literal(outputString));
+                            })
+                            .build());
+                }
+            }
+        }
+        
+        return Optional.empty();
+    }
+
+    public Optional<SimpleGuiElement> generateGlyphPostPinsDecoratorGuiElement(GlyphInstance glyphInstance) {
+        if (glyphInstance.glyph.getInputPinMode() ==  InputPinMode.ARRAY) {
+            return Optional.of(new GuiElementBuilder(Items.ORANGE_CONCRETE)
+                    .setName(Component.literal(")+"))
+                    .setCallback(clickType -> {
+                        String outputString = "Adding pin " + glyphInstance.inputPins.size();
+                        player.sendSystemMessage(Component.literal(outputString));
+                    })
+                    .build());
+        }
+        
+        return Optional.empty();
     }
 }

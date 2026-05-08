@@ -7,6 +7,7 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.IntToString;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.SumOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.PrintStringGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.ProgramGlyph;
 
 public class SpellPresetRegistry {
     
@@ -31,5 +32,16 @@ public class SpellPresetRegistry {
         });
         
         return sumStringPrint;
+    }
+
+    public static GlyphInstance makeProgramTest() {
+        GlyphInstance programGlyph = GlyphsRegistry.PROGRAM_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE);
+        programGlyph.glyph.addPin(programGlyph);
+        programGlyph.glyph.addPin(programGlyph);
+        
+        GlyphUtils.connectGlyph(programGlyph, 0, makeSumTest());
+        GlyphUtils.connectGlyph(programGlyph, 1, makeSumTest());
+
+        return programGlyph;
     }
 }

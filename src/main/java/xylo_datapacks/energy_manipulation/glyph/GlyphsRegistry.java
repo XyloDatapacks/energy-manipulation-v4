@@ -9,6 +9,7 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.SumOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.PrintStringGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.ProgramGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.*;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.variable.RawValueGlyph;
 
@@ -25,6 +26,7 @@ public class GlyphsRegistry {
     public static final Map<Identifier, GlyphValueType> VALUE_TYPES = new LinkedHashMap<>();
     
     static public RawValueGlyph RAW_VALUE_GLYPH = registerGlyph("raw_value_glyph", RawValueGlyph::new);
+    static public ProgramGlyph PROGRAM_GLYPH = registerGlyph("program_glyph", ProgramGlyph::new);
     static public PrintStringGlyph PRINT_STRING_GLYPH = registerGlyph("print_string_glyph", PrintStringGlyph::new);
     static public DebugGlyph DEBUG_GLYPH = registerGlyph("debug_glyph", DebugGlyph::new);
     static public OperationGlyph OPERATION_GLYPH = registerGlyph("operation_glyph", OperationGlyph::new);

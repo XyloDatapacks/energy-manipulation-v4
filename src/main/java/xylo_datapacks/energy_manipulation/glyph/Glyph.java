@@ -143,6 +143,10 @@ public class Glyph {
     }
     
     public Optional<InputPin> getInputPin(GlyphInstance glyphInstance, String pinName) {
+        if (inputPinMode == InputPinMode.ARRAY) {
+            EnergyManipulation.LOGGER.warn("While using InputPinMode.ARRAY, getting an input pin by name will always return the first pin if it exists!");
+        }
+        
         int pinIndex = getInputPinIndex(pinName);
         return getInputPin(glyphInstance, pinIndex);
     }
@@ -162,6 +166,7 @@ public class Glyph {
 
         InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
         glyphInstance.inputPins.add(newInputPin);
+        initializeNewPin(glyphInstance, newInputPin);
         refreshPins(glyphInstance);
     }
 
@@ -183,8 +188,11 @@ public class Glyph {
 
         InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
         glyphInstance.inputPins.add(index, newInputPin);
+        initializeNewPin(glyphInstance, newInputPin);
         refreshPins(glyphInstance);
     }
+    
+    public void initializeNewPin(GlyphInstance glyphInstance, InputPin newInputPin) {}
 
     // ~PinManagement
     /*================================================================================================================*/

@@ -37,7 +37,7 @@ public class EnergyManipulationCommands {
 
         SpellEditor spellEditor = new SpellEditor();
         SpellEditorGui gui = new SpellEditorGui(player, spellEditor);
-        spellEditor.Initialize(SpellPresetRegistry.makeSumTest());
+        spellEditor.Initialize(SpellPresetRegistry.makeProgramTest());
         gui.open();
        
         context.getSource().sendSuccess(() -> {
