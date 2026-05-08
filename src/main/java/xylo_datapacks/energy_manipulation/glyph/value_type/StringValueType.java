@@ -2,9 +2,10 @@ package xylo_datapacks.energy_manipulation.glyph.value_type;
 
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringGlyphValueInterface;
 
-public class StringValueType extends GlyphValueType implements StringGlyphValueInterface, ComparableGlyphValueInterface {
+public class StringValueType extends GlyphValueType implements StringGlyphValueInterface, ComparableGlyphValueInterface, StringConvertibleValueInterface {
     
     class StringGlyphValue extends BaseGlyphValue {
         public String value;
@@ -70,7 +71,17 @@ public class StringValueType extends GlyphValueType implements StringGlyphValueI
         String stringValue = getStringGlyphValue(value);
         return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(stringValue.length());
     }
-    
+
+    @Override
+    public GlyphValue ValueFromString(String value) {
+        return makeStringGlyphValue(value);
+    }
+
+    @Override
+    public String ValueToString(GlyphValue value) {
+        return getStringGlyphValue(value);
+    }
+
     // ~Interfaces
     /*================================================================================================================*/
 }

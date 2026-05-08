@@ -4,8 +4,9 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.NumericGlyphValueInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.SortableGlyphValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
 
-public class IntValueType extends GlyphValueType implements NumericGlyphValueInterface, ComparableGlyphValueInterface, SortableGlyphValueInterface {
+public class IntValueType extends GlyphValueType implements NumericGlyphValueInterface, ComparableGlyphValueInterface, SortableGlyphValueInterface, StringConvertibleValueInterface {
    
     class IntGlyphValue extends BaseGlyphValue {
         public int value;
@@ -112,6 +113,16 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
         int numberA = getIntGlyphValue(a);
         int numberB = getIntGlyphValue(b);
         return GlyphsRegistry.BOOL_VALUE_TYPE.makeBoolGlyphValue(numberA > numberB);
+    }
+
+    @Override
+    public GlyphValue ValueFromString(String value) {
+        return makeIntGlyphValue(Integer.parseInt(value));
+    }
+
+    @Override
+    public String ValueToString(GlyphValue value) {
+        return getIntGlyphValue(value) + "";
     }
 
     // ~Interfaces

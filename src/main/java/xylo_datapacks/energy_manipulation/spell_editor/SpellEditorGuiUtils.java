@@ -2,15 +2,18 @@ package xylo_datapacks.energy_manipulation.spell_editor;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
+import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
-import xylo_datapacks.energy_manipulation.glyph.specialized.variable.variable.RawValueGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
+import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
+import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputGui;
+import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 
 import java.util.Optional;
 
@@ -85,7 +88,14 @@ public class SpellEditorGuiUtils {
         return new GuiElementBuilder(Items.REDSTONE_TORCH)
                 .setName(Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value"))
                 .setCallback(clickType -> {
-                    // TODO: open glyph value selector gui
+                    
+                    SimpleGui gui;
+                    if (glyphInstance.outputPin.valueType instanceof StringConvertibleValueInterface) {
+                        gui = new StringInputGui(editorGui.getPlayer(), editorGui.getSpellEditor(), editorGui.getCurrentPage(), glyphInstance);
+                    } else {
+                        gui = new MultipleChoiceInputGui(editorGui.getPlayer(), editorGui.getSpellEditor(), editorGui.getCurrentPage(), glyphInstance);
+                    }
+                    gui.open();
                     
                     String outputString = "selecting value for " + glyphInstance.glyph.getClass().getSimpleName();
                     editorGui.getPlayer().sendSystemMessage(Component.literal(outputString));

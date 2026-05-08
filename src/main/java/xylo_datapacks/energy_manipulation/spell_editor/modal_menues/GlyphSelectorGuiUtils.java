@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.spell_editor;
+package xylo_datapacks.energy_manipulation.spell_editor.modal_menues;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
