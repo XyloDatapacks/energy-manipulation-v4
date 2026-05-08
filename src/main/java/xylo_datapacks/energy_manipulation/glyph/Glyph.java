@@ -132,7 +132,7 @@ public class Glyph {
     }
 
     public Optional<InputPinDefinition> getInputPinDefinition(int pinIndex) {
-        if (inputPinMode != InputPinMode.ARRAY) {
+        if (inputPinMode == InputPinMode.ARRAY) {
             pinIndex = 0;
         }
         
