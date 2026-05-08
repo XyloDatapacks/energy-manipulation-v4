@@ -35,9 +35,11 @@ public class EnergyManipulationCommands {
             return 0;
         }
 
+        // Initialize spell editor
         SpellEditor spellEditor = new SpellEditor();
-        SpellEditorGui gui = new SpellEditorGui(player, spellEditor);
         spellEditor.Initialize(SpellPresetRegistry.makeProgramTest());
+        // Open gui
+        SpellEditorGui gui = new SpellEditorGui(player, spellEditor);
         gui.open();
        
         context.getSource().sendSuccess(() -> {

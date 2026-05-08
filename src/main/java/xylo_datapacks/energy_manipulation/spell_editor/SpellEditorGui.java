@@ -19,28 +19,36 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class SpellEditorGui extends SimpleGui {
-    private final SimpleContainer inputInventory = new SimpleContainer(5);
+    protected final SimpleContainer inputInventory = new SimpleContainer(5);
     static final int PAGE_SIZE = 9*5;
-    private final SpellEditor editor;
-    private int currentPage;
-    private boolean bIsLastPage = false;
+    protected final SpellEditor editor;
+    protected int currentPage;
+    protected boolean bIsLastPage = false;
 
-    public SpellEditorGui(ServerPlayer player, SpellEditor editor) {
+    public SpellEditorGui(ServerPlayer player, SpellEditor editor, int currentPage) {
         super(MenuType.GENERIC_9x6, player, false);
-        
+
         this.editor = editor;
-        this.editor.onInstanceChangedCallback = this::onInstanceChanged;
-        this.currentPage = 0;
+        this.currentPage = currentPage;
 
         this.setTitle(Component.literal("Spell Editor"));
         this.setupToolbar();
+        this.rebuildSpellGui();
+    }
+    
+    public SpellEditorGui(ServerPlayer player, SpellEditor editor) {
+        this(player, editor, 0);
     }
     
     public SpellEditor getSpellEditor() {
         return editor;
     }
+    
+    public int getCurrentPage() {
+        return currentPage;
+    }
 
-    private void setupToolbar() {
+    protected void setupToolbar() {
         this.setSlot(45, new Slot(inputInventory, 0, 0, 0));
         this.setSlot(46, new Slot(inputInventory, 1, 0, 0));
         this.setSlot(47, new Slot(inputInventory, 2, 0, 0));
@@ -118,6 +126,11 @@ public class SpellEditorGui extends SimpleGui {
             this.clearSlot(currentSlot.getAndIncrement() % PAGE_SIZE);
         }
     }
+
+    /** @return true if currentSlot is out of bounds. */
+    public boolean isOutOfGlyphsDrawingSpace(AtomicInteger currentSlot) {
+        return currentSlot.get() >= PAGE_SIZE * (currentPage + 1);
+    }
     
     public void recursiveCreateSpellGuiElements(GlyphInstance glyphInstance, AtomicInteger currentSlot) {
         // Stop this branch if no glyph instance.
@@ -146,11 +159,6 @@ public class SpellEditorGui extends SimpleGui {
 
         // Add decorator for the glyph after all its pins
         safeAddGlyphGuiElement(currentSlot, () -> generateGlyphDecoratorPostPinsGuiElement(glyphInstance) );
-    }
-    
-    /** @return true if currentSlot is out of bounds. */
-    public boolean isOutOfGlyphsDrawingSpace(AtomicInteger currentSlot) {
-        return currentSlot.get() >= PAGE_SIZE * (currentPage + 1);
     }
     
     /** Adds a glyph related gui element at the correct slot only if possible / needed. */

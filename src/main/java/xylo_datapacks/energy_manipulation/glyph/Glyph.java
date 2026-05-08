@@ -231,11 +231,6 @@ public class Glyph {
     }
 
     public boolean connectGlyph(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
-        if (inputPinMode != InputPinMode.ARRAY) {
-            EnergyManipulation.LOGGER.warn("Cannot connect a GlyphInstance by pinIndex if inputPinMode is not ARRAY!");
-            return false;
-        }
-        
         return connectGlyph_Internal(glyphInstance, pinIndex, glyphToConnect);
     }
 

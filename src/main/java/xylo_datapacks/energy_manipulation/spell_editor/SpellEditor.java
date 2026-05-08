@@ -8,14 +8,16 @@ import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class SpellEditor {
     public GlyphInstance currentGlyphInstance;
-    public Runnable onInstanceChangedCallback;
-    
+
+    public SpellEditor() {
+    }
+
     public void Initialize(GlyphInstance glyphInstance) {
         this.currentGlyphInstance = glyphInstance;
-        onInstanceChangedCallback.run();
     }
     
     public String printCompatibleGlyphs(GlyphInstance glyphInstance, String pinName) {
@@ -37,6 +39,12 @@ public class SpellEditor {
 
         EnergyManipulation.LOGGER.info(output.toString());
         return output.toString();
+    }
+    
+    public void forEachCompatibleGlyph(GlyphInstance glyphInstance, int pinIndex, Consumer<Glyph> consumer) {
+        GlyphsRegistry.GLYPHS.values().stream()
+                .filter(glyph -> isCompatibleGlyph(glyphInstance, pinIndex, glyph))
+                .forEach(consumer);
     }
     
     public boolean isCompatibleGlyph(GlyphInstance glyphInstance, String pinName, Glyph glyphToTest) {

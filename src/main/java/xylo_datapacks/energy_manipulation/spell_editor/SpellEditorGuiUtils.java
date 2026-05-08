@@ -3,6 +3,7 @@ package xylo_datapacks.energy_manipulation.spell_editor;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
@@ -26,10 +27,11 @@ public class SpellEditorGuiUtils {
         return new GuiElementBuilder(connectedGlyphInstance != null ? Items.PAPER : Items.BARRIER)
                 .setName(Component.literal("Pin: " + pinDisplayName + " | " + connectedGlyphDisplayName))
                 .setCallback(clickType -> {
-                    // TODO: open glyph selector gui
+                    GlyphSelectorGui gui = new GlyphSelectorGui(editorGui.getPlayer(), editorGui.getSpellEditor(), editorGui.getCurrentPage(), glyphInstance, pinIndex);
+                    gui.open();
                     
-                    String compatibleGlyphs = editorGui.getSpellEditor().printCompatibleGlyphs(glyphInstance, pinIndex);
-                    editorGui.getPlayer().sendSystemMessage(Component.literal(compatibleGlyphs));
+                    // String compatibleGlyphs = editorGui.getSpellEditor().printCompatibleGlyphs(glyphInstance, pinIndex);
+                    // editorGui.getPlayer().sendSystemMessage(Component.literal(compatibleGlyphs));
                 })
                 .build();
     }
