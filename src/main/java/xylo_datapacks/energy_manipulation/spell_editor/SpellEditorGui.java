@@ -103,7 +103,7 @@ public class SpellEditorGui extends SimpleGui {
             safeAddGlyphGuiElement(currentSlot, () -> generatePinDecoratorPostPinGuiElement(glyphInstance, pinIndex));
         }
 
-        safeAddGlyphGuiElement(currentSlot, () -> generateGlyphPostPinsDecoratorGuiElement(glyphInstance) );
+        safeAddGlyphGuiElement(currentSlot, () -> generateGlyphDecoratorPostPinsGuiElement(glyphInstance) );
     }
     
     /** @return true if currentSlot is out of bounds. */
@@ -192,7 +192,7 @@ public class SpellEditorGui extends SimpleGui {
         return Optional.empty();
     }
 
-    public Optional<SimpleGuiElement> generateGlyphPostPinsDecoratorGuiElement(GlyphInstance glyphInstance) {
+    public Optional<SimpleGuiElement> generateGlyphDecoratorPostPinsGuiElement(GlyphInstance glyphInstance) {
         if (glyphInstance.glyph.getInputPinMode() ==  InputPinMode.ARRAY) {
             return Optional.of(new GuiElementBuilder(Items.ORANGE_CONCRETE)
                     .setName(Component.literal(")+"))
