@@ -1,12 +1,8 @@
 package xylo_datapacks.energy_manipulation;
 
 import xylo_datapacks.energy_manipulation.glyph.*;
-import xylo_datapacks.energy_manipulation.glyph.payload.GlyphGenericPayload;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.OperationGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.IntToString;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.SumOperatorGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.DebugGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.PrintStringGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.DebugGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.PrintStringGlyph;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellPresetRegistry;
 

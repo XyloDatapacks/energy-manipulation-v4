@@ -1,24 +1,18 @@
 package xylo_datapacks.energy_manipulation.glyph;
 
-import com.google.common.collect.Maps;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.OperationGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.IntToString;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.SumOperatorGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.DebugGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.PrintStringGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.ProgramGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperationGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.IntToString;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.SumOperatorGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.DebugGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.PrintStringGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.ProgramGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.*;
-import xylo_datapacks.energy_manipulation.glyph.specialized.variable.variable.RawValueGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 
-import java.security.Provider;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class GlyphsRegistry {

@@ -9,10 +9,9 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Items;
-import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
-import xylo_datapacks.energy_manipulation.glyph.specialized.variable.variable.RawValueGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;

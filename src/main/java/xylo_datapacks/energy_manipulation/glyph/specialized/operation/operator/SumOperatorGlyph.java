@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator;
+package xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator;
 
 import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;

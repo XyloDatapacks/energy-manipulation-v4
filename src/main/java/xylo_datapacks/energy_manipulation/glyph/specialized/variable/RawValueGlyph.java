@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.glyph.specialized.variable.variable;
+package xylo_datapacks.energy_manipulation.glyph.specialized.variable;
 
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;

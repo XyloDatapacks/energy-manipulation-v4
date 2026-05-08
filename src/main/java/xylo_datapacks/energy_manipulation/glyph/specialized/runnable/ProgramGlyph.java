@@ -1,4 +1,4 @@
-package xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable;
+package xylo_datapacks.energy_manipulation.glyph.specialized.runnable;
 
 import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;

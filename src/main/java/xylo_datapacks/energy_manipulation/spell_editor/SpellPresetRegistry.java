@@ -3,11 +3,10 @@ package xylo_datapacks.energy_manipulation.spell_editor;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.OperationGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.IntToString;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operation.operator.SumOperatorGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.PrintStringGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.runnable.ProgramGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperationGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.IntToString;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.SumOperatorGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.PrintStringGlyph;
 
 public class SpellPresetRegistry {
     
