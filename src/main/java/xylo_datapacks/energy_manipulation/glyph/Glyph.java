@@ -24,7 +24,7 @@ public class Glyph {
     public Glyph() {
     }
 
-    public void RegisterPinDefinition(String pinName, Predicate<Glyph> nodeFilter) {
+    public void RegisterPinDefinition(String pinName, Predicate<Glyph> glyphFilter) {
         if (inputPinMode == InputPinMode.NONE) {
             EnergyManipulation.LOGGER.warn("Cannot register a pin definition if inputPinMode is not set for this Glyph!");
             return;
@@ -41,7 +41,7 @@ public class Glyph {
         }
 
         InputPinDefinition inputPinDefinition = new InputPinDefinition(pinName);
-        inputPinDefinition.nodeFilter = nodeFilter;
+        inputPinDefinition.glyphFilter = glyphFilter;
 
         inputPinDefinitions.add(inputPinDefinition);
         editorData.inputPinsEditorData.put(pinName, new InputPinEditorData());
@@ -213,7 +213,12 @@ public class Glyph {
         }
         
         // Verify that the glyph we are trying to connect is acceptable for this input pin
-        if (!inputPinDefinition.get().nodeFilter.test(glyphToConnect.glyph)) {
+        if (!inputPinDefinition.get().glyphFilter.test(glyphToConnect.glyph)) {
+            return false;
+        }
+
+        // Verify that this glyph is acceptable for the output pin of the glyph we are trying to connect
+        if (!glyphToConnect.glyph.outputPinDefinition.glyphFilter.test(glyphInstance.glyph)) {
             return false;
         }
             

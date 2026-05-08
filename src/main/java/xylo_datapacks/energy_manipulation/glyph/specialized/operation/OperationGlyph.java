@@ -4,8 +4,10 @@ import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
+import xylo_datapacks.energy_manipulation.glyph.pin.OutputPinDefinition;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.NumericGlyphValueInterface;
 
 public class OperationGlyph extends Glyph {
     static public String OPERATOR_PIN = "Operator";
@@ -14,7 +16,7 @@ public class OperationGlyph extends Glyph {
         super();
 
         this.inputPinMode = InputPinMode.STANDARD;
-        RegisterPinDefinition(OPERATOR_PIN, glyph -> true); // TODO: use compatibility filter to make operators the only accepted values and not let operators be chosen as possible values
+        RegisterPinDefinition(OPERATOR_PIN, OperatorGlyphInterface.class::isInstance);
         outputPinDefinition.valueTypeCompatibilityPredicate = GlyphValueType::hasOperations;
     }
 

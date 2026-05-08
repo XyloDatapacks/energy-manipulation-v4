@@ -5,9 +5,10 @@ import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 
-public class IntToString extends Glyph {
+public class IntToString extends Glyph implements OperatorGlyphInterface {
     static public String INT_VALUE_PIN = "IntValue";
 
     public IntToString() {
@@ -18,6 +19,7 @@ public class IntToString extends Glyph {
         outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> {
             return valueType == GlyphsRegistry.STRING_VALUE_TYPE;
         };
+        outputPinDefinition.glyphFilter = glyph -> glyph == GlyphsRegistry.OPERATION_GLYPH;
     }
 
     @Override

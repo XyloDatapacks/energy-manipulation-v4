@@ -65,7 +65,12 @@ public class SpellEditor {
         }
 
         // Verify that the glyph we are trying to connect is acceptable for this input pin
-        if (!inputPinDefinition.get().nodeFilter.test(glyphToTest)) {
+        if (!inputPinDefinition.get().glyphFilter.test(glyphToTest)) {
+            return false;
+        }
+
+        // Verify that this glyph is acceptable for the output pin of the glyph we are trying to connect
+        if (!glyphToTest.getOutputPinDefinition().glyphFilter.test(glyphInstance.glyph)) {
             return false;
         }
         

@@ -10,12 +10,12 @@ public class InputPinDefinition {
      * be shared across all pins. */
     public String pinName;
 
-    /** Used to filter which nodes can be connected to this pin (it allows to add extra conditions 
+    /** Used to filter which glyphs can be connected to this pin (it allows to add extra conditions 
      * other than matching GlyphValueType). */
-    public Predicate<Glyph> nodeFilter;
+    public Predicate<Glyph> glyphFilter;
     
     public InputPinDefinition(String pinName) {
         this.pinName = pinName;
-        this.nodeFilter = glyph -> true;
+        this.glyphFilter = glyph -> true;
     }
 }
