@@ -52,7 +52,7 @@ public class SpellEditor {
         }
 
         // Check if the input pin value type is supported by the output pin of the glyph we are tring to connect
-        if (inputPin.get().valueType == null || !glyphToTest.outputPinDefinition.valueTypeCompatibilityPredicate.test(inputPin.get().valueType)) {
+        if (inputPin.get().valueType == null || !glyphToTest.getOutputPinDefinition().valueTypeCompatibilityPredicate.test(inputPin.get().valueType)) {
             return false;
         }
 

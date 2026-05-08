@@ -1,6 +1,8 @@
 package xylo_datapacks.energy_manipulation.glyph;
 
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
+import xylo_datapacks.energy_manipulation.glyph.editor_data.GlyphEditorData;
+import xylo_datapacks.energy_manipulation.glyph.editor_data.InputPinEditorData;
 import xylo_datapacks.energy_manipulation.glyph.payload.GlyphPayload;
 import xylo_datapacks.energy_manipulation.glyph.pin.*;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
@@ -10,19 +12,16 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class Glyph {
 
-    public OutputPinDefinition outputPinDefinition;
-    public List<InputPinDefinition> inputPinDefinitions;
-    public InputPinMode inputPinMode;
+    protected OutputPinDefinition outputPinDefinition = new OutputPinDefinition();
+    protected List<InputPinDefinition> inputPinDefinitions = new ArrayList<>();
+    protected InputPinMode inputPinMode = InputPinMode.NONE;
+    protected GlyphEditorData editorData = new GlyphEditorData();
     
     public Glyph() {
-        this.outputPinDefinition = new OutputPinDefinition();
-        this.inputPinDefinitions = new ArrayList<>();
-        this.inputPinMode = InputPinMode.NONE;
     }
 
     public void RegisterPinDefinition(String pinName, Predicate<Glyph> nodeFilter) {
@@ -45,6 +44,7 @@ public class Glyph {
         inputPinDefinition.nodeFilter = nodeFilter;
 
         inputPinDefinitions.add(inputPinDefinition);
+        editorData.inputPinsEditorData.put(pinName, new InputPinEditorData());
     }
     
     /*================================================================================================================*/
@@ -101,6 +101,14 @@ public class Glyph {
     /*================================================================================================================*/
     // PinManagement
     
+    public InputPinMode getInputPinMode() {
+        return inputPinMode;
+    }
+    
+    public OutputPinDefinition getOutputPinDefinition() {
+        return outputPinDefinition;
+    }
+    
     public boolean hasInputPins(GlyphInstance glyphInstance) {
         return (inputPinMode == InputPinMode.ARRAY || inputPinMode == InputPinMode.STANDARD) && !glyphInstance.inputPins.isEmpty();
     }
@@ -114,16 +122,8 @@ public class Glyph {
         return -1; // Not found
     }
     
-    public Optional<InputPin> getInputPin(GlyphInstance glyphInstance, String pinName) {
-        int pinIndex = getInputPinIndex(pinName);
-        return getInputPin(glyphInstance, pinIndex);
-    }
-
-    public Optional<InputPin> getInputPin(GlyphInstance glyphInstance, int pinIndex) {
-         if (pinIndex >= 0 && pinIndex < glyphInstance.inputPins.size()) {
-            return Optional.ofNullable(glyphInstance.inputPins.get(pinIndex));
-         }
-         return Optional.empty();
+    public List<InputPinDefinition> getInputPinDefinitions() {
+        return inputPinDefinitions;
     }
 
     public Optional<InputPinDefinition> getInputPinDefinition(String pinName) {
@@ -135,11 +135,23 @@ public class Glyph {
         if (inputPinMode == InputPinMode.ARRAY) {
             pinIndex = 0;
         }
-        
+
         if (pinIndex >= 0 && pinIndex < inputPinDefinitions.size()) {
             return Optional.ofNullable(inputPinDefinitions.get(pinIndex));
         }
         return Optional.empty();
+    }
+    
+    public Optional<InputPin> getInputPin(GlyphInstance glyphInstance, String pinName) {
+        int pinIndex = getInputPinIndex(pinName);
+        return getInputPin(glyphInstance, pinIndex);
+    }
+
+    public Optional<InputPin> getInputPin(GlyphInstance glyphInstance, int pinIndex) {
+         if (pinIndex >= 0 && pinIndex < glyphInstance.inputPins.size()) {
+            return Optional.ofNullable(glyphInstance.inputPins.get(pinIndex));
+         }
+         return Optional.empty();
     }
     
     public void addPin(GlyphInstance glyphInstance) {
@@ -294,5 +306,25 @@ public class Glyph {
     }
 
     // ~Execution
+    /*================================================================================================================*/
+
+    /*================================================================================================================*/
+    // EditorData
+
+    public GlyphEditorData getEditorData() {
+        return editorData;
+    }
+
+    public Optional<InputPinEditorData> getInputPinEditorData(String pinName) {
+        return Optional.ofNullable(editorData.inputPinsEditorData.get(pinName));
+    }
+
+    public Optional<InputPinEditorData> getInputPinEditorData(int pinIndex) {
+        Optional<InputPinDefinition> inputPinDefinitions = getInputPinDefinition(pinIndex);
+        String pinName = inputPinDefinitions.isPresent() ? inputPinDefinitions.get().pinName : "";
+        return getInputPinEditorData(pinName);
+    }
+
+    // ~EditorData
     /*================================================================================================================*/
 }

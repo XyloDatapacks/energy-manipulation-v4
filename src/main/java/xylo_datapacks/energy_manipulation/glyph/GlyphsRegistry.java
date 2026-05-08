@@ -14,14 +14,15 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.variable.variable.Ra
 
 import java.security.Provider;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class GlyphsRegistry {
-    public static final Map<Identifier, Glyph> GLYPHS = Maps.newLinkedHashMap();
-    public static final Map<Identifier, GlyphValueType> VALUE_TYPES = Maps.newLinkedHashMap();
+    public static final Map<Identifier, Glyph> GLYPHS = new LinkedHashMap<>();
+    public static final Map<Identifier, GlyphValueType> VALUE_TYPES = new LinkedHashMap<>();
     
     static public RawValueGlyph RAW_VALUE_GLYPH = registerGlyph("raw_value_glyph", RawValueGlyph::new);
     static public PrintStringGlyph PRINT_STRING_GLYPH = registerGlyph("print_string_glyph", PrintStringGlyph::new);
