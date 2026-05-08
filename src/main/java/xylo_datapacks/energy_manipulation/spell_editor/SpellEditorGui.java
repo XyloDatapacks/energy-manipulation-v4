@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
+import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.variable.RawValueGlyph;
@@ -16,9 +17,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class SpellEditorGui extends SimpleGui {
-    static final int pageSize = 9*5;
+    static final int PAGE_SIZE = 9*5;
     private final SpellEditor editor;
     private int currentPage;
+    private boolean bIsLastPage = false;
 
     public SpellEditorGui(ServerPlayer player, SpellEditor editor) {
         super(MenuType.GENERIC_9x6, player, false);
@@ -53,14 +55,22 @@ public class SpellEditorGui extends SimpleGui {
         this.setSlot(52, new GuiElementBuilder(Items.SPECTRAL_ARROW)
                 .setName(Component.literal("Previous Page"))
                 .setCallback(clickType -> {
-                    player.sendSystemMessage(Component.literal("Clicked previous page"));
+                    if (currentPage > 0) {
+                        currentPage--;
+                        rebuildSpellGui();
+                    }
+                    // player.sendSystemMessage(Component.literal("Clicked previous page"));
                 })
                 .build());
 
         this.setSlot(53, new GuiElementBuilder(Items.SPECTRAL_ARROW)
                 .setName(Component.literal("Next Page"))
                 .setCallback(clickType -> {
-                    player.sendSystemMessage(Component.literal("Clicked next page"));
+                    if (!bIsLastPage) {
+                        currentPage++;
+                        rebuildSpellGui();
+                    }
+                    // player.sendSystemMessage(Component.literal("Clicked next page"));
                 })
                 .build());
     }
@@ -81,17 +91,24 @@ public class SpellEditorGui extends SimpleGui {
     }
     
     public void onInstanceChanged() {
-        AtomicInteger currentSlot = new AtomicInteger(0);
-        recursiveCreateSpellGuiElements(editor.currentGlyphInstance, currentSlot);
-
-        // Clear remaining slots.
-        while (!isOutOfGlyphsDrawingSpace(currentSlot)) {
-            this.clearSlot(currentSlot.getAndIncrement());
-        }
+        rebuildSpellGui();
     }
 
     /*================================================================================================================*/
     // SpellGuiElements
+    
+    public void rebuildSpellGui() {
+        AtomicInteger currentSlot = new AtomicInteger(0);
+        recursiveCreateSpellGuiElements(editor.currentGlyphInstance, currentSlot);
+        
+        // If there is still space left, this is the last page.
+        bIsLastPage = !isOutOfGlyphsDrawingSpace(currentSlot);
+        
+        // Clear remaining slots.
+        while (!isOutOfGlyphsDrawingSpace(currentSlot)) {
+            this.clearSlot(currentSlot.getAndIncrement() % PAGE_SIZE);
+        }
+    }
     
     public void recursiveCreateSpellGuiElements(GlyphInstance glyphInstance, AtomicInteger currentSlot) {
         // Stop this branch if no glyph instance.
@@ -124,7 +141,7 @@ public class SpellEditorGui extends SimpleGui {
     
     /** @return true if currentSlot is out of bounds. */
     public boolean isOutOfGlyphsDrawingSpace(AtomicInteger currentSlot) {
-        return currentSlot.get() >= pageSize * (currentPage + 1);
+        return currentSlot.get() >= PAGE_SIZE * (currentPage + 1);
     }
     
     /** Adds a glyph related gui element at the correct slot only if possible / needed. */
@@ -136,16 +153,16 @@ public class SpellEditorGui extends SimpleGui {
             return;
         }
 
-        // Only start generating gui elements if we reached a slot index that is visible.
-        if (slotIndex >= pageSize * (currentPage)) {
-            // Add new element.
-            Optional<SimpleGuiElement> optionalElement = supplier.get();
-            if (optionalElement.isPresent()) {
-                this.setSlot(slotIndex % pageSize, optionalElement.get());
-                
-                // If we were able to add the element then increment the current slot.
-                currentSlot.incrementAndGet();
+        // Create new element.
+        Optional<SimpleGuiElement> optionalElement = supplier.get();
+        if (optionalElement.isPresent()) {
+            // Only set the slot if visible in current page.
+            if (slotIndex >= PAGE_SIZE * (currentPage)) {
+                this.setSlot(slotIndex % PAGE_SIZE, optionalElement.get());
             }
+
+            // If the element exists, increment the slot count.
+            currentSlot.incrementAndGet();
         }
     }
     

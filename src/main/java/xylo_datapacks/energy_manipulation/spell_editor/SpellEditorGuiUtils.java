@@ -50,8 +50,8 @@ public class SpellEditorGuiUtils {
                     // refresh ui
                     editorGui.onInstanceChanged();
                     
-                    String outputString = (clickType.isRight ? "Removing pin" : "Adding pin") + " " + pinIndex;
-                    editorGui.getPlayer().sendSystemMessage(Component.literal(outputString));
+                    // String outputString = (clickType.isRight ? "Removing pin" : "Adding pin") + " " + pinIndex;
+                    // editorGui.getPlayer().sendSystemMessage(Component.literal(outputString));
                 })
                 .build();
     }
@@ -71,8 +71,8 @@ public class SpellEditorGuiUtils {
                     glyphInstance.glyph.addPin(glyphInstance);
                     editorGui.onInstanceChanged();
 
-                    String outputString = "Adding pin " + (glyphInstance.inputPins.size() - 1);
-                    editorGui.getPlayer().sendSystemMessage(Component.literal(outputString));
+                    // String outputString = "Adding pin " + (glyphInstance.inputPins.size() - 1);
+                    // editorGui.getPlayer().sendSystemMessage(Component.literal(outputString));
                 })
                 .build();
     }
