@@ -93,13 +93,14 @@ public class SpellEditorGui extends SimpleGui {
         
         for (int i = 0; i < glyphInstance.inputPins.size(); i++) {
             int pinIndex = i;
-            
+
+            safeAddGlyphGuiElement(currentSlot, () -> generatePinDecoratorPrePinGuiElement(glyphInstance, pinIndex));
             safeAddGlyphGuiElement(currentSlot, () -> generatePinGuiElement(glyphInstance, pinIndex));
             
             // Recursive call for the connected glyph.
             recursiveCreateSpellGuiElements(glyphInstance.inputPins.get(i).connectedGlyph, currentSlot);
 
-            safeAddGlyphGuiElement(currentSlot, () -> generatePinDecoratorGuiElement(glyphInstance, pinIndex));
+            safeAddGlyphGuiElement(currentSlot, () -> generatePinDecoratorPostPinGuiElement(glyphInstance, pinIndex));
         }
 
         safeAddGlyphGuiElement(currentSlot, () -> generateGlyphPostPinsDecoratorGuiElement(glyphInstance) );
@@ -149,7 +150,7 @@ public class SpellEditorGui extends SimpleGui {
                 .build());
     }
     
-    public Optional<SimpleGuiElement> generatePinDecoratorGuiElement(GlyphInstance glyphInstance, int pinIndex) {
+    public Optional<SimpleGuiElement> generatePinDecoratorPrePinGuiElement(GlyphInstance glyphInstance, int pinIndex) {
         if (glyphInstance.glyph.getInputPinMode() ==  InputPinMode.ARRAY) {
             return Optional.of(new GuiElementBuilder(Items.MAP)
                     .setName(Component.literal("+ / -"))
@@ -160,6 +161,10 @@ public class SpellEditorGui extends SimpleGui {
                     .build());
         }
         
+        return Optional.empty();
+    }
+    
+    public Optional<SimpleGuiElement> generatePinDecoratorPostPinGuiElement(GlyphInstance glyphInstance, int pinIndex) {
         return Optional.empty();
     }
 
