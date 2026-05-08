@@ -14,12 +14,16 @@ import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpellEditorGui extends SimpleGui {
+    static final int pageSize = 9*5;
     private final SpellEditor editor;
+    private int currentPage;
 
     public SpellEditorGui(ServerPlayer player, SpellEditor editor) {
         super(MenuType.GENERIC_9x6, player, false);
+        
         this.editor = editor;
         this.editor.onInstanceChangedCallback = this::onInstanceChanged;
+        this.currentPage = 0;
 
         this.setTitle(Component.literal("Spell Editor"));
         this.setupSlots();
@@ -82,13 +86,19 @@ public class SpellEditorGui extends SimpleGui {
         }
         
         for (int i = 0; i < glyphInstance.inputPins.size(); i++) {
-            // Get new slot index, and if we are overflowing stop here.
+            // Get new slot index.
             int slotIndex = currentSlot.getAndIncrement();
-            if (slotIndex >= 44) {
+            // If slot index exceeds the last representable index then quit.
+            if (slotIndex >= pageSize * (currentPage + 1)) {
                 return;
             }
-            // Add new element.
-            this.setSlot(slotIndex, generatePinGuiElement(glyphInstance, i));
+            
+            // Only start generating gui elements if we reached a slot index that is visible.
+            if (slotIndex >= pageSize * (currentPage)) {
+                // Add new element.
+                this.setSlot(slotIndex % pageSize, generatePinGuiElement(glyphInstance, i));
+            }
+            
             // Recursive call for the connected glyph.
             recursiveCreateSpellGuiElements(glyphInstance.inputPins.get(i).connectedGlyph, currentSlot);
         }
