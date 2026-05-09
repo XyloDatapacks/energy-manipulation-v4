@@ -27,7 +27,7 @@ public class EnergyManipulationItems {
         return item;
     }
     
-    public static void register() {
+    public static void initialize() {
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(output -> {
             output.accept(EnergyManipulationItems.SPELL_BOOK);
             output.accept(EnergyManipulationItems.SPELL_SCROLL);

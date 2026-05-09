@@ -10,11 +10,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
-import xylo_datapacks.energy_manipulation.spell_editor.SpellPresetRegistry;
 
 public class EnergyManipulationCommands {
 
-    public static void register() {
+    public static void initialize() {
         CommandRegistrationCallback.EVENT.register(EnergyManipulationCommands::createCommands);
     }
 

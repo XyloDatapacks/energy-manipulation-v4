@@ -4,24 +4,32 @@ import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import eu.pb4.sgui.mixin.ScreenHandlerAccessor;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemContainerContents;
 import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
+import xylo_datapacks.energy_manipulation.item.EnergyManipulationComponents;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
+import xylo_datapacks.energy_manipulation.item.spell.SpellBookItem;
 import xylo_datapacks.energy_manipulation.item.spell.SpellScrollItem;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputGui;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -40,6 +48,7 @@ public class SpellEditorGui extends SimpleGui {
         this.editor = editor;
         this.currentPage = currentPage;
 
+        this.loadItems();
         this.setTitle(Component.literal("Spell Editor"));
         this.setupToolbar();
         this.rebuildSpellGui();
@@ -117,10 +126,28 @@ public class SpellEditorGui extends SimpleGui {
     }
     
     public void onClose() {
+        saveItems();
     }
     
     public void onInstanceChanged() {
         rebuildSpellGui();
+    }
+    
+    public void loadItems() {
+        ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if (heldStack.getItem() instanceof SpellBookItem) {
+            ItemContainerContents spellBookStorage = heldStack.getOrDefault(EnergyManipulationComponents.SPELL_BOOK_STORAGE, ItemContainerContents.EMPTY);
+            spellBookStorage.copyInto(inputInventory.getItems());
+        }
+        
+        onScrollChanged(getScrollStack());
+    }
+    
+    public void saveItems() {
+        ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if (heldStack.getItem() instanceof SpellBookItem) {
+            heldStack.set(EnergyManipulationComponents.SPELL_BOOK_STORAGE, ItemContainerContents.fromItems(inputInventory.getItems()));
+        }
     }
 
     /*================================================================================================================*/
@@ -240,6 +267,10 @@ public class SpellEditorGui extends SimpleGui {
     
     /*================================================================================================================*/
     // GuiButtonsLogic
+    
+    public ItemStack getScrollStack() {
+        return inputInventory.getItem(4);
+    }
     
     public void onScrollChanged(ItemStack itemStack) {
         if (itemStack.getItem() instanceof SpellScrollItem spellScrollItem) {

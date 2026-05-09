@@ -45,7 +45,7 @@ public class GlyphsRegistry {
         return valueType;
     }
     
-    public static void register() {
+    public static void initialize() {
         EnergyManipulation.LOGGER.info("Registering Glyphs for " + EnergyManipulation.MOD_ID);
     }
 }

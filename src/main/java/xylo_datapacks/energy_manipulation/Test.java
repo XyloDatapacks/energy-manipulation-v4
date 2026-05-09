@@ -9,7 +9,7 @@ import xylo_datapacks.energy_manipulation.spell_editor.SpellPresetRegistry;
 public class Test {
 
     public static void main(String[] args) {
-        GlyphsRegistry.register();
+        GlyphsRegistry.initialize();
         ExecutionContext executionContext = new ExecutionContext();
 
         // Print a string
