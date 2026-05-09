@@ -5,9 +5,10 @@ import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
+import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 
 public class EnergyManipulation implements ModInitializer {
-	public static final String MOD_ID = "energy-manipulation";
+	public static final String MOD_ID = "energy_manipulation";
 
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
@@ -21,6 +22,7 @@ public class EnergyManipulation implements ModInitializer {
 		// Proceed with mild caution.
 
 		GlyphsRegistry.register();
+		EnergyManipulationItems.register();
 		EnergyManipulationCommands.register();
 		LOGGER.info("Hello Fabric world!");
 	}
