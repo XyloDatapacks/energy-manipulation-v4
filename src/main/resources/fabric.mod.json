@@ -1,8 +1,8 @@
 {
 	"schemaVersion": 1,
-	"id": "energy-manipulation",
+	"id": "energy_manipulation",
 	"version": "${version}",
-	"name": "energy-manipulation",
+	"name": "energy_manipulation",
 	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
 		"Me!"
@@ -12,7 +12,7 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/energy-manipulation/icon.png",
+	"icon": "assets/energy_manipulation/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [

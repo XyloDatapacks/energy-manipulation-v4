@@ -1,4 +1,4 @@
-# energy-manipulation
+# energy_manipulation
 
 ## Setup
 

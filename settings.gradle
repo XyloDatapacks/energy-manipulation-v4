@@ -10,4 +10,4 @@ pluginManagement {
 }
 
 // Should match your modid
-rootProject.name = 'energy-manipulation'
+rootProject.name = 'energy_manipulation'

@@ -1,5 +1,6 @@
 package xylo_datapacks.energy_manipulation;
 
+import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -20,6 +21,8 @@ public class EnergyManipulation implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+		
+		PolymerResourcePackUtils.addModAssets(MOD_ID);
 
 		GlyphsRegistry.register();
 		EnergyManipulationItems.register();
