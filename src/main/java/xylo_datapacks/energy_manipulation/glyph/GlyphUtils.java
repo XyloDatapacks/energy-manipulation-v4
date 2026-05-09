@@ -9,6 +9,10 @@ import java.util.function.Consumer;
 
 public class GlyphUtils {
 
+    public static GlyphInstance copyGlyphInstance(GlyphInstance glyphInstance) {
+        return new GlyphInstance(glyphInstance.glyph); // TODO: implement
+    }
+    
     /** @param callback consumer passing as parameter the newly created GlyphInstance. */
     public static boolean connectNewGlyphWithCallback(GlyphInstance glyphInstance, String pinName, Glyph glyphToCreate, Consumer<GlyphInstance> callback) {
         if (connectNewGlyph(glyphInstance, pinName, glyphToCreate)) {

@@ -29,13 +29,7 @@ public class SpellEditorGuiUtils {
         
         return new GuiElementBuilder(connectedGlyphInstance != null ? Items.PAPER : Items.BARRIER)
                 .setName(Component.literal("Pin: " + pinDisplayName + " | " + connectedGlyphDisplayName))
-                .setCallback(clickType -> {
-                    GlyphSelectorGui gui = new GlyphSelectorGui(editorGui.getPlayer(), editorGui.getSpellEditor(), editorGui.getCurrentPage(), glyphInstance, pinIndex);
-                    gui.open();
-                    
-                    // String compatibleGlyphs = editorGui.getSpellEditor().printCompatibleGlyphs(glyphInstance, pinIndex);
-                    // editorGui.getPlayer().sendSystemMessage(Component.literal(compatibleGlyphs));
-                })
+                .setCallback(clickType -> editorGui.openGlyphSelector(glyphInstance, pinIndex))
                 .build();
     }
     
@@ -43,20 +37,12 @@ public class SpellEditorGuiUtils {
         return new GuiElementBuilder(Items.MAP)
                 .setName(Component.literal("+ / -"))
                 .setCallback(clickType -> {
-                    
                     if (clickType.isRight) {
-                        // Remove pin
-                        glyphInstance.glyph.removePin(glyphInstance, pinIndex);
+                        editorGui.removeArrayPin(glyphInstance, pinIndex);
                     }
                     else {
-                        // Insert pin
-                        glyphInstance.glyph.insertPin(glyphInstance, pinIndex);
+                        editorGui.insertArrayPin(glyphInstance, pinIndex);
                     }
-                    // refresh ui
-                    editorGui.onInstanceChanged();
-                    
-                    // String outputString = (clickType.isRight ? "Removing pin" : "Adding pin") + " " + pinIndex;
-                    // editorGui.getPlayer().sendSystemMessage(Component.literal(outputString));
                 })
                 .build();
     }
@@ -70,15 +56,7 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeArrayGlyphTerminatorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
         return new GuiElementBuilder(Items.ORANGE_CONCRETE)
                 .setName(Component.literal(")+"))
-                .setCallback(clickType -> {
-                    
-                    // Add new pin and refresh
-                    glyphInstance.glyph.addPin(glyphInstance);
-                    editorGui.onInstanceChanged();
-
-                    // String outputString = "Adding pin " + (glyphInstance.inputPins.size() - 1);
-                    // editorGui.getPlayer().sendSystemMessage(Component.literal(outputString));
-                })
+                .setCallback(clickType -> editorGui.addArrayPin(glyphInstance))
                 .build();
     }
 
@@ -87,19 +65,7 @@ public class SpellEditorGuiUtils {
         
         return new GuiElementBuilder(Items.REDSTONE_TORCH)
                 .setName(Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value"))
-                .setCallback(clickType -> {
-                    
-                    SimpleGui gui;
-                    if (glyphInstance.outputPin.valueType instanceof StringConvertibleValueInterface) {
-                        gui = new StringInputGui(editorGui.getPlayer(), editorGui.getSpellEditor(), editorGui.getCurrentPage(), glyphInstance);
-                    } else {
-                        gui = new MultipleChoiceInputGui(editorGui.getPlayer(), editorGui.getSpellEditor(), editorGui.getCurrentPage(), glyphInstance);
-                    }
-                    gui.open();
-                    
-                    String outputString = "selecting value for " + glyphInstance.glyph.getClass().getSimpleName();
-                    editorGui.getPlayer().sendSystemMessage(Component.literal(outputString));
-                })
+                .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
                 .build();
     }
     

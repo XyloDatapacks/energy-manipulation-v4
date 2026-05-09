@@ -3,6 +3,7 @@ package xylo_datapacks.energy_manipulation.spell_editor;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
+import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
@@ -11,15 +12,30 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class SpellEditor {
-    public GlyphInstance currentGlyphInstance;
+    protected GlyphInstance originalGlyphInstance;
+    protected GlyphInstance currentGlyphInstance;
 
     public SpellEditor() {
     }
+    
+    public void reset() {
+        this.currentGlyphInstance = null;
+        this.originalGlyphInstance = null;
+    }
 
-    public void Initialize(GlyphInstance glyphInstance) {
+    public void initialize(GlyphInstance glyphInstance) {
         this.currentGlyphInstance = glyphInstance;
+        this.originalGlyphInstance = GlyphUtils.copyGlyphInstance(glyphInstance);
+    }
+
+    public GlyphInstance getCurrentGlyphInstance() {
+        return currentGlyphInstance;
     }
     
+    public void restoreGlyphInstance() {
+        currentGlyphInstance = GlyphUtils.copyGlyphInstance(originalGlyphInstance);;
+    }
+
     public String printCompatibleGlyphs(GlyphInstance glyphInstance, String pinName) {
         int pinIndex = glyphInstance.glyph.getInputPinIndex(pinName);
         return printCompatibleGlyphs(glyphInstance, pinIndex);

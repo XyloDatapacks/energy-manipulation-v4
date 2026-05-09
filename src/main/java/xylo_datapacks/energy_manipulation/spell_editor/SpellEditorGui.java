@@ -1,5 +1,6 @@
 package xylo_datapacks.energy_manipulation.spell_editor;
 
+import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
@@ -14,7 +15,12 @@ import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
+import xylo_datapacks.energy_manipulation.item.spell.SpellScrollItem;
+import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
+import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
+import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputGui;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,6 +28,7 @@ import java.util.function.Supplier;
 
 public class SpellEditorGui extends SimpleGui {
     protected final SimpleContainer inputInventory = new SimpleContainer(5);
+    protected final SpellEditorGuiSlot scrollSlot = makeScrollSlot();
     static final int PAGE_SIZE = 9*5;
     protected final SpellEditor editor;
     protected int currentPage;
@@ -51,12 +58,40 @@ public class SpellEditorGui extends SimpleGui {
     }
 
     protected void setupToolbar() {
+        
+        // TODO: allow input slots to set data in item stack component
+        
         this.setSlot(45, new Slot(inputInventory, 0, 0, 0));
         this.setSlot(46, new Slot(inputInventory, 1, 0, 0));
         this.setSlot(47, new Slot(inputInventory, 2, 0, 0));
         this.setSlot(48, new Slot(inputInventory, 3, 0, 0));
         
-        this.setSlot(49, new Slot(inputInventory, 4, 0, 0) {
+        this.setSlot(49, scrollSlot);
+        scrollSlot.onItemStackChangedCallback = this::onScrollChanged;
+        
+        this.setSlot(50, new GuiElementBuilder(Items.RED_WOOL)
+                .setName(Component.literal("Cancel"))
+                .setCallback(this::revertSpellChanges)
+                .build());
+
+        this.setSlot(51, new GuiElementBuilder(Items.GREEN_WOOL)
+                .setName(Component.literal("Confirm"))
+                .setCallback(this::saveSpellChanges)
+                .build());
+        
+        this.setSlot(52, new GuiElementBuilder(Items.SPECTRAL_ARROW)
+                .setName(Component.literal("Previous Page"))
+                .setCallback(this::previousPage)
+                .build());
+
+        this.setSlot(53, new GuiElementBuilder(Items.SPECTRAL_ARROW)
+                .setName(Component.literal("Next Page"))
+                .setCallback(this::nextPage)
+                .build());
+    }
+    
+    protected SpellEditorGuiSlot makeScrollSlot() {
+        return new SpellEditorGuiSlot(inputInventory, 4, 0, 0) {
             @Override
             public boolean mayPlace(@NonNull ItemStack itemStack) {
                 return itemStack.is(EnergyManipulationItems.SPELL_SCROLL);
@@ -66,43 +101,7 @@ public class SpellEditorGui extends SimpleGui {
             public int getMaxStackSize() {
                 return 1;
             }
-        });
-        
-        this.setSlot(50, new GuiElementBuilder(Items.RED_WOOL)
-                .setName(Component.literal("Cancel"))
-                .setCallback(clickType -> {
-                    player.sendSystemMessage(Component.literal("Clicked cancel"));
-                })
-                .build());
-
-        this.setSlot(51, new GuiElementBuilder(Items.GREEN_WOOL)
-                .setName(Component.literal("Confirm"))
-                .setCallback(clickType -> {
-                    player.sendSystemMessage(Component.literal("Clicked confirm"));
-                })
-                .build());
-        
-        this.setSlot(52, new GuiElementBuilder(Items.SPECTRAL_ARROW)
-                .setName(Component.literal("Previous Page"))
-                .setCallback(clickType -> {
-                    if (currentPage > 0) {
-                        currentPage--;
-                        rebuildSpellGui();
-                    }
-                    // player.sendSystemMessage(Component.literal("Clicked previous page"));
-                })
-                .build());
-
-        this.setSlot(53, new GuiElementBuilder(Items.SPECTRAL_ARROW)
-                .setName(Component.literal("Next Page"))
-                .setCallback(clickType -> {
-                    if (!bIsLastPage) {
-                        currentPage++;
-                        rebuildSpellGui();
-                    }
-                    // player.sendSystemMessage(Component.literal("Clicked next page"));
-                })
-                .build());
+        };
     }
 
     @Override
@@ -129,7 +128,7 @@ public class SpellEditorGui extends SimpleGui {
     
     public void rebuildSpellGui() {
         AtomicInteger currentSlot = new AtomicInteger(0);
-        recursiveCreateSpellGuiElements(editor.currentGlyphInstance, currentSlot);
+        recursiveCreateSpellGuiElements(editor.getCurrentGlyphInstance(), currentSlot);
         
         // If there is still space left, this is the last page.
         bIsLastPage = !isOutOfGlyphsDrawingSpace(currentSlot);
@@ -237,5 +236,80 @@ public class SpellEditorGui extends SimpleGui {
     }
 
     // ~SpellGuiElements
+    /*================================================================================================================*/
+    
+    /*================================================================================================================*/
+    // GuiButtonsLogic
+    
+    public void onScrollChanged(ItemStack itemStack) {
+        if (itemStack.getItem() instanceof SpellScrollItem spellScrollItem) {
+            editor.initialize(spellScrollItem.getSpell(itemStack));
+        } else {
+            editor.reset();
+        }
+        onInstanceChanged();
+    }
+
+    public void revertSpellChanges() {
+        // Revert unsaved changes.
+        editor.restoreGlyphInstance();
+        onInstanceChanged();
+    }
+
+    public void saveSpellChanges() {
+        ItemStack scrollStack = scrollSlot.getItem();
+        if (scrollStack.getItem() instanceof SpellScrollItem spellScrollItem) {
+            // Save current version of the spell on the item.
+            spellScrollItem.setSpell(editor.getCurrentGlyphInstance());
+            // Update cached version of the spell to allow to revert to this point.
+            editor.initialize(editor.getCurrentGlyphInstance());
+        }
+    }
+
+    public void previousPage() {
+        if (currentPage > 0) {
+            currentPage--;
+            rebuildSpellGui();
+        }
+    }
+
+    public void nextPage() {
+        if (!bIsLastPage) {
+            currentPage++;
+            rebuildSpellGui();
+        }
+    }
+
+    public void openGlyphSelector(GlyphInstance glyphInstance, int pinIndex) {
+        GlyphSelectorGui gui = new GlyphSelectorGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance, pinIndex);
+        gui.open();
+    }
+
+    public void removeArrayPin(GlyphInstance glyphInstance, int pinIndex) {
+        glyphInstance.glyph.removePin(glyphInstance, pinIndex);
+        onInstanceChanged();
+    }
+
+    public void insertArrayPin(GlyphInstance glyphInstance, int pinIndex) {
+        glyphInstance.glyph.insertPin(glyphInstance, pinIndex);
+        onInstanceChanged();
+    }
+
+    public void addArrayPin(GlyphInstance glyphInstance) {
+        glyphInstance.glyph.addPin(glyphInstance);
+        onInstanceChanged();
+    }
+
+    public void openValueSelector(GlyphInstance glyphInstance) {
+        SimpleGui gui;
+        if (glyphInstance.outputPin.valueType instanceof StringConvertibleValueInterface) {
+            gui = new StringInputGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance);
+        } else {
+            gui = new MultipleChoiceInputGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance);
+        }
+        gui.open();
+    }
+    
+    // ~GuiButtonsLogic
     /*================================================================================================================*/
 }

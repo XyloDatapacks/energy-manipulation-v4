@@ -31,11 +31,8 @@ public class SpellBookItem extends Item implements PolymerItem {
         ItemStack stack = player.getItemInHand(hand);
 
         if (player instanceof ServerPlayer serverPlayer) {
-            // Initialize spell editor
-            SpellEditor spellEditor = new SpellEditor();
-            spellEditor.Initialize(SpellPresetRegistry.makeProgramTest());
-           
             // Open gui
+            SpellEditor spellEditor = new SpellEditor();
             SpellEditorGui gui = new SpellEditorGui(serverPlayer, spellEditor);
             gui.open();
             

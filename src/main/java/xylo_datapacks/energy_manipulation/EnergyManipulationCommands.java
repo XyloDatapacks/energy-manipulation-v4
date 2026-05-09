@@ -2,16 +2,12 @@ package xylo_datapacks.energy_manipulation;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import eu.pb4.sgui.api.elements.GuiElementBuilder;
-import eu.pb4.sgui.api.gui.SimpleGui;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellPresetRegistry;
@@ -35,10 +31,8 @@ public class EnergyManipulationCommands {
             return 0;
         }
 
-        // Initialize spell editor
-        SpellEditor spellEditor = new SpellEditor();
-        spellEditor.Initialize(SpellPresetRegistry.makeProgramTest());
         // Open gui
+        SpellEditor spellEditor = new SpellEditor();
         SpellEditorGui gui = new SpellEditorGui(player, spellEditor);
         gui.open();
        
