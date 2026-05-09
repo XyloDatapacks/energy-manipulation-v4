@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
@@ -24,10 +23,7 @@ import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItemsUtils;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
-import xylo_datapacks.energy_manipulation.spell_editor.SpellPresetRegistry;
-import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputGui;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,9 +60,7 @@ public class SpellBookItem extends Item implements PolymerItem {
         CustomData customData = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
         
         Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, BookContentNbtKey);
-        Optional<CompoundTag> tag = EnergyManipulationItemsUtils.getCompoundTag(itemStack, identifier);
-        
-        // todo: figure out why it is empty
+        Optional<Tag> tag = EnergyManipulationItemsUtils.getTag(itemStack, identifier);
         
         // If no item stored then empty destination
         if (tag.isEmpty()) {
@@ -88,10 +82,8 @@ public class SpellBookItem extends Item implements PolymerItem {
         ItemContainerContents.CODEC.encodeStart(NbtOps.INSTANCE, contents)
                 .resultOrPartial(err -> System.err.println("Failed to encode container: " + err))
                 .ifPresent(tag -> {
-                    Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "");
-                    EnergyManipulationItemsUtils.updateCompoundTag(itemStack, identifier, tagToUpdate -> {
-                        tagToUpdate.put(BookContentNbtKey, tag);
-                    });
+                    Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, BookContentNbtKey);
+                    EnergyManipulationItemsUtils.setTag(itemStack, identifier, tag);
                 });
     }
 }
