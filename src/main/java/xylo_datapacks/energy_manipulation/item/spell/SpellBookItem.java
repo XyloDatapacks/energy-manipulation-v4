@@ -2,6 +2,13 @@ package xylo_datapacks.energy_manipulation.item.spell;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -9,14 +16,24 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.NonNull;
+import xylo_datapacks.energy_manipulation.EnergyManipulation;
+import xylo_datapacks.energy_manipulation.item.EnergyManipulationItemsUtils;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellPresetRegistry;
+import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputGui;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class SpellBookItem extends Item implements PolymerItem {
-
+    public static String BookContentNbtKey = "book_content";
+    
     public SpellBookItem(Properties properties) {
         super(properties);
     }
@@ -41,5 +58,40 @@ public class SpellBookItem extends Item implements PolymerItem {
         return InteractionResult.PASS;
         
         // return super.use(level, player, hand);
+    }
+    
+    public void getBookContent(ItemStack itemStack, NonNullList<ItemStack> destination) {
+        CustomData customData = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
+        
+        Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, BookContentNbtKey);
+        Optional<CompoundTag> tag = EnergyManipulationItemsUtils.getCompoundTag(itemStack, identifier);
+        
+        // todo: figure out why it is empty
+        
+        // If no item stored then empty destination
+        if (tag.isEmpty()) {
+            destination.clear();
+            return;
+        }
+        
+        // Fill destination
+        ItemContainerContents.CODEC.parse(NbtOps.INSTANCE, tag.get())
+                .resultOrPartial(err -> System.err.println("Failed to decode container: " + err))
+                .ifPresent(contents -> {
+                    contents.copyInto(destination);
+                });
+    }
+    
+    public void setBookContent(ItemStack itemStack, List<ItemStack> bookContent) {
+        ItemContainerContents contents = ItemContainerContents.fromItems(bookContent);
+        
+        ItemContainerContents.CODEC.encodeStart(NbtOps.INSTANCE, contents)
+                .resultOrPartial(err -> System.err.println("Failed to encode container: " + err))
+                .ifPresent(tag -> {
+                    Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "");
+                    EnergyManipulationItemsUtils.updateCompoundTag(itemStack, identifier, tagToUpdate -> {
+                        tagToUpdate.put(BookContentNbtKey, tag);
+                    });
+                });
     }
 }

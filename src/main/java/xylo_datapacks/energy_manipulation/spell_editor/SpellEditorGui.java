@@ -135,9 +135,8 @@ public class SpellEditorGui extends SimpleGui {
     
     public void loadItems() {
         ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (heldStack.getItem() instanceof SpellBookItem) {
-            ItemContainerContents spellBookStorage = heldStack.getOrDefault(EnergyManipulationComponents.SPELL_BOOK_STORAGE, ItemContainerContents.EMPTY);
-            spellBookStorage.copyInto(inputInventory.getItems());
+        if (heldStack.getItem() instanceof SpellBookItem spellBookItem) {
+            spellBookItem.getBookContent(heldStack, inputInventory.getItems());
         }
         
         onScrollChanged(getScrollStack());
@@ -145,8 +144,8 @@ public class SpellEditorGui extends SimpleGui {
     
     public void saveItems() {
         ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        if (heldStack.getItem() instanceof SpellBookItem) {
-            heldStack.set(EnergyManipulationComponents.SPELL_BOOK_STORAGE, ItemContainerContents.fromItems(inputInventory.getItems()));
+        if (heldStack.getItem() instanceof SpellBookItem spellBookItem) {
+            spellBookItem.setBookContent(heldStack, inputInventory.getItems());
         }
     }
 
