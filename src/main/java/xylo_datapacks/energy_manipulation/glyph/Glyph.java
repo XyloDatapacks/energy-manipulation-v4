@@ -1,5 +1,9 @@
 package xylo_datapacks.energy_manipulation.glyph;
 
+import net.minecraft.core.Holder;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.Identifier;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.editor_data.GlyphEditorData;
 import xylo_datapacks.energy_manipulation.glyph.editor_data.InputPinEditorData;
@@ -8,6 +12,7 @@ import xylo_datapacks.energy_manipulation.glyph.pin.*;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 
+import javax.swing.text.html.Option;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -334,5 +339,67 @@ public class Glyph {
     }
 
     // ~EditorData
+    /*================================================================================================================*/
+
+    /*================================================================================================================*/
+    // Serialization
+
+    public CompoundTag serializeInstance(GlyphInstance glyphInstance) {
+        CompoundTag output = new CompoundTag();
+        
+        // Serialize id
+        output.putString("id", GlyphsRegistry.GLYPH.getKey(glyphInstance.glyph).toString());
+        
+        // Serialize payload
+        serializePayload(glyphInstance).ifPresent(payload -> output.put("payload", payload));
+
+        // Serialize input pins
+        ListTag inputPins = new ListTag();
+        glyphInstance.inputPins.forEach(pin -> {
+            Optional.ofNullable(pin.connectedGlyph).map(GlyphUtils::serializeInstance).ifPresent(inputPins::add);
+        });
+        output.put("inputs", inputPins);
+        
+        return output;
+    }
+
+    public void deserializeInstance(CompoundTag glyphInstanceCompound, GlyphInstance destination) {
+        // In order for pins to be properly initialized we need to connect a newly created instance to its parent 
+        // glyph instance before we can deserialize its data (in particular its input pins). 
+        // If we were to deserialize a non-connected glyph instance, we would not be able to infer the output pin type. 
+        // Since output pin type can affect the input pins type, we might not be able to connect its child glyphs after 
+        // deserializing them.
+        
+        // Deserialize payload.
+        glyphInstanceCompound.getCompound("payload").ifPresent(payload -> deserializePayload(payload, destination));
+
+        // Deserialize input pins.
+        ListTag inputPins = glyphInstanceCompound.getListOrEmpty("inputs");
+        for (int i = 0; i < Math.min(destination.inputPins.size(), inputPins.size()); i++) {
+            int pinIndex = i;
+            
+            // Deserialize connection's glyph instance.
+            inputPins.getCompound(pinIndex).ifPresent(connectionCompound -> {
+                // Extract glyph from connection's compound.
+                Glyph connectedGlyph = connectionCompound.getString("id").map(Identifier::parse).map(GlyphsRegistry.GLYPH::getValue).orElse(null);
+                if (connectedGlyph != null) {
+                    // Create and connect a glyph instance from the extracted glyph.
+                    GlyphUtils.connectNewGlyphWithCallback(destination, pinIndex, connectedGlyph, connectedInstance -> {
+                        // Deserialize connected instance data.
+                        GlyphUtils.deserializeInstance(connectionCompound, connectedInstance);
+                    });
+                }
+            });
+        }
+    }
+    
+    public Optional<CompoundTag> serializePayload(GlyphInstance glyphInstance) {
+        return Optional.empty();
+    }
+
+    public void deserializePayload(CompoundTag payloadCompound, GlyphInstance destination) {
+    }
+
+    // ~Serialization
     /*================================================================================================================*/
 }

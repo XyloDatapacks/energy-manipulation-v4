@@ -1,5 +1,7 @@
 package xylo_datapacks.energy_manipulation.glyph;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
@@ -11,6 +13,23 @@ public class GlyphUtils {
 
     public static GlyphInstance copyGlyphInstance(GlyphInstance glyphInstance) {
         return new GlyphInstance(glyphInstance.glyph); // TODO: implement
+    }
+
+    public static CompoundTag serializeInstance(GlyphInstance glyphInstance) {
+        return glyphInstance.glyph.serializeInstance(glyphInstance);
+    }
+
+    public static Optional<GlyphInstance> deserializeInstance(CompoundTag glyphInstanceCompound, GlyphValueType valueType) {
+        return glyphInstanceCompound.getString("id").map(Identifier::parse).map(GlyphsRegistry.GLYPH::getValue).flatMap(glyph -> {
+            return Optional.ofNullable(glyph.instantiate(valueType)).map(glyphInstance -> {
+                deserializeInstance(glyphInstanceCompound, glyphInstance);
+                return glyphInstance;
+            });
+        });
+    }
+    
+    public static void deserializeInstance(CompoundTag glyphInstanceCompound, GlyphInstance destination) {
+        destination.glyph.deserializeInstance(glyphInstanceCompound, destination);
     }
     
     /** @param callback consumer passing as parameter the newly created GlyphInstance. */

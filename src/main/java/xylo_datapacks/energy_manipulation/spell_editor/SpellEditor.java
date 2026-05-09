@@ -46,7 +46,7 @@ public class SpellEditor {
 
         StringBuilder output = new StringBuilder("Printing compatible Glyphs for pin [" + pinName + "] in Glyph [" + glyphInstance.glyph.getClass().getSimpleName() + "] \n");
 
-        GlyphsRegistry.GLYPHS.values().stream()
+        GlyphsRegistry.GLYPH.stream()
                 .filter(glyph -> isCompatibleGlyph(glyphInstance, pinName, glyph))
                 .forEach(glyph -> {
                     String entry = "- " + glyph.getClass().getSimpleName() + "\n";
@@ -58,7 +58,7 @@ public class SpellEditor {
     }
     
     public void forEachCompatibleGlyph(GlyphInstance glyphInstance, int pinIndex, Consumer<Glyph> consumer) {
-        GlyphsRegistry.GLYPHS.values().stream()
+        GlyphsRegistry.GLYPH.stream()
                 .filter(glyph -> isCompatibleGlyph(glyphInstance, pinIndex, glyph))
                 .forEach(consumer);
     }
