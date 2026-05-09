@@ -57,8 +57,6 @@ public class SpellBookItem extends Item implements PolymerItem {
     }
     
     public void getBookContent(ItemStack itemStack, NonNullList<ItemStack> destination) {
-        CustomData customData = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY);
-        
         Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, BookContentNbtKey);
         Optional<Tag> tag = EnergyManipulationItemsUtils.getTag(itemStack, identifier);
         
