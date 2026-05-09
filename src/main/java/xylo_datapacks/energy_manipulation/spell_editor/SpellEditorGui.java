@@ -8,10 +8,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
+import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,7 +55,18 @@ public class SpellEditorGui extends SimpleGui {
         this.setSlot(46, new Slot(inputInventory, 1, 0, 0));
         this.setSlot(47, new Slot(inputInventory, 2, 0, 0));
         this.setSlot(48, new Slot(inputInventory, 3, 0, 0));
-        this.setSlot(49, new Slot(inputInventory, 4, 0, 0));
+        
+        this.setSlot(49, new Slot(inputInventory, 4, 0, 0) {
+            @Override
+            public boolean mayPlace(@NonNull ItemStack itemStack) {
+                return itemStack.is(EnergyManipulationItems.SPELL_SCROLL);
+            }
+
+            @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+        });
         
         this.setSlot(50, new GuiElementBuilder(Items.RED_WOOL)
                 .setName(Component.literal("Cancel"))
