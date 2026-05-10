@@ -30,6 +30,7 @@ public class SpellEditorButtonsRegistry {
     public static final Supplier<ItemStack> ADD_ELEMENT_BUTTON = registerGlyph("add_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> ARRAY_START_BUTTON = registerGlyph("array_start_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> EMPTY_PIN_BUTTON = registerGlyph("empty_pin_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> VALUE_SELECTOR_BUTTON = registerGlyph("value_selector_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     
     
     public static Supplier<ItemStack> registerGlyph(String name, Supplier<ItemStack> factory) {

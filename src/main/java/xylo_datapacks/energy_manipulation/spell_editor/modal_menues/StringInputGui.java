@@ -2,8 +2,10 @@ package xylo_datapacks.energy_manipulation.spell_editor.modal_menues;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.AnvilInputGui;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
@@ -27,6 +29,13 @@ public class StringInputGui extends AnvilInputGui {
         this.setDefaultInputValue(getValueAsString());
         
         this.setupToolbar();
+    }
+
+    @Override
+    public ItemStack createInputItem(String input) {
+        ItemStack inputStack = super.createInputItem(input);
+        inputStack.remove(DataComponents.ITEM_MODEL);
+        return inputStack;
     }
 
     public SpellEditor getSpellEditor() {

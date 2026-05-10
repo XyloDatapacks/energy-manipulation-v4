@@ -67,7 +67,7 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeRawValueSelectorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
         Optional<GlyphValue> glyphValue = GlyphsRegistry.RAW_VALUE_GLYPH.getPayloadValue(glyphInstance);
         
-        return new GuiElementBuilder(Items.REDSTONE_TORCH)
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.VALUE_SELECTOR_BUTTON.get())
                 .setName(Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value"))
                 .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
                 .build();
