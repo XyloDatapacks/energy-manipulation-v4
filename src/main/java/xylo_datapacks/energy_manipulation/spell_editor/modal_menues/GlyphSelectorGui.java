@@ -53,7 +53,7 @@ public class GlyphSelectorGui extends SimpleGui {
     }
     
     protected void goBackToEditor() {
-        SpellEditorGui newEditorGui = new SpellEditorGui(player, editor, editorPage);
+        SpellEditorGui newEditorGui = new SpellEditorGui(player, editor, editorPage, false);
         newEditorGui.open();
     }
 

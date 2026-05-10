@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 public class GlyphUtils {
 
     public static GlyphInstance copyGlyphInstance(GlyphInstance glyphInstance) {
-        return new GlyphInstance(glyphInstance.glyph); // TODO: implement
+        return deserializeInstance(serializeInstance(glyphInstance), glyphInstance.outputPin.valueType).get();
     }
 
     public static CompoundTag serializeInstance(GlyphInstance glyphInstance) {

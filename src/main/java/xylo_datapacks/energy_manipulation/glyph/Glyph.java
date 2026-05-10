@@ -356,7 +356,8 @@ public class Glyph {
         // Serialize input pins
         ListTag inputPins = new ListTag();
         glyphInstance.inputPins.forEach(pin -> {
-            Optional.ofNullable(pin.connectedGlyph).map(GlyphUtils::serializeInstance).ifPresent(inputPins::add);
+            // Since we are not storing index or id, we must store the empty connections too.
+            inputPins.add(Optional.ofNullable(pin.connectedGlyph).map(GlyphUtils::serializeInstance).orElse(new CompoundTag()));
         });
         output.put("inputs", inputPins);
         
@@ -375,20 +376,24 @@ public class Glyph {
 
         // Deserialize input pins.
         ListTag inputPins = glyphInstanceCompound.getListOrEmpty("inputs");
-        for (int i = 0; i < Math.min(destination.inputPins.size(), inputPins.size()); i++) {
+        int pinCount = inputPinMode == InputPinMode.ARRAY ? inputPins.size() : Math.min(destination.inputPins.size(), inputPins.size());
+        for (int i = 0; i < pinCount; i++) {
             int pinIndex = i;
+
+            if (inputPinMode == InputPinMode.ARRAY) {
+                addPin(destination);
+            }
             
             // Deserialize connection's glyph instance.
             inputPins.getCompound(pinIndex).ifPresent(connectionCompound -> {
                 // Extract glyph from connection's compound.
-                Glyph connectedGlyph = connectionCompound.getString("id").map(Identifier::parse).map(GlyphsRegistry.GLYPH::getValue).orElse(null);
-                if (connectedGlyph != null) {
+                connectionCompound.getString("id").map(Identifier::parse).map(GlyphsRegistry.GLYPH::getValue).ifPresent(connectedGlyph -> {
                     // Create and connect a glyph instance from the extracted glyph.
                     GlyphUtils.connectNewGlyphWithCallback(destination, pinIndex, connectedGlyph, connectedInstance -> {
                         // Deserialize connected instance data.
                         GlyphUtils.deserializeInstance(connectionCompound, connectedInstance);
                     });
-                }
+                });
             });
         }
     }

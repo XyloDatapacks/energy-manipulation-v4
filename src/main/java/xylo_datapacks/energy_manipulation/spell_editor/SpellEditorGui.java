@@ -16,7 +16,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
 import org.jspecify.annotations.NonNull;
+import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
+import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
@@ -42,16 +44,23 @@ public class SpellEditorGui extends SimpleGui {
     protected int currentPage;
     protected boolean bIsLastPage = false;
 
-    public SpellEditorGui(ServerPlayer player, SpellEditor editor, int currentPage) {
+    public SpellEditorGui(ServerPlayer player, SpellEditor editor, int currentPage, boolean bLoadSpellFromItem) {
         super(MenuType.GENERIC_9x6, player, false);
 
         this.editor = editor;
         this.currentPage = currentPage;
 
         this.loadItems();
+        if (bLoadSpellFromItem) {
+            onScrollChanged(getScrollStack());
+        }
         this.setTitle(Component.literal("Spell Editor"));
         this.setupToolbar();
         this.rebuildSpellGui();
+    }
+
+    public SpellEditorGui(ServerPlayer player, SpellEditor editor, int currentPage) {
+        this(player, editor, currentPage, true);
     }
     
     public SpellEditorGui(ServerPlayer player, SpellEditor editor) {
@@ -138,8 +147,6 @@ public class SpellEditorGui extends SimpleGui {
         if (heldStack.getItem() instanceof SpellBookItem spellBookItem) {
             spellBookItem.getBookContent(heldStack, inputInventory.getItems());
         }
-        
-        onScrollChanged(getScrollStack());
     }
     
     public void saveItems() {
@@ -290,7 +297,8 @@ public class SpellEditorGui extends SimpleGui {
         ItemStack scrollStack = scrollSlot.getItem();
         if (scrollStack.getItem() instanceof SpellScrollItem spellScrollItem) {
             // Save current version of the spell on the item.
-            spellScrollItem.setSpell(editor.getCurrentGlyphInstance());
+            GlyphUtils.execute(new ExecutionContext(), editor.getCurrentGlyphInstance()); // TODO: remove
+            spellScrollItem.setSpell(scrollStack, editor.getCurrentGlyphInstance());
             // Update cached version of the spell to allow to revert to this point.
             editor.initialize(editor.getCurrentGlyphInstance());
         }
