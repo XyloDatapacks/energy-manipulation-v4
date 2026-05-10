@@ -319,6 +319,8 @@ public class SpellEditorGui extends SimpleGui {
     }
 
     public void openGlyphSelector(GlyphInstance glyphInstance, int pinIndex) {
+        onClose();
+        
         GlyphSelectorGui gui = new GlyphSelectorGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance, pinIndex);
         gui.open();
     }
@@ -339,6 +341,8 @@ public class SpellEditorGui extends SimpleGui {
     }
 
     public void openValueSelector(GlyphInstance glyphInstance) {
+        onClose();
+        
         SimpleGui gui;
         if (glyphInstance.outputPin.valueType instanceof StringConvertibleValueInterface) {
             gui = new StringInputGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance);
