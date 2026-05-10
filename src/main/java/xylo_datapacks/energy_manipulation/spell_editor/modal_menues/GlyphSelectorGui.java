@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 import xylo_datapacks.energy_manipulation.spell_editor.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -58,10 +59,11 @@ public class GlyphSelectorGui extends SimpleGui {
 
     protected void displayCompatibleGlyphs() {
         AtomicInteger currentSlot = new AtomicInteger(0);
+        GlyphValueType valueType = instance.glyph.getInputPin(instance, pinIndex).get().valueType;
         editor.forEachCompatibleGlyph(instance, pinIndex, glyph -> {
             int slotIndex = currentSlot.getAndIncrement();
             if (slotIndex < 26) {
-                this.setSlot(slotIndex, SpellEditorGuiUtils.makeGlyphOptionGuiElement(this, glyph));
+                this.setSlot(slotIndex, SpellEditorGuiUtils.makeGlyphOptionGuiElement(this, glyph, valueType));
             }
         });
     }

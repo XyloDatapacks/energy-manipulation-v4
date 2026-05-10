@@ -13,6 +13,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 
 import java.util.ArrayList;
@@ -32,14 +33,23 @@ public class SpellEditorButtonsRegistry {
     public static final Supplier<ItemStack> ADD_ELEMENT_BUTTON = registerGlyph("add_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> ARRAY_START_BUTTON = registerGlyph("array_start_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> EMPTY_PIN_BUTTON = registerGlyph("empty_pin_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> VALUE_SELECTOR_BUTTON = registerGlyph("value_selector_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     
-    public static ItemStack getGlyphButtonStack(Glyph glyph) {
+    public static ItemStack getGlyphButtonStack(Glyph glyph, GlyphValueType outputValueType) {
         ItemStack glyphButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
-        setCustomModelData(glyphButtonStack, GlyphsRegistry.GLYPH.getKey(glyph).getPath());
+        String customModelDataName = GlyphsRegistry.GLYPH.getKey(glyph).getPath();
+        if (glyph == GlyphsRegistry.RAW_VALUE_GLYPH) {
+            customModelDataName = customModelDataName + "_" + GlyphsRegistry.VALUE_TYPE.getKey(outputValueType).getPath();
+        }
+        setCustomModelData(glyphButtonStack, customModelDataName);
         return glyphButtonStack;
     }
-    
+
+    public static ItemStack getValueSelectorButtonStack(GlyphValueType valueType) {
+        ItemStack valueSelectorButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
+        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath());
+        return valueSelectorButtonStack;
+    }
+
     public static Supplier<ItemStack> registerGlyph(String name, Supplier<ItemStack> factory) {
         Supplier<ItemStack> output = () -> {
             ItemStack stack = factory.get();

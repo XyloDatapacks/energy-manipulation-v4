@@ -2,10 +2,8 @@ package xylo_datapacks.energy_manipulation.spell_editor;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
-import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
@@ -13,10 +11,8 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
-import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
-import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputGui;
-import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 
 import java.util.Optional;
 
@@ -30,7 +26,7 @@ public class SpellEditorGuiUtils {
         InputPinDefinition pinDefinitionToDisplay = glyphInstance.glyph.getInputPinDefinition(pinIndex).get();
         String pinDisplayName = pinDefinitionToDisplay.pinName;
         
-        ItemStack buttonStack = connectedGlyphInstance != null ? SpellEditorButtonsRegistry.getGlyphButtonStack(connectedGlyphInstance.glyph) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
+        ItemStack buttonStack = connectedGlyphInstance != null ? SpellEditorButtonsRegistry.getGlyphButtonStack(connectedGlyphInstance.glyph, pinToDisplay.valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
                 .setName(Component.literal("Pin: " + pinDisplayName + " | " + connectedGlyphDisplayName))
                 .setCallback(clickType -> editorGui.openGlyphSelector(glyphInstance, pinIndex))
@@ -67,14 +63,14 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeRawValueSelectorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
         Optional<GlyphValue> glyphValue = GlyphsRegistry.RAW_VALUE_GLYPH.getPayloadValue(glyphInstance);
         
-        return new GuiElementBuilder(SpellEditorButtonsRegistry.VALUE_SELECTOR_BUTTON.get())
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueSelectorButtonStack(glyphInstance.outputPin.valueType))
                 .setName(Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value"))
                 .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
                 .build();
     }
 
-    public static SimpleGuiElement makeGlyphOptionGuiElement(GlyphSelectorGui selectorGui, Glyph glyph) {
-        return new GuiElementBuilder(SpellEditorButtonsRegistry.getGlyphButtonStack(glyph))
+    public static SimpleGuiElement makeGlyphOptionGuiElement(GlyphSelectorGui selectorGui, Glyph glyph, GlyphValueType valueType) {
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.getGlyphButtonStack(glyph, valueType))
                 .setName(Component.literal(glyph.getClass().getSimpleName()))
                 .setCallback(clickType -> {
                     GlyphUtils.connectNewGlyph(selectorGui.getGlyphInstance(), selectorGui.getPinIndex(), glyph);
