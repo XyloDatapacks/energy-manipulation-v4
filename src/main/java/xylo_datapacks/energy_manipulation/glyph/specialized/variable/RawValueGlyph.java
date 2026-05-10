@@ -1,5 +1,6 @@
 package xylo_datapacks.energy_manipulation.glyph.specialized.variable;
 
+import net.minecraft.nbt.CompoundTag;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
@@ -69,5 +70,21 @@ public class RawValueGlyph extends Glyph {
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         return getPayloadValue(glyphInstance)
                 .orElse(GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("RawValueGlyph could not return its payload as it is malformed!"));
+    }
+
+    @Override
+    public Optional<CompoundTag> serializePayload(GlyphInstance glyphInstance) {
+        CompoundTag output = new CompoundTag();
+        getPayloadValue(glyphInstance).flatMap(glyphInstance.outputPin.valueType::serialize).ifPresent(valueTag -> {
+            output.put("value", valueTag);
+        });
+        return Optional.of(output);
+    }
+
+    @Override
+    public void deserializePayload(CompoundTag payloadCompound, GlyphInstance destination) {
+        Optional.ofNullable(payloadCompound.get("value")).flatMap(destination.outputPin.valueType::deserialize).ifPresent(value -> {
+            setPayloadValue(destination, value); 
+        });
     }
 }

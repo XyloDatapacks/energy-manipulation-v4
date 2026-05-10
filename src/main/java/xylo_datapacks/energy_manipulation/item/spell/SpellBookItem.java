@@ -68,7 +68,7 @@ public class SpellBookItem extends Item implements PolymerItem {
         
         // Fill destination
         ItemContainerContents.CODEC.parse(NbtOps.INSTANCE, tag.get())
-                .resultOrPartial(err -> System.err.println("Failed to decode container: " + err))
+                .resultOrPartial(err -> System.err.println("Failed to parse container: " + err))
                 .ifPresent(contents -> {
                     contents.copyInto(destination);
                 });

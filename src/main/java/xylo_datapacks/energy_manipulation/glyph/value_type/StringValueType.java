@@ -1,9 +1,15 @@
 package xylo_datapacks.energy_manipulation.glyph.value_type;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringGlyphValueInterface;
+
+import java.util.Optional;
 
 public class StringValueType extends GlyphValueType implements StringGlyphValueInterface, ComparableGlyphValueInterface, StringConvertibleValueInterface {
     
@@ -49,6 +55,19 @@ public class StringValueType extends GlyphValueType implements StringGlyphValueI
     @Override
     public boolean hasValueSelector() { return true; }
     
+    @Override
+    public Optional<Tag> serialize(GlyphValue value) {
+        return Codec.STRING.encodeStart(NbtOps.INSTANCE, getStringGlyphValue(value))
+                .resultOrPartial(err -> System.err.println("Failed to encode string glyph value: " + err));
+    }
+
+    @Override
+    public Optional<GlyphValue> deserialize(Tag value) {
+        return Codec.STRING.parse(NbtOps.INSTANCE, value)
+                .resultOrPartial(err -> System.err.println("Failed to parse string glyph value: " + err))
+                .map(this::makeStringGlyphValue);
+    }
+
     /*================================================================================================================*/
     // Interfaces
 

@@ -1,10 +1,15 @@
 package xylo_datapacks.energy_manipulation.glyph.value_type;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.NumericGlyphValueInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.SortableGlyphValueInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
+
+import java.util.Optional;
 
 public class IntValueType extends GlyphValueType implements NumericGlyphValueInterface, ComparableGlyphValueInterface, SortableGlyphValueInterface, StringConvertibleValueInterface {
    
@@ -49,6 +54,19 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
 
     @Override
     public boolean hasValueSelector() { return true; }
+
+    @Override
+    public Optional<Tag> serialize(GlyphValue value) {
+        return Codec.INT.encodeStart(NbtOps.INSTANCE, getIntGlyphValue(value))
+                .resultOrPartial(err -> System.err.println("Failed to encode int glyph value: " + err));
+    }
+
+    @Override
+    public Optional<GlyphValue> deserialize(Tag value) {
+        return Codec.INT.parse(NbtOps.INSTANCE, value)
+                .resultOrPartial(err -> System.err.println("Failed to parse int glyph value: " + err))
+                .map(this::makeIntGlyphValue);
+    }
 
     /*================================================================================================================*/
     // Interfaces

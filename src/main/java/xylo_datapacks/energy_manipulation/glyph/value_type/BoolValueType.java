@@ -1,7 +1,12 @@
 package xylo_datapacks.energy_manipulation.glyph.value_type;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
+
+import java.util.Optional;
 
 public class BoolValueType extends GlyphValueType implements ComparableGlyphValueInterface {
     
@@ -46,6 +51,19 @@ public class BoolValueType extends GlyphValueType implements ComparableGlyphValu
 
     @Override
     public boolean hasValueSelector() { return true; }
+    
+    @Override
+    public Optional<Tag> serialize(GlyphValue value) {
+        return Codec.BOOL.encodeStart(NbtOps.INSTANCE, getBoolGlyphValue(value))
+                .resultOrPartial(err -> System.err.println("Failed to encode boolean glyph value: " + err));
+    }
+
+    @Override
+    public Optional<GlyphValue> deserialize(Tag value) {
+        return Codec.BOOL.parse(NbtOps.INSTANCE, value)
+                .resultOrPartial(err -> System.err.println("Failed to parse boolean glyph value: " + err))
+                .map(this::makeBoolGlyphValue);
+    }
 
     /*================================================================================================================*/
     // Interfaces

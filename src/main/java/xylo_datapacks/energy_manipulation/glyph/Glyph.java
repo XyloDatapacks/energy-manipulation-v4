@@ -354,16 +354,19 @@ public class Glyph {
         serializePayload(glyphInstance).ifPresent(payload -> output.put("payload", payload));
 
         // Serialize input pins
-        ListTag inputPins = new ListTag();
-        glyphInstance.inputPins.forEach(pin -> {
-            // Since we are not storing index or id, we must store the empty connections too.
-            inputPins.add(Optional.ofNullable(pin.connectedGlyph).map(GlyphUtils::serializeInstance).orElse(new CompoundTag()));
-        });
-        output.put("inputs", inputPins);
+        if (hasInputPins(glyphInstance)) {
+            ListTag inputPins = new ListTag();
+            glyphInstance.inputPins.forEach(pin -> {
+                // Since we are not storing index or id, we must store the empty connections too.
+                inputPins.add(Optional.ofNullable(pin.connectedGlyph).map(GlyphUtils::serializeInstance).orElse(new CompoundTag()));
+            });
+            output.put("inputs", inputPins);
+        }
         
         return output;
     }
 
+    /** @param destination the glyph instance (of this glyph class!!!) to deserialize. */
     public void deserializeInstance(CompoundTag glyphInstanceCompound, GlyphInstance destination) {
         // In order for pins to be properly initialized we need to connect a newly created instance to its parent 
         // glyph instance before we can deserialize its data (in particular its input pins). 
@@ -402,6 +405,7 @@ public class Glyph {
         return Optional.empty();
     }
 
+    /** @param destination the glyph instance (of this glyph class!!!) to deserialize. */
     public void deserializePayload(CompoundTag payloadCompound, GlyphInstance destination) {
     }
 
