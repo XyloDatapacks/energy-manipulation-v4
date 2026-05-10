@@ -9,10 +9,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
+import xylo_datapacks.energy_manipulation.item.EnergyManipulationComponents;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItemsUtils;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellPresetRegistry;
 
@@ -30,7 +32,8 @@ public class SpellScrollItem extends Item implements PolymerItem {
         return Items.PAPER;
     }
 
-    public GlyphInstance getSpell(ItemStack itemStack) {
+    @Deprecated
+    public GlyphInstance getSpellFromCustomData(ItemStack itemStack) {
         Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, SpellContentNbtKey);
         
         // Try to deserialize the spell otherwise creates an empty program glyph.
@@ -44,10 +47,21 @@ public class SpellScrollItem extends Item implements PolymerItem {
         }).orElse(/*GlyphsRegistry.PROGRAM_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE)*/ SpellPresetRegistry.makeProgramTest());
     }
 
-    public void setSpell(ItemStack itemStack, GlyphInstance glyphInstance) {
+    @Deprecated
+    public void setSpellToCustomData(ItemStack itemStack, GlyphInstance glyphInstance) {
         Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, SpellContentNbtKey);
         
         // Serialize the spell and set in compound
         EnergyManipulationItemsUtils.setTag(itemStack, identifier, GlyphUtils.serializeInstance(glyphInstance));
+    }
+
+    public GlyphInstance getSpell(ItemStack itemStack) {
+        return Optional.ofNullable(itemStack.get(EnergyManipulationComponents.SPELL_CONTAINER))
+                .flatMap(spellTag -> GlyphUtils.deserializeInstance(spellTag.copyTag(), GlyphsRegistry.EXECUTION_VALUE_TYPE))
+                .orElse(GlyphsRegistry.PROGRAM_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE));
+    }
+
+    public void setSpell(ItemStack itemStack, GlyphInstance glyphInstance) {
+        itemStack.set(EnergyManipulationComponents.SPELL_CONTAINER, CustomData.of(GlyphUtils.serializeInstance(glyphInstance)));
     }
 }

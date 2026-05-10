@@ -20,6 +20,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
+import xylo_datapacks.energy_manipulation.item.EnergyManipulationComponents;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItemsUtils;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
@@ -56,7 +57,8 @@ public class SpellBookItem extends Item implements PolymerItem {
         // return super.use(level, player, hand);
     }
     
-    public void getBookContent(ItemStack itemStack, NonNullList<ItemStack> destination) {
+    @Deprecated
+    public void getBookContentFromCustomData(ItemStack itemStack, NonNullList<ItemStack> destination) {
         Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, BookContentNbtKey);
         Optional<Tag> tag = EnergyManipulationItemsUtils.getTag(itemStack, identifier);
         
@@ -74,7 +76,8 @@ public class SpellBookItem extends Item implements PolymerItem {
                 });
     }
     
-    public void setBookContent(ItemStack itemStack, List<ItemStack> bookContent) {
+    @Deprecated
+    public void setBookContentToCustomData(ItemStack itemStack, List<ItemStack> bookContent) {
         ItemContainerContents contents = ItemContainerContents.fromItems(bookContent);
         
         ItemContainerContents.CODEC.encodeStart(NbtOps.INSTANCE, contents)
@@ -83,5 +86,15 @@ public class SpellBookItem extends Item implements PolymerItem {
                     Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, BookContentNbtKey);
                     EnergyManipulationItemsUtils.setTag(itemStack, identifier, tag);
                 });
+    }
+    
+    public void getBookContent(ItemStack itemStack, NonNullList<ItemStack> destination) {
+        Optional.ofNullable(itemStack.get(EnergyManipulationComponents.SPELL_BOOK_STORAGE)).ifPresent(itemContainer -> {
+            itemContainer.copyInto(destination);
+        });
+    }
+
+    public void setBookContent(ItemStack itemStack, List<ItemStack> bookContent) {
+        itemStack.set(EnergyManipulationComponents.SPELL_BOOK_STORAGE, ItemContainerContents.fromItems(bookContent));
     }
 }
