@@ -50,6 +50,12 @@ public class SpellEditorButtonsRegistry {
         return valueSelectorButtonStack;
     }
 
+    public static ItemStack getOperatorSeparatorButtonStack(Glyph glyph) {
+        ItemStack operatorSeparatorButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
+        setCustomModelData(operatorSeparatorButtonStack, GlyphsRegistry.GLYPH.getKey(glyph).getPath() + "_separator");
+        return operatorSeparatorButtonStack;
+    }
+
     public static Supplier<ItemStack> registerGlyph(String name, Supplier<ItemStack> factory) {
         Supplier<ItemStack> output = () -> {
             ItemStack stack = factory.get();

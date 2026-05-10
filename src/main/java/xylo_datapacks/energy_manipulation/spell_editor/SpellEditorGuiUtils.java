@@ -79,4 +79,9 @@ public class SpellEditorGuiUtils {
                 .build();
     }
     
+    public static SimpleGuiElement makeOperatorPinDecoratorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance, int pinIndex) {
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.getOperatorSeparatorButtonStack(glyphInstance.glyph))
+                .setName(Component.literal(""))
+                .build();
+    }
 }

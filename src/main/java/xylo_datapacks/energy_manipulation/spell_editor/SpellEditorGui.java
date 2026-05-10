@@ -14,6 +14,7 @@ import net.minecraft.world.item.Items;
 import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
+import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
@@ -227,6 +228,10 @@ public class SpellEditorGui extends SimpleGui {
     public Optional<SimpleGuiElement> generatePinDecoratorPrePinGuiElement(GlyphInstance glyphInstance, int pinIndex) {
         if (glyphInstance.glyph.getInputPinMode() ==  InputPinMode.ARRAY) {
             return Optional.of(SpellEditorGuiUtils.makeArrayPinDecoratorGuiElement(this, glyphInstance, pinIndex));
+        }
+        
+        if (pinIndex > 0 && glyphInstance.glyph instanceof OperatorGlyphInterface) {
+            return Optional.of(SpellEditorGuiUtils.makeOperatorPinDecoratorGuiElement(this, glyphInstance, pinIndex));
         }
         
         return Optional.empty();
