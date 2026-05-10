@@ -1,11 +1,8 @@
 package xylo_datapacks.energy_manipulation.spell_editor;
 
-import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import eu.pb4.sgui.mixin.ScreenHandlerAccessor;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -14,15 +11,11 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.ItemContainerContents;
 import org.jspecify.annotations.NonNull;
-import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
-import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
-import xylo_datapacks.energy_manipulation.item.EnergyManipulationComponents;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 import xylo_datapacks.energy_manipulation.item.spell.SpellBookItem;
 import xylo_datapacks.energy_manipulation.item.spell.SpellScrollItem;
@@ -30,8 +23,6 @@ import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelecto
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputGui;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -79,12 +70,13 @@ public class SpellEditorGui extends SimpleGui {
         
         // TODO: allow input slots to set data in item stack component
         
-        this.setSlot(45, new Slot(inputInventory, 0, 0, 0));
-        this.setSlot(46, new Slot(inputInventory, 1, 0, 0));
-        this.setSlot(47, new Slot(inputInventory, 2, 0, 0));
-        this.setSlot(48, new Slot(inputInventory, 3, 0, 0));
+        int toolBarFirstIndex = 45;
+        this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_UTILITY_1_INDEX, new Slot(inputInventory, SpellBookItem.SPELL_UTILITY_1_INDEX, 0, 0));
+        this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_UTILITY_2_INDEX, new Slot(inputInventory, SpellBookItem.SPELL_UTILITY_2_INDEX, 0, 0));
+        this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_UTILITY_3_INDEX, new Slot(inputInventory, SpellBookItem.SPELL_UTILITY_3_INDEX, 0, 0));
+        this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_UTILITY_4_INDEX, new Slot(inputInventory, SpellBookItem.SPELL_UTILITY_4_INDEX, 0, 0));
         
-        this.setSlot(49, scrollSlot);
+        this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_SCROLL_INDEX, scrollSlot);
         scrollSlot.onItemStackChangedCallback = this::onScrollChanged;
         
         this.setSlot(50, new GuiElementBuilder(Items.RED_WOOL)
@@ -109,7 +101,7 @@ public class SpellEditorGui extends SimpleGui {
     }
     
     protected SpellEditorGuiSlot makeScrollSlot() {
-        return new SpellEditorGuiSlot(inputInventory, 4, 0, 0) {
+        return new SpellEditorGuiSlot(inputInventory, SpellBookItem.SPELL_SCROLL_INDEX, 0, 0) {
             @Override
             public boolean mayPlace(@NonNull ItemStack itemStack) {
                 return itemStack.is(EnergyManipulationItems.SPELL_SCROLL);
@@ -275,7 +267,7 @@ public class SpellEditorGui extends SimpleGui {
     // GuiButtonsLogic
     
     public ItemStack getScrollStack() {
-        return inputInventory.getItem(4);
+        return inputInventory.getItem(SpellBookItem.SPELL_SCROLL_INDEX);
     }
     
     public void onScrollChanged(ItemStack itemStack) {
@@ -297,7 +289,6 @@ public class SpellEditorGui extends SimpleGui {
         ItemStack scrollStack = scrollSlot.getItem();
         if (scrollStack.getItem() instanceof SpellScrollItem spellScrollItem) {
             // Save current version of the spell on the item.
-            GlyphUtils.execute(new ExecutionContext(), editor.getCurrentGlyphInstance()); // TODO: remove
             spellScrollItem.setSpell(scrollStack, editor.getCurrentGlyphInstance());
             // Update cached version of the spell to allow to revert to this point.
             editor.initialize(editor.getCurrentGlyphInstance());

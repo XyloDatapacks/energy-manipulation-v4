@@ -1,5 +1,7 @@
 package xylo_datapacks.energy_manipulation.glyph.specialized.runnable;
 
+import net.minecraft.network.chat.Component;
+import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
@@ -31,7 +33,10 @@ public class PrintStringGlyph extends Glyph {
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         GlyphValue stringValue = evaluatePin(executionContext, glyphInstance, STRING_PIN);
         String string = GlyphsRegistry.STRING_VALUE_TYPE.getStringGlyphValue(stringValue);
-        System.out.println(">> " + string);
+
+        String message = ">> " + string;
+        executionContext.player.sendSystemMessage(Component.literal(message));
+        EnergyManipulation.LOGGER.info(message);
         
         return GlyphsRegistry.EXECUTION_VALUE_TYPE.makeExecutionGlyphValue(1);
     }

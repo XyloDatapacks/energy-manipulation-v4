@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -20,16 +21,26 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
+import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
+import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
+import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationComponents;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItemsUtils;
+import xylo_datapacks.energy_manipulation.item.ItemDoubleSwapInterface;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
-public class SpellBookItem extends Item implements PolymerItem {
+public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapInterface {
     public static String BookContentNbtKey = "book_content";
+    public static int SPELL_SCROLL_INDEX = 4;
+    public static int SPELL_UTILITY_1_INDEX = 0;
+    public static int SPELL_UTILITY_2_INDEX = 1;
+    public static int SPELL_UTILITY_3_INDEX = 2;
+    public static int SPELL_UTILITY_4_INDEX = 3;
     
     public SpellBookItem(Properties properties) {
         super(properties);
@@ -42,19 +53,26 @@ public class SpellBookItem extends Item implements PolymerItem {
 
     @Override
     public @NonNull InteractionResult use(@NonNull Level level, @NonNull Player player, @NonNull InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
+        if (player instanceof ServerPlayer serverPlayer) {
+            ItemStack itemStack = player.getItemInHand(hand);
+            
+            // Try cast spell.
+            if (getSpell(itemStack).isPresent()) {
+                GlyphUtils.execute(new ExecutionContext(serverPlayer), getSpell(itemStack).get());
+                return InteractionResult.SUCCESS;
+            }
+        }
+        return InteractionResult.PASS;
+    }
 
+    @Override
+    public void onDoubleSwap(@NonNull Level level, @NonNull Player player, @NonNull ItemStack stack) {
         if (player instanceof ServerPlayer serverPlayer) {
             // Open gui
             SpellEditor spellEditor = new SpellEditor();
             SpellEditorGui gui = new SpellEditorGui(serverPlayer, spellEditor);
             gui.open();
-            
-            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;
-        
-        // return super.use(level, player, hand);
     }
     
     @Deprecated
@@ -96,5 +114,16 @@ public class SpellBookItem extends Item implements PolymerItem {
 
     public void setBookContent(ItemStack itemStack, List<ItemStack> bookContent) {
         itemStack.set(EnergyManipulationComponents.SPELL_BOOK_STORAGE, ItemContainerContents.fromItems(bookContent));
+    }
+    
+    public Optional<GlyphInstance> getSpell(ItemStack itemStack) {
+        NonNullList<ItemStack> bookContent = NonNullList.withSize(5, ItemStack.EMPTY);
+        getBookContent(itemStack, bookContent);
+        
+        ItemStack scrollStack = bookContent.get(SPELL_SCROLL_INDEX);
+        if (!scrollStack.isEmpty() && scrollStack.getItem() instanceof SpellScrollItem spellScrollItem) {
+            return Optional.of(spellScrollItem.getSpell(scrollStack));
+        }
+        return Optional.empty();
     }
 }

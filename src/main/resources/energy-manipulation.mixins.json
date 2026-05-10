@@ -3,7 +3,8 @@
 	"package": "xylo_datapacks.energy_manipulation.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
-		"ExampleMixin"
+		"ExampleMixin",
+		"ServerGamePacketListenerImplMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
