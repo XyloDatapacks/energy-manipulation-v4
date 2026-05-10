@@ -3,7 +3,8 @@
 	"package": "xylo_datapacks.energy_manipulation.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"ExampleClientMixin"
+		"ExampleClientMixin",
+		"ModelTemplateMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

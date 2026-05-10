@@ -73,6 +73,7 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
             Identifier modelIdentifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "item/gui/button/" + buttonName);
 
             ModelTemplates.FLAT_ITEM.create(modelIdentifier, TextureMapping.singleSlot(TextureSlot.LAYER0, new Material(modelIdentifier)), generator.modelOutput);
+            // ((EnergyManipulationModelTemplate) ModelTemplates.FLAT_ITEM).energy_manipulation$createWithGuiScale(modelIdentifier, TextureMapping.singleSlot(TextureSlot.LAYER0, new Material(modelIdentifier)), generator.modelOutput, new Vector3f(1.f, 1.f, 1.f));
 
             ItemModel.Unbaked caseModel = ItemModelUtils.plainModel(modelIdentifier);
             switchCases.add(ItemModelUtils.when(buttonName, caseModel));
