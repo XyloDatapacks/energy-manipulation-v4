@@ -68,7 +68,10 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
     @Override
     public void onDoubleSwap(@NonNull Level level, @NonNull Player player, @NonNull ItemStack stack) {
         if (player instanceof ServerPlayer serverPlayer) {
-            // Open gui
+            // Force send inventory data to prevent visual artifacts.
+            serverPlayer.containerMenu.sendAllDataToRemote();
+            
+            // Open gui.
             SpellEditor spellEditor = new SpellEditor();
             SpellEditorGui gui = new SpellEditorGui(serverPlayer, spellEditor);
             gui.open();

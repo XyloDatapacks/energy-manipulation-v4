@@ -21,7 +21,9 @@ public class ServerGamePacketListenerImplMixin {
 
         if (listenerInstance.hasClientLoaded()) {
             if (packet.getAction() == ServerboundPlayerActionPacket.Action.SWAP_ITEM_WITH_OFFHAND) {
-                DoubleSwapTracker.onAfterSwap(listenerInstance.player);
+                if (!listenerInstance.player.isSpectator()) {
+                    DoubleSwapTracker.onAfterSwap(listenerInstance.player);
+                }
             }
         }
     }
