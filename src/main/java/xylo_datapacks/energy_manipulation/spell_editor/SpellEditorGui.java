@@ -79,22 +79,22 @@ public class SpellEditorGui extends SimpleGui {
         this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_SCROLL_INDEX, scrollSlot);
         scrollSlot.onItemStackChangedCallback = this::onScrollChanged;
         
-        this.setSlot(50, new GuiElementBuilder(Items.RED_WOOL)
+        this.setSlot(50, new GuiElementBuilder(SpellEditorButtonsRegistry.CANCEL_BUTTON.get())
                 .setName(Component.literal("Cancel"))
                 .setCallback(this::revertSpellChanges)
                 .build());
 
-        this.setSlot(51, new GuiElementBuilder(Items.GREEN_WOOL)
+        this.setSlot(51, new GuiElementBuilder(SpellEditorButtonsRegistry.CONFIRM_BUTTON.get())
                 .setName(Component.literal("Confirm"))
                 .setCallback(this::saveSpellChanges)
                 .build());
         
-        this.setSlot(52, new GuiElementBuilder(Items.SPECTRAL_ARROW)
+        this.setSlot(52, new GuiElementBuilder(SpellEditorButtonsRegistry.PREVIOUS_PAGE_BUTTON.get())
                 .setName(Component.literal("Previous Page"))
                 .setCallback(this::previousPage)
                 .build());
 
-        this.setSlot(53, new GuiElementBuilder(Items.SPECTRAL_ARROW)
+        this.setSlot(53, new GuiElementBuilder(SpellEditorButtonsRegistry.NEXT_PAGE_BUTTON.get())
                 .setName(Component.literal("Next Page"))
                 .setCallback(this::nextPage)
                 .build());

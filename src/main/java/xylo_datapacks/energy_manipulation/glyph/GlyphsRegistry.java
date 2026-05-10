@@ -15,14 +15,12 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.ProgramGlyp
 import xylo_datapacks.energy_manipulation.glyph.value_type.*;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class GlyphsRegistry {
     // Glyph registry
-    public static final ResourceKey<Registry<Glyph>> GLYPHS_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "glyph_registry"));
-    public static final Registry<Glyph> GLYPH = FabricRegistryBuilder.create(GLYPHS_REGISTRY_KEY).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
+    public static final ResourceKey<Registry<Glyph>> GLYPH_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "glyph_registry"));
+    public static final Registry<Glyph> GLYPH = FabricRegistryBuilder.create(GLYPH_REGISTRY_KEY).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
     // Value Type registry
     public static final ResourceKey<Registry<GlyphValueType>> VALUE_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "glyph_value_type_registry"));
     public static final Registry<GlyphValueType> VALUE_TYPE = FabricRegistryBuilder.create(VALUE_TYPE_REGISTRY_KEY).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
@@ -41,14 +39,14 @@ public class GlyphsRegistry {
     static public final ExecutionValueType EXECUTION_VALUE_TYPE = registerValueType("execution_value_type", ExecutionValueType::new);
     static public final ExecutionErrorValueType EXECUTION_ERROR_VALUE_TYPE = registerValueType("execution_error_value_type", ExecutionErrorValueType::new);
 
-    public static <T extends Glyph> T registerGlyph(String name, Supplier<T> Factory) {
-        T glyph = Factory.get();
+    public static <T extends Glyph> T registerGlyph(String name, Supplier<T> factory) {
+        T glyph = factory.get();
         Registry.register(GLYPH, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, name), glyph);
         return glyph;
     }
 
-    public static <T extends GlyphValueType> T registerValueType(String name, Supplier<T> Factory) {
-        T valueType = Factory.get();
+    public static <T extends GlyphValueType> T registerValueType(String name, Supplier<T> factory) {
+        T valueType = factory.get();
         Registry.register(VALUE_TYPE, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, name), valueType);
         return valueType;
     }

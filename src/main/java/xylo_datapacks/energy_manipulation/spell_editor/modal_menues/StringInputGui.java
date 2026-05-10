@@ -2,18 +2,13 @@ package xylo_datapacks.energy_manipulation.spell_editor.modal_menues;
 
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.AnvilInputGui;
-import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
-import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
-import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
-import xylo_datapacks.energy_manipulation.glyph.value_type.StringValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
+import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorButtonsRegistry;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
 
 public class StringInputGui extends AnvilInputGui {
@@ -43,7 +38,7 @@ public class StringInputGui extends AnvilInputGui {
     }
 
     protected void setupToolbar() {
-        this.setSlot(1, new GuiElementBuilder(Items.RED_WOOL)
+        this.setSlot(1, new GuiElementBuilder(SpellEditorButtonsRegistry.CANCEL_BUTTON.get())
                 .setName(Component.literal("Cancel"))
                 .setCallback(clickType -> {
                     setValueFromString(defaultText);
@@ -51,7 +46,7 @@ public class StringInputGui extends AnvilInputGui {
                 })
                 .build());
         
-        this.setSlot(2, new GuiElementBuilder(Items.GREEN_WOOL)
+        this.setSlot(2, new GuiElementBuilder(SpellEditorButtonsRegistry.CONFIRM_BUTTON.get())
                 .setName(Component.literal("Confirm"))
                 .setCallback(clickType -> {
                     if (isValidInput(getInput())) {

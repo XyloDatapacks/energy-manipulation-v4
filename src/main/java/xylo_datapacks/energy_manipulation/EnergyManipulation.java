@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationComponents;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
+import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorButtonsRegistry;
 
 public class EnergyManipulation implements ModInitializer {
 	public static final String MOD_ID = "energy_manipulation";
@@ -26,6 +27,7 @@ public class EnergyManipulation implements ModInitializer {
 		PolymerResourcePackUtils.addModAssets(MOD_ID);
 
 		GlyphsRegistry.initialize();
+		SpellEditorButtonsRegistry.initialize();
 		EnergyManipulationComponents.initialize();
 		EnergyManipulationItems.initialize();
 		EnergyManipulationCommands.initialize();

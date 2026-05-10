@@ -4,8 +4,11 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
+import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
@@ -27,14 +30,15 @@ public class SpellEditorGuiUtils {
         InputPinDefinition pinDefinitionToDisplay = glyphInstance.glyph.getInputPinDefinition(pinIndex).get();
         String pinDisplayName = pinDefinitionToDisplay.pinName;
         
-        return new GuiElementBuilder(connectedGlyphInstance != null ? Items.PAPER : Items.BARRIER)
+        ItemStack buttonStack = connectedGlyphInstance != null ? Items.PAPER.getDefaultInstance() : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
+        return new GuiElementBuilder(buttonStack)
                 .setName(Component.literal("Pin: " + pinDisplayName + " | " + connectedGlyphDisplayName))
                 .setCallback(clickType -> editorGui.openGlyphSelector(glyphInstance, pinIndex))
                 .build();
     }
     
     public static SimpleGuiElement makeArrayPinDecoratorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance, int pinIndex) {
-        return new GuiElementBuilder(Items.MAP)
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.INSERT_OR_REMOVE_ELEMENT_BUTTON.get())
                 .setName(Component.literal("+ / -"))
                 .setCallback(clickType -> {
                     if (clickType.isRight) {
@@ -48,13 +52,13 @@ public class SpellEditorGuiUtils {
     }
 
     public static SimpleGuiElement makeArrayGlyphOpenerGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
-        return new GuiElementBuilder(Items.LIGHT_BLUE_CONCRETE)
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.ARRAY_START_BUTTON.get())
                 .setName(Component.literal("("))
                 .build();
     }
 
     public static SimpleGuiElement makeArrayGlyphTerminatorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
-        return new GuiElementBuilder(Items.ORANGE_CONCRETE)
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.ADD_ELEMENT_BUTTON.get())
                 .setName(Component.literal(")+"))
                 .setCallback(clickType -> editorGui.addArrayPin(glyphInstance))
                 .build();
@@ -66,6 +70,16 @@ public class SpellEditorGuiUtils {
         return new GuiElementBuilder(Items.REDSTONE_TORCH)
                 .setName(Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value"))
                 .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
+                .build();
+    }
+
+    public static SimpleGuiElement makeGlyphOptionGuiElement(GlyphSelectorGui selectorGui, Glyph glyph) {
+        return new GuiElementBuilder(Items.PAPER)
+                .setName(Component.literal(glyph.getClass().getSimpleName()))
+                .setCallback(clickType -> {
+                    GlyphUtils.connectNewGlyph(selectorGui.getGlyphInstance(), selectorGui.getPinIndex(), glyph);
+                    selectorGui.goBackToEditor();
+                })
                 .build();
     }
     

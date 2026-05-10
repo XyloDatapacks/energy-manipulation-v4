@@ -5,11 +5,11 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
+import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorButtonsRegistry;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
 
 public class MultipleChoiceInputGui extends SimpleGui {
@@ -40,7 +40,7 @@ public class MultipleChoiceInputGui extends SimpleGui {
     }
 
     protected void setupToolbar() {
-        this.setSlot(26, new GuiElementBuilder(Items.RED_WOOL)
+        this.setSlot(26, new GuiElementBuilder(SpellEditorButtonsRegistry.CANCEL_BUTTON.get())
                 .setName(Component.literal("Cancel"))
                 .setCallback(clickType -> {
                     GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(instance, initialValue);

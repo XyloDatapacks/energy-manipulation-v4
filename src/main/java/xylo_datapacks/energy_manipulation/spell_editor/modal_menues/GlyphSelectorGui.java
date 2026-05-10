@@ -7,8 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Items;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
-import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
-import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
+import xylo_datapacks.energy_manipulation.spell_editor.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -44,7 +43,7 @@ public class GlyphSelectorGui extends SimpleGui {
     }
 
     protected void setupToolbar() {
-        this.setSlot(26, new GuiElementBuilder(Items.RED_WOOL)
+        this.setSlot(26, new GuiElementBuilder(SpellEditorButtonsRegistry.CANCEL_BUTTON.get())
                 .setName(Component.literal("Cancel"))
                 .setCallback(clickType -> {
                     goBackToEditor();
@@ -52,7 +51,7 @@ public class GlyphSelectorGui extends SimpleGui {
                 .build());
     }
     
-    protected void goBackToEditor() {
+    public void goBackToEditor() {
         SpellEditorGui newEditorGui = new SpellEditorGui(player, editor, editorPage, false);
         newEditorGui.open();
     }
@@ -62,7 +61,7 @@ public class GlyphSelectorGui extends SimpleGui {
         editor.forEachCompatibleGlyph(instance, pinIndex, glyph -> {
             int slotIndex = currentSlot.getAndIncrement();
             if (slotIndex < 26) {
-                this.setSlot(slotIndex, GlyphSelectorGuiUtils.makeGlyphOptionGuiElement(this, glyph));
+                this.setSlot(slotIndex, SpellEditorGuiUtils.makeGlyphOptionGuiElement(this, glyph));
             }
         });
     }

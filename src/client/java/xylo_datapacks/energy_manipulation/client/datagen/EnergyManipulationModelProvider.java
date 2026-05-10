@@ -18,6 +18,7 @@ import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
+import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorButtonsRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +38,13 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
     public void generateItemModels(@NonNull ItemModelGenerators itemModelGenerators) {
         itemModelGenerators.generateFlatItem(EnergyManipulationItems.SPELL_BOOK, ModelTemplates.FLAT_ITEM);
         itemModelGenerators.generateFlatItem(EnergyManipulationItems.SPELL_SCROLL, ModelTemplates.FLAT_ITEM);
-        generateDynamicGuiItemModels(itemModelGenerators, EnergyManipulationItems.GUI_BUTTON, List.of("confirm", "cancel"));
+        generateDynamicGuiItemModels(itemModelGenerators, EnergyManipulationItems.GUI_BUTTON);
     }
 
-    public void generateDynamicGuiItemModels(ItemModelGenerators generator, Item baseItem, List<String> buttons) {
+    public void generateDynamicGuiItemModels(ItemModelGenerators generator, Item baseItem) {
         // Add glyphs to buttons to create.
-        List<String> allButtons = new ArrayList<>(buttons);
+        List<String> allButtons = new ArrayList<>();
+        allButtons.addAll(SpellEditorButtonsRegistry.SPELL_EDITOR_BUTTON.keySet().stream().map(Identifier::getPath).toList());
         allButtons.addAll(GlyphsRegistry.GLYPH.keySet().stream().map(Identifier::getPath).toList());
         
         System.out.println("Generating models for buttons: " + allButtons);
