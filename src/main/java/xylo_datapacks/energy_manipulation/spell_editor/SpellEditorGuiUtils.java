@@ -30,7 +30,7 @@ public class SpellEditorGuiUtils {
         InputPinDefinition pinDefinitionToDisplay = glyphInstance.glyph.getInputPinDefinition(pinIndex).get();
         String pinDisplayName = pinDefinitionToDisplay.pinName;
         
-        ItemStack buttonStack = connectedGlyphInstance != null ? Items.PAPER.getDefaultInstance() : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
+        ItemStack buttonStack = connectedGlyphInstance != null ? SpellEditorButtonsRegistry.getGlyphButtonStack(connectedGlyphInstance.glyph) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
                 .setName(Component.literal("Pin: " + pinDisplayName + " | " + connectedGlyphDisplayName))
                 .setCallback(clickType -> editorGui.openGlyphSelector(glyphInstance, pinIndex))
@@ -74,7 +74,7 @@ public class SpellEditorGuiUtils {
     }
 
     public static SimpleGuiElement makeGlyphOptionGuiElement(GlyphSelectorGui selectorGui, Glyph glyph) {
-        return new GuiElementBuilder(Items.PAPER)
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.getGlyphButtonStack(glyph))
                 .setName(Component.literal(glyph.getClass().getSimpleName()))
                 .setCallback(clickType -> {
                     GlyphUtils.connectNewGlyph(selectorGui.getGlyphInstance(), selectorGui.getPinIndex(), glyph);

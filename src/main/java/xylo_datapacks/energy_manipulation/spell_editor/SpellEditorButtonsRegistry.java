@@ -11,6 +11,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
+import xylo_datapacks.energy_manipulation.glyph.Glyph;
+import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 
 import java.util.ArrayList;
@@ -32,29 +34,38 @@ public class SpellEditorButtonsRegistry {
     public static final Supplier<ItemStack> EMPTY_PIN_BUTTON = registerGlyph("empty_pin_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> VALUE_SELECTOR_BUTTON = registerGlyph("value_selector_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     
+    public static ItemStack getGlyphButtonStack(Glyph glyph) {
+        ItemStack glyphButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
+        setCustomModelData(glyphButtonStack, GlyphsRegistry.GLYPH.getKey(glyph).getPath());
+        return glyphButtonStack;
+    }
     
     public static Supplier<ItemStack> registerGlyph(String name, Supplier<ItemStack> factory) {
         Supplier<ItemStack> output = () -> {
             ItemStack stack = factory.get();
-            stack.update(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY, customModelData -> {
-                List<String> strings = new ArrayList<>(customModelData.strings());
-
-                if (strings.size() <= 0) {
-                    strings.add("");
-                }
-                strings.set(0, name);
-
-                return new CustomModelData(
-                        customModelData.floats(),
-                        customModelData.flags(),
-                        strings,
-                        customModelData.colors()
-                );
-            });
+            setCustomModelData(stack, name);
             return stack;
         };
         Registry.register(SPELL_EDITOR_BUTTON, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, name), output);
         return output;
+    }
+    
+    protected static void setCustomModelData(ItemStack stack, String name) {
+        stack.update(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY, customModelData -> {
+            List<String> strings = new ArrayList<>(customModelData.strings());
+
+            if (strings.size() <= 0) {
+                strings.add("");
+            }
+            strings.set(0, name);
+
+            return new CustomModelData(
+                    customModelData.floats(),
+                    customModelData.flags(),
+                    strings,
+                    customModelData.colors()
+            );
+        });
     }
 
     public static void initialize() {

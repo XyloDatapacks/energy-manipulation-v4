@@ -17,11 +17,13 @@ import net.minecraft.world.item.Item;
 import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorButtonsRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EnergyManipulationModelProvider extends FabricModelProvider {
     
@@ -46,6 +48,13 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         List<String> allButtons = new ArrayList<>();
         allButtons.addAll(SpellEditorButtonsRegistry.SPELL_EDITOR_BUTTON.keySet().stream().map(Identifier::getPath).toList());
         allButtons.addAll(GlyphsRegistry.GLYPH.keySet().stream().map(Identifier::getPath).toList());
+
+        allButtons.addAll(GlyphsRegistry.VALUE_TYPE.keySet().stream().map(Identifier::getPath).toList());
+        String rawValueGlyphKey = GlyphsRegistry.GLYPH.getKey(GlyphsRegistry.RAW_VALUE_GLYPH).getPath();
+        allButtons.addAll(GlyphsRegistry.VALUE_TYPE.stream()
+                .filter(GlyphValueType::hasValueSelector)
+                .map(valueType -> rawValueGlyphKey + "_" + GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath())
+                .toList());
         
         System.out.println("Generating models for buttons: " + allButtons);
 
