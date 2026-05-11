@@ -4,10 +4,8 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomModelData;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
@@ -24,18 +22,22 @@ public class SpellEditorButtonsRegistry {
     // Buttons registry
     public static final ResourceKey<Registry<Supplier<ItemStack>>> SPELL_EDITOR_BUTTON_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "spell_editor_button_registry"));
     public static final Registry<Supplier<ItemStack>> SPELL_EDITOR_BUTTON = FabricRegistryBuilder.create(SPELL_EDITOR_BUTTON_REGISTRY_KEY).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
+    // Glyph buttons registry (fix for data gen since I do not have good textures for the glyphs and I need to scale them up more)
+    public static final ResourceKey<Registry<Supplier<ItemStack>>> SPELL_EDITOR_GLYPH_BUTTON_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "spell_editor_glyph_button_registry"));
+    public static final Registry<Supplier<ItemStack>> SPELL_EDITOR_GLYPH_BUTTON = FabricRegistryBuilder.create(SPELL_EDITOR_GLYPH_BUTTON_REGISTRY_KEY).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
     
-    public static final Supplier<ItemStack> CONFIRM_BUTTON = registerGlyph("confirm_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> CONFIRM_BUTTON_DISABLED = registerGlyph("confirm_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> CANCEL_BUTTON = registerGlyph("cancel_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> NEXT_PAGE_BUTTON = registerGlyph("next_page_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON = registerGlyph("previous_page_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> NEXT_PAGE_BUTTON_DISABLED = registerGlyph("next_page_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON_DISABLED = registerGlyph("previous_page_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> INSERT_OR_REMOVE_ELEMENT_BUTTON = registerGlyph("insert_or_remove_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> ADD_ELEMENT_BUTTON = registerGlyph("add_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> ARRAY_START_BUTTON = registerGlyph("array_start_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> EMPTY_PIN_BUTTON = registerGlyph("empty_pin_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> CONFIRM_BUTTON = registerButton("confirm_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> CONFIRM_BUTTON_DISABLED = registerButton("confirm_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> CANCEL_BUTTON = registerButton("cancel_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> NEXT_PAGE_BUTTON = registerButton("next_page_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON = registerButton("previous_page_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> NEXT_PAGE_BUTTON_DISABLED = registerButton("next_page_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON_DISABLED = registerButton("previous_page_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    
+    public static final Supplier<ItemStack> INSERT_OR_REMOVE_ELEMENT_BUTTON = registerGlyphButton("insert_or_remove_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> ADD_ELEMENT_BUTTON = registerGlyphButton("add_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> ARRAY_START_BUTTON = registerGlyphButton("array_start_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> EMPTY_PIN_BUTTON = registerGlyphButton("empty_pin_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     
     public static ItemStack getGlyphButtonStack(Glyph glyph, GlyphValueType outputValueType) {
         ItemStack glyphButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
@@ -59,7 +61,17 @@ public class SpellEditorButtonsRegistry {
         return operatorSeparatorButtonStack;
     }
 
-    public static Supplier<ItemStack> registerGlyph(String name, Supplier<ItemStack> factory) {
+    public static Supplier<ItemStack> registerGlyphButton(String name, Supplier<ItemStack> factory) {
+        Supplier<ItemStack> output = () -> {
+            ItemStack stack = factory.get();
+            setCustomModelData(stack, name);
+            return stack;
+        };
+        Registry.register(SPELL_EDITOR_GLYPH_BUTTON, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, name), output);
+        return output;
+    }
+
+    public static Supplier<ItemStack> registerButton(String name, Supplier<ItemStack> factory) {
         Supplier<ItemStack> output = () -> {
             ItemStack stack = factory.get();
             setCustomModelData(stack, name);
