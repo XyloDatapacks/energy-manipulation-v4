@@ -26,9 +26,12 @@ public class SpellEditorButtonsRegistry {
     public static final Registry<Supplier<ItemStack>> SPELL_EDITOR_BUTTON = FabricRegistryBuilder.create(SPELL_EDITOR_BUTTON_REGISTRY_KEY).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
     
     public static final Supplier<ItemStack> CONFIRM_BUTTON = registerGlyph("confirm_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> CONFIRM_BUTTON_DISABLED = registerGlyph("confirm_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> CANCEL_BUTTON = registerGlyph("cancel_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> NEXT_PAGE_BUTTON = registerGlyph("next_page_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON = registerGlyph("previous_page_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> NEXT_PAGE_BUTTON_DISABLED = registerGlyph("next_page_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON_DISABLED = registerGlyph("previous_page_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> INSERT_OR_REMOVE_ELEMENT_BUTTON = registerGlyph("insert_or_remove_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> ADD_ELEMENT_BUTTON = registerGlyph("add_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
     public static final Supplier<ItemStack> ARRAY_START_BUTTON = registerGlyph("array_start_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);

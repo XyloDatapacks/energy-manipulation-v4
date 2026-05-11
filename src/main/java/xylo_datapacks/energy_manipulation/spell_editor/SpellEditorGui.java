@@ -102,12 +102,18 @@ public class SpellEditorGui extends SimpleGui {
                 .setCallback(this::saveSpellChanges)
                 .build());
         
-        this.setSlot(52, new GuiElementBuilder(SpellEditorButtonsRegistry.PREVIOUS_PAGE_BUTTON.get())
+        refreshPageButtons();
+    }
+    
+    public void refreshPageButtons() {
+        ItemStack prevPageStack = currentPage > 0 ? SpellEditorButtonsRegistry.PREVIOUS_PAGE_BUTTON.get() : SpellEditorButtonsRegistry.PREVIOUS_PAGE_BUTTON_DISABLED.get();
+        this.setSlot(52, new GuiElementBuilder(prevPageStack)
                 .setName(Component.literal("Previous Page"))
                 .setCallback(this::previousPage)
                 .build());
 
-        this.setSlot(53, new GuiElementBuilder(SpellEditorButtonsRegistry.NEXT_PAGE_BUTTON.get())
+        ItemStack nextPageStack = !bIsLastPage ? SpellEditorButtonsRegistry.NEXT_PAGE_BUTTON.get() : SpellEditorButtonsRegistry.NEXT_PAGE_BUTTON_DISABLED.get();
+        this.setSlot(53, new GuiElementBuilder(nextPageStack)
                 .setName(Component.literal("Next Page"))
                 .setCallback(this::nextPage)
                 .build());
@@ -173,8 +179,11 @@ public class SpellEditorGui extends SimpleGui {
         
         // Clear remaining slots.
         while (!isOutOfGlyphsDrawingSpace(currentSlot)) {
-            this.clearSlot(currentSlot.getAndIncrement() % PAGE_SIZE);
+            clearSlot(currentSlot.getAndIncrement() % PAGE_SIZE);
         }
+
+        // refresh page buttons because page might have changed.
+        refreshPageButtons();
     }
 
     /** @return true if currentSlot is out of bounds. */
@@ -293,6 +302,8 @@ public class SpellEditorGui extends SimpleGui {
         } else {
             editor.reset();
         }
+        
+        currentPage = 0;
         onInstanceChanged();
     }
 
