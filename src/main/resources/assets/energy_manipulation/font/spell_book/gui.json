@@ -1,0 +1,49 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "energy_manipulation:item/gui/spell_book/menu_6by9.png",
+      "ascent": 21,
+      "height": 256,
+      "chars": ["\uE001"]
+    },
+    {
+      "type": "bitmap",
+      "file": "energy_manipulation:item/gui/spell_book/menu_3by9.png",
+      "ascent": 21,
+      "height": 256,
+      "chars": ["\uE002"]
+    },
+    {
+      "type": "bitmap",
+      "file": "energy_manipulation:item/gui/spell_book/menu_3by9_anvil.png",
+      "ascent": 22,
+      "height": 256,
+      "chars": ["\uE003"]
+    },
+    {
+      "type": "space",
+      "advances": {
+        "\uF001": -192,
+        "\uF002": -192,
+        "\uF003": -192
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "\uF101": -16,
+        "\uF102": -16,
+        "\uF103": -68
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "\uF201": 16,
+        "\uF202": 16,
+        "\uF203": 16
+      }
+    }
+  ]
+}

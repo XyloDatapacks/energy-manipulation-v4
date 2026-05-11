@@ -4,6 +4,10 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
@@ -12,6 +16,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jspecify.annotations.NonNull;
+import xylo_datapacks.energy_manipulation.EnergyManipulation;
+import xylo_datapacks.energy_manipulation.font.EnergyManipulationFonts;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
@@ -46,7 +52,7 @@ public class SpellEditorGui extends SimpleGui {
         if (bLoadSpellFromItem) {
             onScrollChanged(getScrollStack());
         }
-        this.setTitle(Component.literal("Spell Editor"));
+        this.setTitle(getTitleText());
         this.setupToolbar();
         this.rebuildSpellGui();
     }
@@ -67,6 +73,12 @@ public class SpellEditorGui extends SimpleGui {
         return currentPage;
     }
 
+    protected MutableComponent getTitleText() {
+        return Component.empty()
+                .append(Component.literal("\uF101\uE001\uF001\uF201").setStyle(Style.EMPTY.withFont(EnergyManipulationFonts.SPELL_BOOK_GUI).withColor(0xFFFFFF)))
+                .append(Component.literal("Spell Book").setStyle(Style.EMPTY.withFont(FontDescription.DEFAULT)));
+    }
+    
     protected void setupToolbar() {
         
         // TODO: allow input slots to set data in item stack component

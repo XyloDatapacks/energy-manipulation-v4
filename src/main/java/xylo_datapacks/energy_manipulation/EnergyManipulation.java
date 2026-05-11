@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xylo_datapacks.energy_manipulation.font.EnergyManipulationFonts;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationComponents;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
@@ -26,6 +27,7 @@ public class EnergyManipulation implements ModInitializer {
 		
 		PolymerResourcePackUtils.addModAssets(MOD_ID);
 
+		EnergyManipulationFonts.initialize();
 		GlyphsRegistry.initialize();
 		SpellEditorButtonsRegistry.initialize();
 		EnergyManipulationComponents.initialize();
