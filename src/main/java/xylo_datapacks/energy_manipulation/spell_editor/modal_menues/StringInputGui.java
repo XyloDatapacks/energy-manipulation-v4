@@ -42,6 +42,11 @@ public class StringInputGui extends AnvilInputGui {
         return inputStack;
     }
 
+    @Override
+    public void onInput(String input) {
+        refreshConfirmButton();
+    }
+
     public SpellEditor getSpellEditor() {
         return editor;
     }
@@ -65,7 +70,12 @@ public class StringInputGui extends AnvilInputGui {
                 })
                 .build());
         
-        this.setSlot(2, new GuiElementBuilder(SpellEditorButtonsRegistry.CONFIRM_BUTTON.get())
+        refreshConfirmButton();
+    }
+    
+    protected void refreshConfirmButton() {
+        ItemStack confirmButtonStack = isValidInput(getInput()) ? SpellEditorButtonsRegistry.CONFIRM_BUTTON.get() : SpellEditorButtonsRegistry.CONFIRM_BUTTON_DISABLED.get();
+        this.setSlot(2, new GuiElementBuilder(confirmButtonStack)
                 .setName(Component.literal("Confirm"))
                 .setCallback(clickType -> {
                     if (isValidInput(getInput())) {
