@@ -1,6 +1,5 @@
 package xylo_datapacks.energy_manipulation.glyph;
 
-import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.Identifier;
@@ -12,13 +11,25 @@ import xylo_datapacks.energy_manipulation.glyph.pin.*;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 
-import javax.swing.text.html.Option;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+/**
+ * Remember to always use qualified access to members of this class to avoid calling methods using the 
+ * wrong Glyph object.
+ *  {@snippet : 
+ *    connect(GlyphInstance glyphInstance, GlyphInstance other) {
+ *        onPinConnectionChanged(glyphInstance);
+ *
+ *        onConnected(other);  // <- WRONG!
+ *        parentInstance.glyph.onConnected(other); // <- RIGHT!
+ *    }
+ *  }
+ * 
+ */
 public class Glyph {
 
     protected OutputPinDefinition outputPinDefinition = new OutputPinDefinition();
@@ -30,17 +41,17 @@ public class Glyph {
     }
 
     public void RegisterPinDefinition(String pinName, Predicate<Glyph> glyphFilter) {
-        if (inputPinMode == InputPinMode.NONE) {
+        if (this.inputPinMode == InputPinMode.NONE) {
             EnergyManipulation.LOGGER.warn("Cannot register a pin definition if inputPinMode is not set for this Glyph!");
             return;
         }
 
-        if (inputPinMode == InputPinMode.VALUE) {
+        if (this.inputPinMode == InputPinMode.VALUE) {
             EnergyManipulation.LOGGER.warn("Trying to register a Glyph pin, while no pin is expected!");
             return;
         }
 
-        if (inputPinMode == InputPinMode.ARRAY && !inputPinDefinitions.isEmpty()) {
+        if (this.inputPinMode == InputPinMode.ARRAY && !this.inputPinDefinitions.isEmpty()) {
             EnergyManipulation.LOGGER.warn("Glyphs with input pin arrays can only register one input pin definition!");
             return;
         }
@@ -48,8 +59,8 @@ public class Glyph {
         InputPinDefinition inputPinDefinition = new InputPinDefinition(pinName);
         inputPinDefinition.glyphFilter = glyphFilter;
 
-        inputPinDefinitions.add(inputPinDefinition);
-        editorData.inputPinsEditorData.put(pinName, new InputPinEditorData());
+        this.inputPinDefinitions.add(inputPinDefinition);
+        this.editorData.inputPinsEditorData.put(pinName, new InputPinEditorData());
     }
     
     /*================================================================================================================*/
@@ -58,7 +69,7 @@ public class Glyph {
     public GlyphInstance instantiate(GlyphValueType outputValueType) {
         
         // do not allow creation if we cannot support output value type
-        if (outputValueType == null || !outputPinDefinition.valueTypeCompatibilityPredicate.test(outputValueType)) {
+        if (outputValueType == null || !this.outputPinDefinition.valueTypeCompatibilityPredicate.test(outputValueType)) {
             EnergyManipulation.LOGGER.warn("Trying to instantiate a GlyphInstance with a non supported output pin type!");
             return null;
         }
@@ -67,8 +78,8 @@ public class Glyph {
         GlyphInstance glyphInstance = new GlyphInstance(this);
 
         // Create input pins
-        if (inputPinMode == InputPinMode.STANDARD) {
-            inputPinDefinitions.forEach(inputPinDefinition -> {
+        if (this.inputPinMode == InputPinMode.STANDARD) {
+            this.inputPinDefinitions.forEach(inputPinDefinition -> {
                 InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
                 glyphInstance.inputPins.add(newInputPin);
             });
@@ -79,20 +90,16 @@ public class Glyph {
         glyphInstance.outputPin.valueType = outputValueType;
         
         // Custom initialization for pins
-        initializePins(glyphInstance);
-        refreshPins(glyphInstance);
+        this.initializePins(glyphInstance);
         
         // Create payload
         glyphInstance.payload = createPayload(glyphInstance);
-        initializePayload(glyphInstance);
+        this.initializePayload(glyphInstance);
         
         return glyphInstance;
     }
     
     public void initializePins(GlyphInstance glyphInstance) {}
-
-    /** Called every time a pin connection changes. */
-    public void refreshPins(GlyphInstance glyphInstance) {}
 
     public GlyphPayload createPayload(GlyphInstance glyphInstance) {
         return null;
@@ -107,20 +114,20 @@ public class Glyph {
     // PinManagement
     
     public InputPinMode getInputPinMode() {
-        return inputPinMode;
+        return this.inputPinMode;
     }
     
     public OutputPinDefinition getOutputPinDefinition() {
-        return outputPinDefinition;
+        return this.outputPinDefinition;
     }
     
     public boolean hasInputPins(GlyphInstance glyphInstance) {
-        return (inputPinMode == InputPinMode.ARRAY || inputPinMode == InputPinMode.STANDARD) && !glyphInstance.inputPins.isEmpty();
+        return (this.inputPinMode == InputPinMode.ARRAY || this.inputPinMode == InputPinMode.STANDARD) && !glyphInstance.inputPins.isEmpty();
     }
 
     public int getInputPinIndex(String pinName) {
-        for (int i = 0; i < inputPinDefinitions.size(); i++) {
-            if (inputPinDefinitions.get(i).pinName.equals(pinName)) {
+        for (int i = 0; i < this.inputPinDefinitions.size(); i++) {
+            if (this.inputPinDefinitions.get(i).pinName.equals(pinName)) {
                 return i;
             }
         }
@@ -128,32 +135,32 @@ public class Glyph {
     }
     
     public List<InputPinDefinition> getInputPinDefinitions() {
-        return inputPinDefinitions;
+        return this.inputPinDefinitions;
     }
 
     public Optional<InputPinDefinition> getInputPinDefinition(String pinName) {
-        int pinIndex = getInputPinIndex(pinName);
-        return getInputPinDefinition(pinIndex);
+        int pinIndex = this.getInputPinIndex(pinName);
+        return this.getInputPinDefinition(pinIndex);
     }
 
     public Optional<InputPinDefinition> getInputPinDefinition(int pinIndex) {
-        if (inputPinMode == InputPinMode.ARRAY) {
+        if (this.inputPinMode == InputPinMode.ARRAY) {
             pinIndex = 0;
         }
 
-        if (pinIndex >= 0 && pinIndex < inputPinDefinitions.size()) {
-            return Optional.ofNullable(inputPinDefinitions.get(pinIndex));
+        if (pinIndex >= 0 && pinIndex < this.inputPinDefinitions.size()) {
+            return Optional.ofNullable(this.inputPinDefinitions.get(pinIndex));
         }
         return Optional.empty();
     }
     
     public Optional<InputPin> getInputPin(GlyphInstance glyphInstance, String pinName) {
-        if (inputPinMode == InputPinMode.ARRAY) {
+        if (this.inputPinMode == InputPinMode.ARRAY) {
             EnergyManipulation.LOGGER.warn("While using InputPinMode.ARRAY, getting an input pin by name will always return the first pin if it exists!");
         }
         
-        int pinIndex = getInputPinIndex(pinName);
-        return getInputPin(glyphInstance, pinIndex);
+        int pinIndex = this.getInputPinIndex(pinName);
+        return this.getInputPin(glyphInstance, pinIndex);
     }
 
     public Optional<InputPin> getInputPin(GlyphInstance glyphInstance, int pinIndex) {
@@ -164,37 +171,34 @@ public class Glyph {
     }
     
     public void addPin(GlyphInstance glyphInstance) {
-        if (inputPinMode != InputPinMode.ARRAY) {
+        if (this.inputPinMode != InputPinMode.ARRAY) {
             EnergyManipulation.LOGGER.warn("Cannot add pins if inputPinMode is not ARRAY!");
             return;
         }
 
         InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
         glyphInstance.inputPins.add(newInputPin);
-        initializeNewPin(glyphInstance, newInputPin);
-        refreshPins(glyphInstance);
+        this.initializeNewPin(glyphInstance, newInputPin);
     }
 
     public void removePin(GlyphInstance glyphInstance, int index) {
-        if (inputPinMode != InputPinMode.ARRAY) {
+        if (this.inputPinMode != InputPinMode.ARRAY) {
             EnergyManipulation.LOGGER.warn("Cannot remove pins if inputPinMode is not ARRAY!");
             return;
         }
 
         glyphInstance.inputPins.remove(index);
-        refreshPins(glyphInstance);
     }
 
     public void insertPin(GlyphInstance glyphInstance, int index) {
-        if (inputPinMode != InputPinMode.ARRAY) {
+        if (this.inputPinMode != InputPinMode.ARRAY) {
             EnergyManipulation.LOGGER.warn("Cannot insert pins if inputPinMode is not ARRAY!");
             return;
         }
 
         InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
         glyphInstance.inputPins.add(index, newInputPin);
-        initializeNewPin(glyphInstance, newInputPin);
-        refreshPins(glyphInstance);
+        this.initializeNewPin(glyphInstance, newInputPin);
     }
     
     public void initializeNewPin(GlyphInstance glyphInstance, InputPin newInputPin) {}
@@ -205,9 +209,14 @@ public class Glyph {
     /*================================================================================================================*/
     // Connections
     
+    public Optional<GlyphInstance> getParentGlyphInstance(GlyphInstance glyphInstance) {
+        Optional<InputPin> parentInputPin = Optional.ofNullable(glyphInstance.outputPin.connectedPin.get());
+        return parentInputPin.map(pin -> pin.owner.get());
+    }
+    
     protected boolean canConnectToPin_Internal(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
-        Optional<InputPin> inputPin = getInputPin(glyphInstance, pinIndex);
-        Optional<InputPinDefinition> inputPinDefinition = getInputPinDefinition(pinIndex);
+        Optional<InputPin> inputPin = this.getInputPin(glyphInstance, pinIndex);
+        Optional<InputPinDefinition> inputPinDefinition = this.getInputPinDefinition(pinIndex);
         if (inputPin.isEmpty() || inputPinDefinition.isEmpty()) {
             return false;
         }
@@ -231,21 +240,21 @@ public class Glyph {
     }
 
     public boolean connectGlyph(GlyphInstance glyphInstance, String pinName, GlyphInstance glyphToConnect) {
-        if (inputPinMode != InputPinMode.STANDARD) {
+        if (this.inputPinMode != InputPinMode.STANDARD) {
             EnergyManipulation.LOGGER.warn("Cannot connect a GlyphInstance by pinName if inputPinMode is not STANDARD!");
             return false;
         }
         
-        int pinIndex = getInputPinIndex(pinName);
-        return connectGlyph_Internal(glyphInstance, pinIndex, glyphToConnect);
+        int pinIndex = this.getInputPinIndex(pinName);
+        return this.connectGlyph_Internal(glyphInstance, pinIndex, glyphToConnect);
     }
 
     public boolean connectGlyph(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
-        return connectGlyph_Internal(glyphInstance, pinIndex, glyphToConnect);
+        return this.connectGlyph_Internal(glyphInstance, pinIndex, glyphToConnect);
     }
 
     protected boolean connectGlyph_Internal(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
-        if (!hasInputPins(glyphInstance)) {
+        if (!this.hasInputPins(glyphInstance)) {
             EnergyManipulation.LOGGER.warn("Cannot connect a GlyphInstance to one with no input pins!");
             return false;
         }
@@ -255,7 +264,7 @@ public class Glyph {
             return false;
         }
         
-        if (!canConnectToPin_Internal(glyphInstance, pinIndex, glyphToConnect)) {
+        if (!this.canConnectToPin_Internal(glyphInstance, pinIndex, glyphToConnect)) {
             EnergyManipulation.LOGGER.warn("Cannot connect GlyphInstance to specified input pin, as they are not compatible!");
             return false;
         }
@@ -264,14 +273,33 @@ public class Glyph {
         targetPin.connectedGlyph = glyphToConnect;
         glyphToConnect.outputPin.connectedPin = new WeakReference<>(targetPin);
         
-        refreshPins(glyphInstance);
-
-        OnConnected(glyphToConnect);
+        this.NotifyInputPinConnectionChanged(glyphInstance, pinIndex);
+        glyphToConnect.glyph.NotifyConnected(glyphToConnect);
         return true;
     }
     
-    public void OnConnected(GlyphInstance glyphInstance) {
-        refreshPins(glyphInstance);
+    public void NotifyInputPinConnectionChanged(GlyphInstance glyphInstance, int pinIndex) {
+        this.onInputPinConnectionChanged(glyphInstance, pinIndex);
+
+        Optional<InputPin> parentInputPin = Optional.ofNullable(glyphInstance.outputPin.connectedPin.get());
+        Optional<GlyphInstance> parentGlyphInstance = parentInputPin.map(pin -> pin.owner.get());
+        if (parentGlyphInstance.isPresent()) {
+            int parentInputPinIndex = parentGlyphInstance.get().inputPins.indexOf(parentInputPin.get());
+            parentGlyphInstance.get().glyph.NotifyInputPinGlyphStateChanged(parentGlyphInstance.get(), parentInputPinIndex);
+        }
+    }
+
+    /**
+     * Called when a connected glyph's input pin changes connection.
+     * @param glyphInstance this glyph instance.
+     * @param pinIndex the index of the input pin who's connected glyph instance changed connection.
+     */
+    public void NotifyInputPinGlyphStateChanged(GlyphInstance glyphInstance, int pinIndex) {
+        this.onInputPinGlyphStateChanged(glyphInstance, pinIndex);
+    }
+    
+    public void NotifyConnected(GlyphInstance glyphInstance) {
+        this.onConnected(glyphInstance);
     }
     
     // ~Connections
@@ -286,13 +314,13 @@ public class Glyph {
     }
 
     public GlyphValue evaluatePin(ExecutionContext executionContext, GlyphInstance glyphInstance, String pinName) {
-        Optional<InputPin> targetPin = getInputPin(glyphInstance, pinName);
-        return evaluatePin_Internal(executionContext, glyphInstance, targetPin.orElse(null));
+        Optional<InputPin> targetPin = this.getInputPin(glyphInstance, pinName);
+        return this.evaluatePin_Internal(executionContext, glyphInstance, targetPin.orElse(null));
     }
 
     public GlyphValue evaluatePin(ExecutionContext executionContext, GlyphInstance glyphInstance, int pinIndex) {
-        Optional<InputPin> targetPin = getInputPin(glyphInstance, pinIndex);
-        return evaluatePin_Internal(executionContext, glyphInstance, targetPin.orElse(null));
+        Optional<InputPin> targetPin = this.getInputPin(glyphInstance, pinIndex);
+        return this.evaluatePin_Internal(executionContext, glyphInstance, targetPin.orElse(null));
     }
 
     protected GlyphValue evaluatePin_Internal(ExecutionContext executionContext, GlyphInstance glyphInstance, InputPin targetPin) {
@@ -325,17 +353,17 @@ public class Glyph {
     // EditorData
 
     public GlyphEditorData getEditorData() {
-        return editorData;
+        return this.editorData;
     }
 
     public Optional<InputPinEditorData> getInputPinEditorData(String pinName) {
-        return Optional.ofNullable(editorData.inputPinsEditorData.get(pinName));
+        return Optional.ofNullable(this.editorData.inputPinsEditorData.get(pinName));
     }
 
     public Optional<InputPinEditorData> getInputPinEditorData(int pinIndex) {
-        Optional<InputPinDefinition> inputPinDefinitions = getInputPinDefinition(pinIndex);
+        Optional<InputPinDefinition> inputPinDefinitions = this.getInputPinDefinition(pinIndex);
         String pinName = inputPinDefinitions.isPresent() ? inputPinDefinitions.get().pinName : "";
-        return getInputPinEditorData(pinName);
+        return this.getInputPinEditorData(pinName);
     }
 
     // ~EditorData
@@ -351,10 +379,10 @@ public class Glyph {
         output.putString("id", GlyphsRegistry.GLYPH.getKey(glyphInstance.glyph).toString());
         
         // Serialize payload
-        serializePayload(glyphInstance).ifPresent(payload -> output.put("payload", payload));
+        this.serializePayload(glyphInstance).ifPresent(payload -> output.put("payload", payload));
 
         // Serialize input pins
-        if (hasInputPins(glyphInstance)) {
+        if (this.hasInputPins(glyphInstance)) {
             ListTag inputPins = new ListTag();
             glyphInstance.inputPins.forEach(pin -> {
                 // Since we are not storing index or id, we must store the empty connections too.
@@ -375,16 +403,16 @@ public class Glyph {
         // deserializing them.
         
         // Deserialize payload.
-        glyphInstanceCompound.getCompound("payload").ifPresent(payload -> deserializePayload(payload, destination));
+        glyphInstanceCompound.getCompound("payload").ifPresent(payload -> this.deserializePayload(payload, destination));
 
         // Deserialize input pins.
         ListTag inputPins = glyphInstanceCompound.getListOrEmpty("inputs");
-        int pinCount = inputPinMode == InputPinMode.ARRAY ? inputPins.size() : Math.min(destination.inputPins.size(), inputPins.size());
+        int pinCount = this.inputPinMode == InputPinMode.ARRAY ? inputPins.size() : Math.min(destination.inputPins.size(), inputPins.size());
         for (int i = 0; i < pinCount; i++) {
             int pinIndex = i;
 
-            if (inputPinMode == InputPinMode.ARRAY) {
-                addPin(destination);
+            if (this.inputPinMode == InputPinMode.ARRAY) {
+                this.addPin(destination);
             }
             
             // Deserialize connection's glyph instance.
@@ -410,5 +438,19 @@ public class Glyph {
     }
 
     // ~Serialization
+    /*================================================================================================================*/
+
+    /*================================================================================================================*/
+    // Callbacks
+
+    public void onInputPinConnectionChanged(GlyphInstance glyphInstance, int pinIndex) {}
+
+    public void onInputPinGlyphStateChanged(GlyphInstance glyphInstance, int pinIndex) {}
+    
+    public void onConnected(GlyphInstance glyphInstance) {
+
+    }
+
+    // ~Callbacks
     /*================================================================================================================*/
 }

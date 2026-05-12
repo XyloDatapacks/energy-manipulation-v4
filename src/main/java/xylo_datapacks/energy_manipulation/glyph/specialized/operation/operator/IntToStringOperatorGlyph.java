@@ -15,23 +15,23 @@ public class IntToStringOperatorGlyph extends Glyph implements OperatorGlyphInte
         super();
 
         this.inputPinMode = InputPinMode.STANDARD;
-        RegisterPinDefinition(INT_VALUE_PIN, glyph -> true);
-        outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> {
+        this.RegisterPinDefinition(INT_VALUE_PIN, glyph -> true);
+        this.outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> {
             return valueType == GlyphsRegistry.STRING_VALUE_TYPE;
         };
-        outputPinDefinition.glyphFilter = glyph -> glyph == GlyphsRegistry.OPERATION_GLYPH;
+        this.outputPinDefinition.glyphFilter = glyph -> glyph == GlyphsRegistry.OPERATION_GLYPH;
     }
 
     @Override
     public void initializePins(GlyphInstance glyphInstance) {
-        getInputPin(glyphInstance, INT_VALUE_PIN).ifPresent(inputPin -> {
+        this.getInputPin(glyphInstance, INT_VALUE_PIN).ifPresent(inputPin -> {
             inputPin.valueType = GlyphsRegistry.INT_VALUE_TYPE;
         });
     }
 
     @Override
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
-        GlyphValue intPinValue = evaluatePin(executionContext, glyphInstance, INT_VALUE_PIN);
+        GlyphValue intPinValue = this.evaluatePin(executionContext, glyphInstance, INT_VALUE_PIN);
         int intValue = GlyphsRegistry.INT_VALUE_TYPE.getIntGlyphValue(intPinValue);
         return GlyphsRegistry.STRING_VALUE_TYPE.makeStringGlyphValue(String.valueOf(intValue));
     }

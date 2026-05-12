@@ -17,19 +17,19 @@ public class SumOperatorGlyph extends Glyph implements OperatorGlyphInterface {
         super();
 
         this.inputPinMode = InputPinMode.STANDARD;
-        RegisterPinDefinition(FIRST_VALUE_PIN, glyph -> true);
-        RegisterPinDefinition(SECOND_VALUE_PIN, glyph -> true);
-        outputPinDefinition.valueTypeCompatibilityPredicate = NumericGlyphValueInterface.class::isInstance;
-        outputPinDefinition.glyphFilter = glyph -> glyph == GlyphsRegistry.OPERATION_GLYPH;
+        this.RegisterPinDefinition(FIRST_VALUE_PIN, glyph -> true);
+        this.RegisterPinDefinition(SECOND_VALUE_PIN, glyph -> true);
+        this.outputPinDefinition.valueTypeCompatibilityPredicate = NumericGlyphValueInterface.class::isInstance;
+        this.outputPinDefinition.glyphFilter = glyph -> glyph == GlyphsRegistry.OPERATION_GLYPH;
     }
 
     @Override
     public void initializePins(GlyphInstance glyphInstance) {
-        getInputPin(glyphInstance, FIRST_VALUE_PIN).ifPresent(inputPin -> {
+        this.getInputPin(glyphInstance, FIRST_VALUE_PIN).ifPresent(inputPin -> {
             inputPin.valueType = glyphInstance.outputPin.valueType;
         });
 
-        getInputPin(glyphInstance, SECOND_VALUE_PIN).ifPresent(inputPin -> {
+        this.getInputPin(glyphInstance, SECOND_VALUE_PIN).ifPresent(inputPin -> {
             inputPin.valueType = glyphInstance.outputPin.valueType;
         });
     }
@@ -38,8 +38,8 @@ public class SumOperatorGlyph extends Glyph implements OperatorGlyphInterface {
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         NumericGlyphValueInterface numericGlyphValueInterface = (NumericGlyphValueInterface) glyphInstance.outputPin.valueType;
         return numericGlyphValueInterface.add(
-                evaluatePin(executionContext, glyphInstance, FIRST_VALUE_PIN),
-                evaluatePin(executionContext, glyphInstance, SECOND_VALUE_PIN)
+                this.evaluatePin(executionContext, glyphInstance, FIRST_VALUE_PIN),
+                this.evaluatePin(executionContext, glyphInstance, SECOND_VALUE_PIN)
         );
     }
 }

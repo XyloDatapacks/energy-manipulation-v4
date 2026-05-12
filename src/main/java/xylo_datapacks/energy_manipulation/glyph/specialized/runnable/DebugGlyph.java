@@ -17,21 +17,21 @@ public class DebugGlyph extends Glyph {
         super();
 
         this.inputPinMode = InputPinMode.STANDARD;
-        RegisterPinDefinition(INPUT_PIN, glyph -> true);
+        this.RegisterPinDefinition(INPUT_PIN, glyph -> true);
     }
 
     @Override
     public void initializePins(GlyphInstance glyphInstance) {
-        getInputPin(glyphInstance, INPUT_PIN).ifPresent(inputPin -> {
+        this.getInputPin(glyphInstance, INPUT_PIN).ifPresent(inputPin -> {
             inputPin.valueType = glyphInstance.outputPin.valueType;
         });
     }
 
     @Override
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
-        GlyphValue outputValue = evaluatePin(executionContext, glyphInstance, INPUT_PIN);
+        GlyphValue outputValue = this.evaluatePin(executionContext, glyphInstance, INPUT_PIN);
 
-        Optional<InputPin> inputPin = getInputPin(glyphInstance, INPUT_PIN);
+        Optional<InputPin> inputPin = this.getInputPin(glyphInstance, INPUT_PIN);
         
         if (inputPin.isPresent() && inputPin.get().connectedGlyph != null) {
             EnergyManipulation.LOGGER.info("Executing [{}] with result [{}]", inputPin.get().connectedGlyph.glyph.getClass().getSimpleName(), outputValue.getDebugString());

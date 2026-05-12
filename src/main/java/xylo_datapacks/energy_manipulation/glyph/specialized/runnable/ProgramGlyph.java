@@ -17,8 +17,8 @@ public class ProgramGlyph extends Glyph {
         super();
 
         this.inputPinMode = InputPinMode.ARRAY;
-        RegisterPinDefinition(INSTRUCTION_PIN, glyph -> true);
-        outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> {
+        this.RegisterPinDefinition(INSTRUCTION_PIN, glyph -> true);
+        this.outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> {
             return valueType == GlyphsRegistry.EXECUTION_VALUE_TYPE;
         };
     }
@@ -36,7 +36,7 @@ public class ProgramGlyph extends Glyph {
         AtomicInteger SuccessCount = new AtomicInteger(0);
         
         for (int i = 0; i < glyphInstance.inputPins.size(); i++) {
-            GlyphValue executionResult = evaluatePin(executionContext, glyphInstance, i);
+            GlyphValue executionResult = this.evaluatePin(executionContext, glyphInstance, i);
             if (GlyphsRegistry.EXECUTION_VALUE_TYPE.getExecutionGlyphValue(executionResult) > 0) {
                 SuccessCount.incrementAndGet();
             }

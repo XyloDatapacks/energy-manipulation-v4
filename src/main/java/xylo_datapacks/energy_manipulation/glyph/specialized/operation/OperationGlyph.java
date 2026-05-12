@@ -16,19 +16,19 @@ public class OperationGlyph extends Glyph {
         super();
 
         this.inputPinMode = InputPinMode.STANDARD;
-        RegisterPinDefinition(OPERATOR_PIN, OperatorGlyphInterface.class::isInstance);
-        outputPinDefinition.valueTypeCompatibilityPredicate = GlyphValueType::hasOperations;
+        this.RegisterPinDefinition(OPERATOR_PIN, OperatorGlyphInterface.class::isInstance);
+        this.outputPinDefinition.valueTypeCompatibilityPredicate = GlyphValueType::hasOperations;
     }
 
     @Override
     public void initializePins(GlyphInstance glyphInstance) {
-        getInputPin(glyphInstance, OPERATOR_PIN).ifPresent(inputPin -> {
+        this.getInputPin(glyphInstance, OPERATOR_PIN).ifPresent(inputPin -> {
             inputPin.valueType = glyphInstance.outputPin.valueType;
         });
     }
 
     @Override
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
-        return evaluatePin(executionContext, glyphInstance, OPERATOR_PIN);
+        return this.evaluatePin(executionContext, glyphInstance, OPERATOR_PIN);
     }
 }

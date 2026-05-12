@@ -20,7 +20,7 @@ public class RawValueGlyph extends Glyph {
         super();
 
         this.inputPinMode = InputPinMode.VALUE;
-        outputPinDefinition.valueTypeCompatibilityPredicate = GlyphValueType::hasValueSelector;
+        this.outputPinDefinition.valueTypeCompatibilityPredicate = GlyphValueType::hasValueSelector;
     }
 
     @Override

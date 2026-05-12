@@ -14,7 +14,7 @@ public class OutputPin {
     public GlyphValueType valueType;
 
     /** We keep a weak reference to the pin connected to this output pin, to allow navigating backward. */
-    public WeakReference<InputPin> connectedPin;
+    public WeakReference<InputPin> connectedPin = new WeakReference<>(null);
     
     public OutputPin(WeakReference<GlyphInstance> owner) {
         this.owner = owner;

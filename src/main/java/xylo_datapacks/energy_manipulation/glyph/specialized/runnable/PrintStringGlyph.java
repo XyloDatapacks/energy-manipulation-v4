@@ -16,22 +16,22 @@ public class PrintStringGlyph extends Glyph {
         super();
         
         this.inputPinMode = InputPinMode.STANDARD;
-        RegisterPinDefinition(STRING_PIN, glyph -> true);
-        outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> { 
+        this.RegisterPinDefinition(STRING_PIN, glyph -> true);
+        this.outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> { 
             return valueType == GlyphsRegistry.EXECUTION_VALUE_TYPE; 
         };
     }
 
     @Override
     public void initializePins(GlyphInstance glyphInstance) {
-        getInputPin(glyphInstance, STRING_PIN).ifPresent(inputPin -> {
+        this.getInputPin(glyphInstance, STRING_PIN).ifPresent(inputPin -> {
             inputPin.valueType = GlyphsRegistry.STRING_VALUE_TYPE;
         });
     }
 
     @Override
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
-        GlyphValue stringValue = evaluatePin(executionContext, glyphInstance, STRING_PIN);
+        GlyphValue stringValue = this.evaluatePin(executionContext, glyphInstance, STRING_PIN);
         String string = GlyphsRegistry.STRING_VALUE_TYPE.getStringGlyphValue(stringValue);
 
         String message = ">> " + string;
