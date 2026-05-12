@@ -18,7 +18,9 @@ public class FromConversionGlyph extends Glyph {
         
         this.inputPinMode = InputPinMode.STANDARD;
         
-        this.RegisterPinDefinition(TYPE_PIN, glyph -> true);
+        this.RegisterPinDefinition(TYPE_PIN, glyph -> {
+            return glyph == GlyphsRegistry.RAW_VALUE_GLYPH;
+        });
         
         this.RegisterPinDefinition(VALUE_PIN, glyph -> {
             return !(glyph instanceof FromConversionGlyph);

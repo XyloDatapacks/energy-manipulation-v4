@@ -355,6 +355,16 @@ public class SpellEditorGui extends SimpleGui {
             gui = new MultipleChoiceInputGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance, inputGui -> {
                 if (inputGui.getGlyphInstance().outputPin.valueType == GlyphsRegistry.CLASS_VALUE_TYPE) {
                     return GlyphsRegistry.VALUE_TYPE.stream()
+                            .filter(valueType -> inputGui.getGlyphInstance().glyph.getParentGlyphInstance(inputGui.getGlyphInstance())
+                                    .map(parentInstance -> {
+                                        // Filter by rawValueGlyph's parent.
+                                        if (parentInstance.glyph == GlyphsRegistry.FROM_CONVERSION_GLYPH) {
+                                            return parentInstance.glyph.getOutputPinDefinition().valueTypeCompatibilityPredicate.test(valueType);
+                                        }
+                                        return true;
+                                    })
+                                    .orElse(true)
+                            )
                             .map(valueType -> {
                                 return SpellEditorGuiUtils.makeValueTypeOptionElement(inputGui, valueType);
                             })
