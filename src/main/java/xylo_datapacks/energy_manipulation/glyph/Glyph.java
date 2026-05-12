@@ -93,7 +93,7 @@ public class Glyph {
         this.initializePins(glyphInstance);
         
         // Create payload
-        glyphInstance.payload = createPayload(glyphInstance);
+        glyphInstance.payload = this.createPayload(glyphInstance);
         this.initializePayload(glyphInstance);
         
         return glyphInstance;
@@ -106,6 +106,26 @@ public class Glyph {
     }
 
     public void initializePayload(GlyphInstance glyphInstance) {}
+
+    /** Called after modifying the payload of this glyphInstance. */
+    public void NotifyPayloadChanged(GlyphInstance glyphInstance) {
+        this.onPayloadChanged(glyphInstance);
+
+        Optional<InputPin> parentInputPin = Optional.ofNullable(glyphInstance.outputPin.connectedPin.get());
+        Optional<GlyphInstance> parentGlyphInstance = parentInputPin.map(pin -> pin.owner.get());
+        if (parentGlyphInstance.isPresent()) {
+            int parentInputPinIndex = parentGlyphInstance.get().inputPins.indexOf(parentInputPin.get());
+            parentGlyphInstance.get().glyph.NotifyInputPinGlyphPayloadChanged(parentGlyphInstance.get(), parentInputPinIndex);
+        }
+    }
+
+    /** Called when a connected glyph's payload changes.
+     * @param glyphInstance this glyph instance.
+     * @param pinIndex the index of the input pin (of glyphInstance) whose connected glyphInstance payload changed.
+     */
+    public void NotifyInputPinGlyphPayloadChanged(GlyphInstance glyphInstance, int pinIndex) {
+        this.onInputPinGlyphPayloadChanged(glyphInstance, pinIndex);
+    }
 
     // ~Instantiation
     /*================================================================================================================*/
@@ -125,7 +145,12 @@ public class Glyph {
         return (this.inputPinMode == InputPinMode.ARRAY || this.inputPinMode == InputPinMode.STANDARD) && !glyphInstance.inputPins.isEmpty();
     }
 
+    /** Always returns the first pin index if inputPinMode is ARRAY. */
     public int getInputPinIndex(String pinName) {
+        if (this.inputPinMode == InputPinMode.ARRAY) {
+            EnergyManipulation.LOGGER.warn("While using InputPinMode.ARRAY, getting an input pin index by name will always return the first pin if it exists!");
+        }
+        
         for (int i = 0; i < this.inputPinDefinitions.size(); i++) {
             if (this.inputPinDefinitions.get(i).pinName.equals(pinName)) {
                 return i;
@@ -154,6 +179,7 @@ public class Glyph {
         return Optional.empty();
     }
     
+    /** Always returns the first pin if inputPinMode is ARRAY. */
     public Optional<InputPin> getInputPin(GlyphInstance glyphInstance, String pinName) {
         if (this.inputPinMode == InputPinMode.ARRAY) {
             EnergyManipulation.LOGGER.warn("While using InputPinMode.ARRAY, getting an input pin by name will always return the first pin if it exists!");
@@ -276,6 +302,31 @@ public class Glyph {
         this.NotifyInputPinConnectionChanged(glyphInstance, pinIndex);
         glyphToConnect.glyph.NotifyConnected(glyphToConnect);
         return true;
+    }
+
+    public void resetConnection(GlyphInstance glyphInstance, String pinName) {
+        if (this.inputPinMode != InputPinMode.STANDARD) {
+            EnergyManipulation.LOGGER.warn("Cannot reset a pin connection by pinName if inputPinMode is not STANDARD!");
+            return;
+        }
+        
+        this.resetConnection(glyphInstance, this.getInputPinIndex(pinName));   
+    }
+
+    public void resetConnection(GlyphInstance glyphInstance, int pinIndex) {
+        if (!this.hasInputPins(glyphInstance)) {
+            EnergyManipulation.LOGGER.warn("Cannot reset connection for a GlyphInstance with no input pins!");
+            return;
+        }
+
+        if (!(pinIndex >= 0 && pinIndex < glyphInstance.inputPins.size())) {
+            EnergyManipulation.LOGGER.warn("Cannot reset connection for a non existent input pin!");
+            return;
+        }
+
+        InputPin targetPin = glyphInstance.inputPins.get(pinIndex);
+        targetPin.connectedGlyph = null;
+        this.NotifyInputPinConnectionChanged(glyphInstance, pinIndex);
     }
     
     /**
@@ -472,9 +523,11 @@ public class Glyph {
 
     public void onDescendantGlyphStateChanged(GlyphInstance glyphInstance, GlyphInstance descendantInstance, int pinIndex) {}
     
-    public void onConnected(GlyphInstance glyphInstance) {
+    public void onConnected(GlyphInstance glyphInstance) {}
 
-    }
+    public void onPayloadChanged(GlyphInstance glyphInstance) {}
+    
+    public void onInputPinGlyphPayloadChanged(GlyphInstance glyphInstance, int pinIndex) {}
 
     // ~Callbacks
     /*================================================================================================================*/
