@@ -205,18 +205,26 @@ public class SpellEditorGui extends SimpleGui {
         
         for (int i = 0; i < glyphInstance.inputPins.size(); i++) {
             int pinIndex = i;
-
-            // Add decorator for this pin to show before the pin itself.
-            safeAddGlyphGuiElement(currentSlot, () -> generatePinDecoratorPrePinGuiElement(glyphInstance, pinIndex));
             
-            // Add element for the pin.
-            safeAddGlyphGuiElement(currentSlot, () -> generatePinGuiElement(glyphInstance, pinIndex));
+            boolean bHidden = glyphInstance.glyph.getInputPinEditorData(pinIndex)
+                    .map(editorData -> editorData.bHiddenInEditor)
+                    .orElse(false);
+
+            if (!bHidden) {
+                // Add decorator for this pin to show before the pin itself.
+                safeAddGlyphGuiElement(currentSlot, () -> generatePinDecoratorPrePinGuiElement(glyphInstance, pinIndex));
+
+                // Add element for the pin.
+                safeAddGlyphGuiElement(currentSlot, () -> generatePinGuiElement(glyphInstance, pinIndex));
+            }
             
             // Recursive call for the connected glyph.
             recursiveCreateSpellGuiElements(glyphInstance.inputPins.get(i).connectedGlyph, currentSlot);
 
-            // Add decorator for this pin to show after the pin itself and all its sub-pins.
-            safeAddGlyphGuiElement(currentSlot, () -> generatePinDecoratorPostPinGuiElement(glyphInstance, pinIndex));
+            if (!bHidden) {
+                // Add decorator for this pin to show after the pin itself and all its sub-pins.
+                safeAddGlyphGuiElement(currentSlot, () -> generatePinDecoratorPostPinGuiElement(glyphInstance, pinIndex));
+            }
         }
 
         // Add decorator for the glyph after all its pins

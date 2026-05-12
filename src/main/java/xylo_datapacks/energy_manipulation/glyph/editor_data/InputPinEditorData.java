@@ -4,5 +4,5 @@ public class InputPinEditorData {
 
     public String displayName;
     public String description;
-    
+    public boolean bHiddenInEditor = false;
 }

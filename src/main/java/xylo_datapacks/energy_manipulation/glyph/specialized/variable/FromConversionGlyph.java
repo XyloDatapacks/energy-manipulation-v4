@@ -35,6 +35,7 @@ public class FromConversionGlyph extends Glyph {
         };
 
         this.editorData.bHasTypeDependentTexture = true;
+        this.getInputPinEditorData(TYPE_PIN).ifPresent(pinEditorData -> pinEditorData.bHiddenInEditor = true);
     }
 
     @Override
