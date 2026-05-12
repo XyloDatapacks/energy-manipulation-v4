@@ -1,13 +1,11 @@
 package xylo_datapacks.energy_manipulation.glyph.specialized.variable;
 
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
-import xylo_datapacks.energy_manipulation.glyph.Glyph;
-import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
-import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
-import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
+import xylo_datapacks.energy_manipulation.glyph.*;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
+import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
 
 import java.util.Optional;
 
@@ -72,5 +70,39 @@ public class FromConversionGlyph extends Glyph {
                 }
             });
         }
+    }
+
+    @Override
+    public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
+        GlyphValue typePinValue = this.evaluatePin(executionContext, glyphInstance, TYPE_PIN);
+        GlyphValue valuePinValue = this.evaluatePin(executionContext, glyphInstance, VALUE_PIN);
+        
+        Optional<GlyphValueType> inputValueType = GlyphsRegistry.CLASS_VALUE_TYPE.getClassGlyphValue(typePinValue);
+        if (inputValueType.isEmpty()) {
+            return GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("FromConversionGlyph could not convert the input value since type is not a class!");
+        }
+        
+        // If input and output value types are the same, no conversion is needed.
+        if (glyphInstance.outputPin.valueType == inputValueType.get()) {
+            return valuePinValue;
+        }
+        
+        // If input is string, and ValueFromString is available for the output type, use it.
+        if (inputValueType.get() == GlyphsRegistry.STRING_VALUE_TYPE) {
+            if (glyphInstance.outputPin.valueType instanceof StringConvertibleValueInterface stringConvertibleOutputValueType) {
+                String inputString = GlyphsRegistry.STRING_VALUE_TYPE.getStringGlyphValue(valuePinValue);
+                return stringConvertibleOutputValueType.ValueFromString(inputString);
+            }
+        }
+
+        // If output is string, and ValueToString is available for the input type, use it.
+        if (glyphInstance.outputPin.valueType == GlyphsRegistry.STRING_VALUE_TYPE) {
+            if (inputValueType.get() instanceof StringConvertibleValueInterface stringConvertibleInputValueType) {
+                String inputString = stringConvertibleInputValueType.ValueToString(valuePinValue);
+                return GlyphsRegistry.STRING_VALUE_TYPE.makeStringGlyphValue(inputString);
+            }
+        }
+
+        return GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("FromConversionGlyph no conversion available from " + inputValueType.getClass().getSimpleName() + " to " +  glyphInstance.outputPin.valueType.getClass().getSimpleName());
     }
 }

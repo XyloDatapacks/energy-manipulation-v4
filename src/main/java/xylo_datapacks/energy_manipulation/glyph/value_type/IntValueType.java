@@ -135,6 +135,9 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
 
     @Override
     public GlyphValue ValueFromString(String value) {
+        if (!isValidString(value)) {
+            return MakeDefaulted();
+        }
         return makeIntGlyphValue(Integer.parseInt(value));
     }
 
