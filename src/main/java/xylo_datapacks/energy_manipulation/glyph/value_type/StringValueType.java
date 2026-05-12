@@ -2,7 +2,6 @@ package xylo_datapacks.energy_manipulation.glyph.value_type;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
@@ -53,7 +52,7 @@ public class StringValueType extends GlyphValueType implements StringGlyphValueI
     }
 
     @Override
-    public boolean hasValueSelector() { return true; }
+    public ValueSelectorType getValueSelectorType() { return ValueSelectorType.INPUT; }
     
     @Override
     public Optional<Tag> serialize(GlyphValue value) {
@@ -99,6 +98,11 @@ public class StringValueType extends GlyphValueType implements StringGlyphValueI
     @Override
     public String ValueToString(GlyphValue value) {
         return getStringGlyphValue(value);
+    }
+
+    @Override
+    public boolean isValidString(String value) {
+        return true;
     }
 
     // ~Interfaces

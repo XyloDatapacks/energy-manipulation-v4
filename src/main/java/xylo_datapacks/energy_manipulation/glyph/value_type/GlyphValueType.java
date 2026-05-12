@@ -20,7 +20,9 @@ public abstract class GlyphValueType {
 
     public boolean hasOperations() { return false; }
     
-    public boolean hasValueSelector() { return false; }
+    public ValueSelectorType getValueSelectorType() { return ValueSelectorType.NONE; }
+
+    public boolean hasValueSelector() { return getValueSelectorType() != ValueSelectorType.NONE; }
 
     public Optional<Tag> serialize(GlyphValue value) {
         return Optional.empty();

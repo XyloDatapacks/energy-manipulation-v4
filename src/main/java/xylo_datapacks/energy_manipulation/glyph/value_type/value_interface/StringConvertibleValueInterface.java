@@ -8,4 +8,6 @@ public interface StringConvertibleValueInterface {
     public GlyphValue ValueFromString(String value);
     
     public String ValueToString(GlyphValue value);
+
+    public boolean isValidString(String value);
 }

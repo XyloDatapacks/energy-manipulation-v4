@@ -50,7 +50,7 @@ public class BoolValueType extends GlyphValueType implements ComparableGlyphValu
     }
 
     @Override
-    public boolean hasValueSelector() { return true; }
+    public ValueSelectorType getValueSelectorType() { return ValueSelectorType.MULTIPLE_CHOICE; }
     
     @Override
     public Optional<Tag> serialize(GlyphValue value) {

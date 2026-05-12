@@ -53,7 +53,7 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
     }
 
     @Override
-    public boolean hasValueSelector() { return true; }
+    public ValueSelectorType getValueSelectorType() { return ValueSelectorType.INPUT; }
 
     @Override
     public Optional<Tag> serialize(GlyphValue value) {
@@ -141,6 +141,11 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
     @Override
     public String ValueToString(GlyphValue value) {
         return getIntGlyphValue(value) + "";
+    }
+
+    @Override
+    public boolean isValidString(String value) {
+        return value.matches("-?\\d+");
     }
 
     // ~Interfaces
