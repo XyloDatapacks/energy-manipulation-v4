@@ -4,8 +4,12 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
+import xylo_datapacks.energy_manipulation.font.EnergyManipulationFonts;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
@@ -37,7 +41,7 @@ public class MultipleChoiceInputGui extends SimpleGui {
         this.initialValue = GlyphsRegistry.RAW_VALUE_GLYPH.getPayloadValue(instance).get();
         this.optionsSupplier = optionsSupplier;
 
-        this.setTitle(Component.literal("Spell Editor"));
+        this.setTitle(getTitleText());
         this.setupToolbar();
         this.displaySelector();
     }
@@ -48,6 +52,12 @@ public class MultipleChoiceInputGui extends SimpleGui {
 
     public GlyphInstance getGlyphInstance() {
         return instance;
+    }
+
+    protected MutableComponent getTitleText() {
+        return Component.empty()
+                .append(Component.literal("\uF102\uE002\uF002\uF202").setStyle(Style.EMPTY.withFont(EnergyManipulationFonts.SPELL_BOOK_GUI).withColor(0xFFFFFF)))
+                .append(Component.literal("Spell Book").setStyle(Style.EMPTY.withFont(FontDescription.DEFAULT)));
     }
 
     protected void setupToolbar() {
