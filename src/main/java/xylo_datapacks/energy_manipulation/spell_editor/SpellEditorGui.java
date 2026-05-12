@@ -1,8 +1,10 @@
 package xylo_datapacks.energy_manipulation.spell_editor;
 
+import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import eu.pb4.sgui.mixin.ScreenHandlerAccessor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.MutableComponent;
@@ -10,6 +12,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -135,6 +138,23 @@ public class SpellEditorGui extends SimpleGui {
                 return 1;
             }
         };
+    }
+
+    @Override
+    public boolean onAnyClick(int index, ClickType type, ContainerInput action) {
+        
+        // Prevent actions on selected slot
+        int selectedHotbarSlotIndex = getHotbarSlotIndex(this.wrappedMenu.slots.size(), player.getInventory().getSelectedSlot());
+        if (index == selectedHotbarSlotIndex) {
+            return false;
+        }
+
+        // Prevent quick swap to selected swap
+        if (action == ContainerInput.SWAP && type.value == player.getInventory().getSelectedSlot() + 1) {
+            return false;
+        }
+        
+        return super.onAnyClick(index, type, action);
     }
 
     @Override
