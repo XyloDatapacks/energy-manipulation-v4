@@ -88,6 +88,14 @@ public class GlyphUtils {
         return glyphInstance.glyph.connectGlyph(glyphInstance, pinIndex, glyphToConnect);
     }
 
+    public static void resetConnection(GlyphInstance glyphInstance, String pinName) {
+        glyphInstance.glyph.resetConnection(glyphInstance, pinName);
+    }
+
+    public static void resetConnection(GlyphInstance glyphInstance, int pinIndex) {
+        glyphInstance.glyph.resetConnection(glyphInstance, pinIndex);
+    }
+
     public static GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         return glyphInstance.glyph.execute(executionContext, glyphInstance);
     }
