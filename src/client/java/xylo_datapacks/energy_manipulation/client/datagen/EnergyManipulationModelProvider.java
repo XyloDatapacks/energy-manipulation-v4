@@ -62,7 +62,7 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         // Type-specific glyphs
         List<String> typeSpecificGlyphs = new ArrayList<>(GlyphsRegistry.GLYPH.stream()
                 .filter(glyph -> glyph.getEditorData().bHasTypeDependentTexture)
-                .map(valueType -> GlyphsRegistry.GLYPH.getKey(valueType).getPath() + "_separator")
+                .map(valueType -> GlyphsRegistry.GLYPH.getKey(valueType).getPath())
                 .toList());
         typeSpecificGlyphs.forEach(glyphName -> {
             allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.stream()
