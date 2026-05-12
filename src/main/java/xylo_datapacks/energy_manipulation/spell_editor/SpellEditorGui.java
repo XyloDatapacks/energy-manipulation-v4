@@ -73,6 +73,10 @@ public class SpellEditorGui extends SimpleGui {
         return currentPage;
     }
 
+    public ItemStack getScrollStack() {
+        return inputInventory.getItem(SpellBookItem.SPELL_SCROLL_INDEX);
+    }
+
     protected MutableComponent getTitleText() {
         return Component.empty()
                 .append(Component.literal("\uF101\uE001\uF001\uF201").setStyle(Style.EMPTY.withFont(EnergyManipulationFonts.SPELL_BOOK_GUI).withColor(0xFFFFFF)))
@@ -147,10 +151,6 @@ public class SpellEditorGui extends SimpleGui {
     
     public void onClose() {
         saveItems();
-    }
-    
-    public void onInstanceChanged() {
-        rebuildSpellGui();
     }
     
     public void loadItems() {
@@ -273,10 +273,6 @@ public class SpellEditorGui extends SimpleGui {
     /*================================================================================================================*/
     // GuiButtonsLogic
     
-    public ItemStack getScrollStack() {
-        return inputInventory.getItem(SpellBookItem.SPELL_SCROLL_INDEX);
-    }
-    
     public void onScrollChanged(ItemStack itemStack) {
         if (itemStack.getItem() instanceof SpellScrollItem spellScrollItem) {
             editor.initialize(spellScrollItem.getSpell(itemStack));
@@ -285,13 +281,13 @@ public class SpellEditorGui extends SimpleGui {
         }
         
         currentPage = 0;
-        onInstanceChanged();
+        rebuildSpellGui();
     }
 
     public void revertSpellChanges() {
         // Revert unsaved changes.
         editor.restoreGlyphInstance();
-        onInstanceChanged();
+        rebuildSpellGui();
     }
 
     public void saveSpellChanges() {
@@ -327,17 +323,17 @@ public class SpellEditorGui extends SimpleGui {
 
     public void removeArrayPin(GlyphInstance glyphInstance, int pinIndex) {
         glyphInstance.glyph.removePin(glyphInstance, pinIndex);
-        onInstanceChanged();
+        rebuildSpellGui();
     }
 
     public void insertArrayPin(GlyphInstance glyphInstance, int pinIndex) {
         glyphInstance.glyph.insertPin(glyphInstance, pinIndex);
-        onInstanceChanged();
+        rebuildSpellGui();
     }
 
     public void addArrayPin(GlyphInstance glyphInstance) {
         glyphInstance.glyph.addPin(glyphInstance);
-        onInstanceChanged();
+        rebuildSpellGui();
     }
 
     public void openValueSelector(GlyphInstance glyphInstance) {
