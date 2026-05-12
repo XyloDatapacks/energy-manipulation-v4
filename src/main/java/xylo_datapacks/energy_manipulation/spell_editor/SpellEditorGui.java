@@ -36,7 +36,6 @@ import java.util.function.Supplier;
 
 public class SpellEditorGui extends SimpleGui {
     protected final SimpleContainer inputInventory = new SimpleContainer(5);
-    protected final SpellEditorGuiSlot scrollSlot = makeScrollSlot();
     static final int PAGE_SIZE = 9*5;
     protected final SpellEditor editor;
     protected int currentPage;
@@ -93,6 +92,7 @@ public class SpellEditorGui extends SimpleGui {
         this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_UTILITY_3_INDEX, new Slot(inputInventory, SpellBookItem.SPELL_UTILITY_3_INDEX, 0, 0));
         this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_UTILITY_4_INDEX, new Slot(inputInventory, SpellBookItem.SPELL_UTILITY_4_INDEX, 0, 0));
         
+        SpellEditorGuiSlot scrollSlot = makeScrollSlot();
         this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_SCROLL_INDEX, scrollSlot);
         scrollSlot.onItemStackChangedCallback = this::onScrollChanged;
         
@@ -291,12 +291,12 @@ public class SpellEditorGui extends SimpleGui {
     }
 
     public void saveSpellChanges() {
-        ItemStack scrollStack = scrollSlot.getItem();
+        ItemStack scrollStack = getScrollStack();
         if (scrollStack.getItem() instanceof SpellScrollItem spellScrollItem) {
             // Save current version of the spell on the item.
             spellScrollItem.setSpell(scrollStack, editor.getCurrentGlyphInstance());
-            // Update cached version of the spell to allow to revert to this point.
-            editor.initialize(editor.getCurrentGlyphInstance());
+            // Update cached version of the spell to allow reverting to this point.
+            editor.saveChanges();
         }
     }
 

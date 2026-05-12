@@ -55,8 +55,12 @@ public class SpellEditor {
         }
 
         @Override
+        public void onInputPinConnectionChanged(GlyphInstance glyphInstance, int pinIndex) {
+            ((SpellEditorRootGlyphInstance) glyphInstance).onInstanceChangedCallback.run();
+        }
+
+        @Override
         public void onDescendantGlyphStateChanged(GlyphInstance glyphInstance, GlyphInstance descendantInstance, int pinIndex) {
-            EnergyManipulation.LOGGER.warn("onDescendantGlyphStateChanged");
             ((SpellEditorRootGlyphInstance) glyphInstance).onInstanceChangedCallback.run();
         }
     }
@@ -82,6 +86,10 @@ public class SpellEditor {
         this.currentGlyphInstance = glyphInstance;
         this.originalGlyphInstance = GlyphUtils.copyGlyphInstance(glyphInstance);
         GlyphUtils.connectGlyph(rootGlyphInstance, SpellEditorRootGlyph.INPUT_PIN, currentGlyphInstance);
+    }
+    
+    public void saveChanges() {
+        this.originalGlyphInstance = GlyphUtils.copyGlyphInstance(currentGlyphInstance);
     }
     
     public void restoreGlyphInstance() {
