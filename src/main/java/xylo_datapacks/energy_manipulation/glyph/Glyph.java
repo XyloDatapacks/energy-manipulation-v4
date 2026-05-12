@@ -75,7 +75,7 @@ public class Glyph {
         }
 
         // Create new instance
-        GlyphInstance glyphInstance = new GlyphInstance(this);
+        GlyphInstance glyphInstance = this.createInstance_internal();
 
         // Create input pins
         if (this.inputPinMode == InputPinMode.STANDARD) {
@@ -97,6 +97,10 @@ public class Glyph {
         this.initializePayload(glyphInstance);
         
         return glyphInstance;
+    }
+    
+    protected GlyphInstance createInstance_internal() {
+        return new GlyphInstance(this);
     }
     
     public void initializePins(GlyphInstance glyphInstance) {}

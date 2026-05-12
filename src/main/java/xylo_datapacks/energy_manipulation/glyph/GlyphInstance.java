@@ -11,10 +11,12 @@ public class GlyphInstance {
 
     public Glyph glyph;
 
+    /** Set by glyph during instantiation. */
     public OutputPin outputPin;
 
     public List<InputPin> inputPins;
 
+    /** Set by glyph during instantiation. */
     public GlyphPayload payload;
     
     public GlyphInstance(Glyph glyph) {
