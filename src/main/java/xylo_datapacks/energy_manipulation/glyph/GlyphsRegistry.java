@@ -12,6 +12,7 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.S
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.PrintStringGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.ProgramGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.variable.FromConversionGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.*;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 
@@ -32,7 +33,9 @@ public class GlyphsRegistry {
     static public final OperationGlyph OPERATION_GLYPH = registerGlyph("operation_glyph", OperationGlyph::new);
     static public final SumOperatorGlyph SUM_OPERATOR_GLYPH = registerGlyph("sum_operator_glyph", SumOperatorGlyph::new);
     static public final IntToStringOperatorGlyph INT_TO_STRING_OPERATOR_GLYPH = registerGlyph("int_to_string_operator_glyph", IntToStringOperatorGlyph::new);
+    static public final FromConversionGlyph FROM_CONVERSION_GLYPH = registerGlyph("from_conversion_glyph", FromConversionGlyph::new);
     
+    static public final ClassValueType CLASS_VALUE_TYPE = registerValueType("class_value_type", ClassValueType::new);
     static public final StringValueType STRING_VALUE_TYPE = registerValueType("string_value_type", StringValueType::new);
     static public final BoolValueType BOOL_VALUE_TYPE = registerValueType("bool_value_type", BoolValueType::new);
     static public final IntValueType INT_VALUE_TYPE = registerValueType("int_value_type", IntValueType::new);

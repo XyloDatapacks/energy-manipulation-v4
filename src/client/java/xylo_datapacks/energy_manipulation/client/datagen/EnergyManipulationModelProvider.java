@@ -22,6 +22,7 @@ import xylo_datapacks.energy_manipulation.client.utils.EnergyManipulationModelTe
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
+import xylo_datapacks.energy_manipulation.glyph.value_type.ValueSelectorType;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorButtonsRegistry;
 
@@ -58,12 +59,17 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         allGlyphs.addAll(GlyphsRegistry.GLYPH.keySet().stream().map(Identifier::getPath).toList());
         // Value types
         allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.keySet().stream().map(Identifier::getPath).toList());
-        // Type specific raw value glyphs
-        String rawValueGlyphKey = GlyphsRegistry.GLYPH.getKey(GlyphsRegistry.RAW_VALUE_GLYPH).getPath();
-        allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.stream()
-                .filter(GlyphValueType::hasValueSelector)
-                .map(valueType -> rawValueGlyphKey + "_" + GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath())
+        // Type-specific glyphs
+        List<String> typeSpecificGlyphs = new ArrayList<>(GlyphsRegistry.GLYPH.stream()
+                .filter(glyph -> glyph.getEditorData().bHasTypeDependentTexture)
+                .map(valueType -> GlyphsRegistry.GLYPH.getKey(valueType).getPath() + "_separator")
                 .toList());
+        typeSpecificGlyphs.forEach(glyphName -> {
+            allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.stream()
+                    .filter(GlyphValueType::hasValueSelector)
+                    .map(valueType -> glyphName + "_" + GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath())
+                    .toList());
+        });
         // Operator glyphs pin separator
         allGlyphs.addAll(GlyphsRegistry.GLYPH.stream()
                 .filter(OperatorGlyphInterface.class::isInstance)

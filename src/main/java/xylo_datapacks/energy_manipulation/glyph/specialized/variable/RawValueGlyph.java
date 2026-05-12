@@ -21,6 +21,8 @@ public class RawValueGlyph extends Glyph {
 
         this.inputPinMode = InputPinMode.VALUE;
         this.outputPinDefinition.valueTypeCompatibilityPredicate = GlyphValueType::hasValueSelector;
+        
+        this.editorData.bHasTypeDependentTexture = true;
     }
 
     @Override
@@ -64,6 +66,7 @@ public class RawValueGlyph extends Glyph {
         }
 
         getPayload(glyphInstance).content = payloadValue;
+        this.NotifyPayloadChanged(glyphInstance);
     }
 
     @Override

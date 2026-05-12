@@ -7,18 +7,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jspecify.annotations.NonNull;
-import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.font.EnergyManipulationFonts;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
+import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
@@ -30,6 +28,8 @@ import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelecto
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputGui;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -170,6 +170,14 @@ public class SpellEditorGui extends SimpleGui {
     /*================================================================================================================*/
     // SpellGuiElements
     
+    public boolean isOutOfGlyphsDrawingSpace(AtomicInteger currentSlot) {
+        return SpellEditorGuiUtils.isOutOfGlyphsDrawingSpace(PAGE_SIZE, currentPage, currentSlot);
+    }
+    
+    public void safeAddGlyphGuiElement(AtomicInteger currentSlot, Supplier<Optional<SimpleGuiElement>> supplier) {
+        SpellEditorGuiUtils.safeAddGlyphGuiElement(this, PAGE_SIZE, currentPage, currentSlot, supplier);
+    }
+    
     public void rebuildSpellGui() {
         AtomicInteger currentSlot = new AtomicInteger(0);
         recursiveCreateSpellGuiElements(editor.getCurrentGlyphInstance(), currentSlot);
@@ -184,11 +192,6 @@ public class SpellEditorGui extends SimpleGui {
 
         // refresh page buttons because page might have changed.
         refreshPageButtons();
-    }
-
-    /** @return true if currentSlot is out of bounds. */
-    public boolean isOutOfGlyphsDrawingSpace(AtomicInteger currentSlot) {
-        return currentSlot.get() >= PAGE_SIZE * (currentPage + 1);
     }
     
     public void recursiveCreateSpellGuiElements(GlyphInstance glyphInstance, AtomicInteger currentSlot) {
@@ -218,28 +221,6 @@ public class SpellEditorGui extends SimpleGui {
 
         // Add decorator for the glyph after all its pins
         safeAddGlyphGuiElement(currentSlot, () -> generateGlyphDecoratorPostPinsGuiElement(glyphInstance) );
-    }
-    
-    /** Adds a glyph related gui element at the correct slot only if possible / needed. */
-    public void safeAddGlyphGuiElement(AtomicInteger currentSlot, Supplier<Optional<SimpleGuiElement>> supplier) {
-        // Get new slot index.
-        int slotIndex = currentSlot.get();
-        // If slot index exceeds the last representable index then quit.
-        if (isOutOfGlyphsDrawingSpace(currentSlot)) {
-            return;
-        }
-
-        // Create new element.
-        Optional<SimpleGuiElement> optionalElement = supplier.get();
-        if (optionalElement.isPresent()) {
-            // Only set the slot if visible in current page.
-            if (slotIndex >= PAGE_SIZE * (currentPage)) {
-                this.setSlot(slotIndex % PAGE_SIZE, optionalElement.get());
-            }
-
-            // If the element exists, increment the slot count.
-            currentSlot.incrementAndGet();
-        }
     }
     
     public Optional<SimpleGuiElement> generatePinGuiElement(GlyphInstance glyphInstance, int pinIndex) {
@@ -364,9 +345,23 @@ public class SpellEditorGui extends SimpleGui {
         
         SimpleGui gui;
         if (glyphInstance.outputPin.valueType instanceof StringConvertibleValueInterface) {
-            gui = new StringInputGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance);
+            gui = new StringInputGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance, ((inputGui, value) -> {
+                if (inputGui.getGlyphInstance().outputPin.valueType instanceof StringConvertibleValueInterface stringConvertibleValueInterface) {
+                    return stringConvertibleValueInterface.isValidString(value);
+                }
+                return false;
+            }));
         } else {
-            gui = new MultipleChoiceInputGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance);
+            gui = new MultipleChoiceInputGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance, inputGui -> {
+                if (inputGui.getGlyphInstance().outputPin.valueType == GlyphsRegistry.CLASS_VALUE_TYPE) {
+                    return GlyphsRegistry.VALUE_TYPE.stream()
+                            .map(valueType -> {
+                                return SpellEditorGuiUtils.makeValueTypeOptionElement(inputGui, valueType);
+                            })
+                            .toList();
+                }
+                return new ArrayList<>();
+            });
         }
         gui.open();
     }

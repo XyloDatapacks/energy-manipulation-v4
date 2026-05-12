@@ -17,17 +17,22 @@ import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorButtonsRegistry;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
 
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+
 public class StringInputGui extends AnvilInputGui {
     protected final SpellEditor editor;
     protected final int editorPage;
     protected final GlyphInstance instance;
+    protected final BiPredicate<StringInputGui, String> isValidValue;
 
-    public StringInputGui(ServerPlayer player, SpellEditor editor, int editorPage, GlyphInstance instance) {
+    public StringInputGui(ServerPlayer player, SpellEditor editor, int editorPage, GlyphInstance instance, BiPredicate<StringInputGui, String> isValidValue) {
         super(player, false);
 
         this.editor = editor;
         this.editorPage = editorPage;
         this.instance = instance;
+        this.isValidValue = isValidValue;
 
         this.setTitle(getTitleText());
         this.setDefaultInputValue(getValueAsString());
@@ -105,14 +110,6 @@ public class StringInputGui extends AnvilInputGui {
     }
     
     public boolean isValidInput(String input) {
-        if (instance.outputPin.valueType == GlyphsRegistry.INT_VALUE_TYPE) {
-            return input.matches("-?\\d+");
-        }
-
-        if (instance.outputPin.valueType == GlyphsRegistry.STRING_VALUE_TYPE) {
-            return true;
-        }
-        
-        return false;
+        return isValidValue.test(this, input);
     }
 }

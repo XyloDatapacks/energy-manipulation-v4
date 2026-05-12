@@ -42,14 +42,14 @@ public class SpellEditorButtonsRegistry {
     public static ItemStack getGlyphButtonStack(Glyph glyph, GlyphValueType outputValueType) {
         ItemStack glyphButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
         String customModelDataName = GlyphsRegistry.GLYPH.getKey(glyph).getPath();
-        if (glyph == GlyphsRegistry.RAW_VALUE_GLYPH) {
+        if (glyph.getEditorData().bHasTypeDependentTexture) {
             customModelDataName = customModelDataName + "_" + GlyphsRegistry.VALUE_TYPE.getKey(outputValueType).getPath();
         }
         setCustomModelData(glyphButtonStack, customModelDataName);
         return glyphButtonStack;
     }
 
-    public static ItemStack getValueSelectorButtonStack(GlyphValueType valueType) {
+    public static ItemStack getValueTypeButtonStack(GlyphValueType valueType) {
         ItemStack valueSelectorButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
         setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath());
         return valueSelectorButtonStack;

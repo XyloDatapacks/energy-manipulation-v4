@@ -15,4 +15,5 @@ public class GlyphEditorData {
     public String displayName;
     public String description;
     public Map<String, InputPinEditorData> inputPinsEditorData = new LinkedHashMap<>();
+    public boolean bHasTypeDependentTexture = false;
 }
