@@ -7,7 +7,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperationGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.IntToStringOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.SumOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.PrintStringGlyph;
@@ -32,7 +31,6 @@ public class GlyphsRegistry {
     static public final DebugGlyph DEBUG_GLYPH = registerGlyph("debug_glyph", DebugGlyph::new);
     static public final OperationGlyph OPERATION_GLYPH = registerGlyph("operation_glyph", OperationGlyph::new);
     static public final SumOperatorGlyph SUM_OPERATOR_GLYPH = registerGlyph("sum_operator_glyph", SumOperatorGlyph::new);
-    static public final IntToStringOperatorGlyph INT_TO_STRING_OPERATOR_GLYPH = registerGlyph("int_to_string_operator_glyph", IntToStringOperatorGlyph::new);
     static public final FromConversionGlyph FROM_CONVERSION_GLYPH = registerGlyph("from_conversion_glyph", FromConversionGlyph::new);
     
     static public final ClassValueType CLASS_VALUE_TYPE = registerValueType("class_value_type", ClassValueType::new);

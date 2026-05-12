@@ -44,7 +44,7 @@ public class SpellScrollItem extends Item implements PolymerItem {
             }
             // If there was no compound return empty to let orElse() take care of it.
             return Optional.empty();
-        }).orElse(/*GlyphsRegistry.PROGRAM_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE)*/ SpellPresetRegistry.makeProgramTest());
+        }).orElse(GlyphsRegistry.PROGRAM_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE));
     }
 
     @Deprecated
