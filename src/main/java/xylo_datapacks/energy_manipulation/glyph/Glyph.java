@@ -209,6 +209,7 @@ public class Glyph {
         InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
         glyphInstance.inputPins.add(newInputPin);
         this.initializeNewPin(glyphInstance, newInputPin);
+        this.NotifyInputPinConnectionChanged(glyphInstance, glyphInstance.inputPins.size() - 1);
     }
 
     public void removePin(GlyphInstance glyphInstance, int index) {
@@ -218,6 +219,7 @@ public class Glyph {
         }
 
         glyphInstance.inputPins.remove(index);
+        this.NotifyInputPinConnectionChanged(glyphInstance, -1);
     }
 
     public void insertPin(GlyphInstance glyphInstance, int index) {
@@ -229,6 +231,7 @@ public class Glyph {
         InputPin newInputPin = new InputPin(new WeakReference<>(glyphInstance));
         glyphInstance.inputPins.add(index, newInputPin);
         this.initializeNewPin(glyphInstance, newInputPin);
+        this.NotifyInputPinConnectionChanged(glyphInstance, index);
     }
     
     public void initializeNewPin(GlyphInstance glyphInstance, InputPin newInputPin) {}
