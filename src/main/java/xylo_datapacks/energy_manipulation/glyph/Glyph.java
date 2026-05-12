@@ -278,6 +278,11 @@ public class Glyph {
         return true;
     }
     
+    /**
+     * Called when a descendant glyph's input pin changes connection.
+     * @param glyphInstance this glyph instance.
+     * @param pinIndex the index of the input pin whose connection changed.
+     */
     public void NotifyInputPinConnectionChanged(GlyphInstance glyphInstance, int pinIndex) {
         this.onInputPinConnectionChanged(glyphInstance, pinIndex);
 
@@ -286,18 +291,36 @@ public class Glyph {
         if (parentGlyphInstance.isPresent()) {
             int parentInputPinIndex = parentGlyphInstance.get().inputPins.indexOf(parentInputPin.get());
             parentGlyphInstance.get().glyph.NotifyInputPinGlyphStateChanged(parentGlyphInstance.get(), parentInputPinIndex);
+
+            parentGlyphInstance.get().glyph.NotifyDescendantGlyphStateChanged(parentGlyphInstance.get(), glyphInstance, pinIndex);
         }
     }
 
     /**
      * Called when a connected glyph's input pin changes connection.
      * @param glyphInstance this glyph instance.
-     * @param pinIndex the index of the input pin who's connected glyph instance changed connection.
+     * @param pinIndex the index of the input pin (of glyph instance) whose connected glyph instance changed a connection.
      */
     public void NotifyInputPinGlyphStateChanged(GlyphInstance glyphInstance, int pinIndex) {
         this.onInputPinGlyphStateChanged(glyphInstance, pinIndex);
     }
     
+    /**
+     * Called when a descendant glyph's input pin changes connection.
+     * @param glyphInstance this glyph instance.
+     * @param descendantInstance the descendant glyph instance whose pin changed connection.
+     * @param pinIndex the index of descendantInstance's input pin whose connection changed.
+     */
+    public void NotifyDescendantGlyphStateChanged(GlyphInstance glyphInstance, GlyphInstance descendantInstance, int pinIndex) {
+        this.onDescendantGlyphStateChanged(glyphInstance, descendantInstance, pinIndex);
+        
+        // Propagate the change to the parent glyph instance, if any.
+        this.getParentGlyphInstance(glyphInstance).ifPresent(parentGlyphInstance -> {
+            parentGlyphInstance.glyph.NotifyDescendantGlyphStateChanged(parentGlyphInstance, glyphInstance, pinIndex);
+        });
+    }
+    
+    /** Called when this instance output pin is connected to another glyph instance. */
     public void NotifyConnected(GlyphInstance glyphInstance) {
         this.onConnected(glyphInstance);
     }
@@ -446,6 +469,8 @@ public class Glyph {
     public void onInputPinConnectionChanged(GlyphInstance glyphInstance, int pinIndex) {}
 
     public void onInputPinGlyphStateChanged(GlyphInstance glyphInstance, int pinIndex) {}
+
+    public void onDescendantGlyphStateChanged(GlyphInstance glyphInstance, GlyphInstance descendantInstance, int pinIndex) {}
     
     public void onConnected(GlyphInstance glyphInstance) {
 
