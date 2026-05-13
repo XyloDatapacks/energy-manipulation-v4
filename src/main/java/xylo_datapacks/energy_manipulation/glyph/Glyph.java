@@ -6,6 +6,7 @@ import net.minecraft.resources.Identifier;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.editor_data.GlyphEditorData;
 import xylo_datapacks.energy_manipulation.glyph.editor_data.InputPinEditorData;
+import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.payload.GlyphPayload;
 import xylo_datapacks.energy_manipulation.glyph.pin.*;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;

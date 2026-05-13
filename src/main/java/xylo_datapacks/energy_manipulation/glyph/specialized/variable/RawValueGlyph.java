@@ -2,7 +2,7 @@ package xylo_datapacks.energy_manipulation.glyph.specialized.variable;
 
 import net.minecraft.nbt.CompoundTag;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
-import xylo_datapacks.energy_manipulation.glyph.ExecutionContext;
+import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;

@@ -2,6 +2,7 @@ package xylo_datapacks.energy_manipulation.glyph;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
+import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
