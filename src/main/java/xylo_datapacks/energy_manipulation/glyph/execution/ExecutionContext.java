@@ -28,7 +28,7 @@ public class ExecutionContext {
     }
     
     public Optional<GlyphValue> getVariable(String name) {
-        if (!this.variables.containsKey(name)) {
+        if (this.variables.containsKey(name)) {
             return Optional.of(this.variables.get(name));
         }
         return Optional.empty();
