@@ -174,7 +174,7 @@ public class Glyph {
     }
 
     public Optional<InputPinDefinition> getInputPinDefinition(int pinIndex) {
-        if (this.inputPinMode == InputPinMode.ARRAY) {
+        if (this.inputPinMode == InputPinMode.ARRAY && pinIndex > 0) {
             pinIndex = 0;
         }
 
@@ -392,7 +392,7 @@ public class Glyph {
     
     /** @return an object derived from GlyphValue. It must NEVER be null, instead use GlyphValue or ExecutionErrorGlyphValue in case of exceptions */
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
-        return new GlyphValue();
+        return GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue(this.getClass().getSimpleName() + " does not implement execute() method!");
     }
 
     public GlyphValue evaluatePin(ExecutionContext executionContext, GlyphInstance glyphInstance, String pinName) {
@@ -406,26 +406,42 @@ public class Glyph {
     }
 
     protected GlyphValue evaluatePin_Internal(ExecutionContext executionContext, GlyphInstance glyphInstance, InputPin targetPin) {
-        if (targetPin == null || targetPin.connectedGlyph == null) {
-            return new GlyphValue();
+        GlyphValue glyphValue;
+
+        if (targetPin == null) {
+            glyphValue = GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("Cannot evaluate a non existent pin!");
+        } 
+        else if (targetPin.connectedGlyph == null) {
+            glyphValue = GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("Cannot evaluate a pin with no connection!");
+        } 
+        else {
+            GlyphInstance instanceAtPin = targetPin.connectedGlyph;
+            glyphValue = instanceAtPin.glyph.execute(executionContext, instanceAtPin);
+
+            if (glyphValue == null) {
+                glyphValue = GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("Evaluation of glyph [" + instanceAtPin.glyph.getClass().getSimpleName() + "] resulted in null GlyphValue. This behaviour is unsupported!");
+            } 
+            else if (!glyphValue.isOfType(GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE)) {
+                // If not already an error, check for further errors.
+                
+                if (!glyphValue.isOfType(targetPin.valueType)) {
+                    glyphValue = GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("Evaluation of glyph [" + instanceAtPin.glyph.getClass().getSimpleName() + "] resulted in incompatible value type! Make sure \"execute\" method returns the same value type as the instance's outputPin.");
+                }
+            }
         }
 
-        GlyphInstance instanceAtPin = targetPin.connectedGlyph;
-        GlyphValue glyphValue = instanceAtPin.glyph.execute(executionContext, instanceAtPin);
-
-        if (glyphValue == null) {
-            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in null GlyphValue. This behaviour is unsupported!", instanceAtPin.glyph.getClass().getSimpleName(), glyphInstance.glyph.getClass().getSimpleName());
-            return new GlyphValue();
-        }
-
-        if (glyphValue.isOfType(GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE)) {
-            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in the following error: {}", instanceAtPin.glyph.getClass().getSimpleName(), glyphInstance.glyph.getClass().getSimpleName(), glyphValue.getDebugString());
-        }
-        else if (!glyphValue.isOfType(targetPin.valueType)) {
-            EnergyManipulation.LOGGER.warn("Evaluation of glyph [{}] connected to a pin of [{}] resulted in incompatible value type! Make sure \"execute\" method returns the same value type as the instance's outputPin.", instanceAtPin.glyph.getClass().getSimpleName(), glyphInstance.glyph.getClass().getSimpleName());
-        }
-        
+        logPinEvaluationError(executionContext, glyphInstance, targetPin, glyphValue);
         return glyphValue;
+    }
+    
+    protected void logPinEvaluationError(ExecutionContext executionContext, GlyphInstance glyphInstance, InputPin targetPin, GlyphValue evaluationValue) {
+        if (evaluationValue.isOfType(GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE)) {
+            
+            int pinIndex = glyphInstance.inputPins.indexOf(targetPin);
+            String inputPinName = this.getInputPinDefinition(pinIndex).map(def -> def.pinName).orElse("null");
+
+            EnergyManipulation.LOGGER.warn("Evaluation of pin [{} {}] from {}, resulted in the following error: {}", inputPinName, pinIndex, glyphInstance.glyph.getClass().getSimpleName(), GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.getExecutionErrorGlyphValue(evaluationValue));
+        }
     }
 
     // ~Execution

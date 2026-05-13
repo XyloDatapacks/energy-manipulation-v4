@@ -50,7 +50,7 @@ public class VarGetterGlyph extends Glyph {
         Optional<GlyphValue> output = executionContext.getVariable(varName);
         
         if (output.isEmpty()) {
-            return GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("VarGetterGlyph: variable " + varName + " does not exist");
+            return GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("VarGetterGlyph: variable does not exist");
         }
         
         if (!output.get().isOfType(requestedOutputType)) {

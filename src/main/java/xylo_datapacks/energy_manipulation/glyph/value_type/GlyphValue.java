@@ -1,6 +1,6 @@
 package xylo_datapacks.energy_manipulation.glyph.value_type;
 
-public class GlyphValue {
+public abstract class GlyphValue {
     
     public boolean isOfType(GlyphValueType glyphValueType) { return false; }
 
