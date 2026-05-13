@@ -8,8 +8,11 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
+import xylo_datapacks.energy_manipulation.glyph.specialized.variable.VarDefinitionGlyph;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
+import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class SpellEditor {
@@ -18,6 +21,9 @@ public class SpellEditor {
     protected final SpellEditorRootGlyphInstance rootGlyphInstance;
     protected GlyphInstance originalGlyphInstance;
     protected GlyphInstance currentGlyphInstance;
+    protected Map<GlyphInstance, SpellEditorVariable> registeredVariables = new LinkedHashMap<>();
+
+    protected record SpellEditorVariable(String name, GlyphValueType valueType) {} 
 
     /*================================================================================================================*/
     // RootGlyph
@@ -26,10 +32,10 @@ public class SpellEditor {
 
         public SpellEditorRootGlyphInstance(Glyph glyph) {
             super(glyph);
-            this.onInstanceChangedCallback = () -> {};
+            this.onInstanceChangedCallback = changedInstance -> {};
         }
 
-        Runnable onInstanceChangedCallback;
+        Consumer<GlyphInstance> onInstanceChangedCallback;
     }
 
     protected static class SpellEditorRootGlyph extends Glyph {
@@ -56,12 +62,12 @@ public class SpellEditor {
 
         @Override
         public void onInputPinConnectionChanged(GlyphInstance glyphInstance, int pinIndex) {
-            ((SpellEditorRootGlyphInstance) glyphInstance).onInstanceChangedCallback.run();
+            ((SpellEditorRootGlyphInstance) glyphInstance).onInstanceChangedCallback.accept(glyphInstance);
         }
 
         @Override
         public void onDescendantGlyphStateChanged(GlyphInstance glyphInstance, GlyphInstance descendantInstance, int pinIndex) {
-            ((SpellEditorRootGlyphInstance) glyphInstance).onInstanceChangedCallback.run();
+            ((SpellEditorRootGlyphInstance) glyphInstance).onInstanceChangedCallback.accept(descendantInstance);
         }
     }
 
@@ -101,9 +107,46 @@ public class SpellEditor {
         return currentGlyphInstance;
     }
 
-    public void onInstanceChanged() {}
+    public void onInstanceChanged(GlyphInstance changedInstance) {
+        UpdateVariableRegistry();
+    }
 
     // ~TrackedInstance
+    /*================================================================================================================*/
+
+    /*================================================================================================================*/
+    // Variables
+    
+    public void registerVariable(GlyphInstance varDefGlyphInstance, String name, GlyphValueType valueType) {
+        registeredVariables.put(varDefGlyphInstance, new SpellEditorVariable(name, valueType));
+    }
+    
+    public void unregisterVariable(GlyphInstance varDefGlyphInstance) {
+        registeredVariables.remove(varDefGlyphInstance);
+    }
+    
+    public void UpdateVariableRegistry() {
+        // Get all var definition instances.
+        List<GlyphInstance> varDefinitionInstances = new ArrayList<>();
+        rootGlyphInstance.glyph.getDescendants(rootGlyphInstance, varDefinitionInstances, instance -> {
+            return instance.glyph == GlyphsRegistry.VAR_DEFINITION_GLYPH;
+        });
+        
+        // Rebuild the variables' registry.
+        registeredVariables.clear();
+        varDefinitionInstances.forEach(varDefInstance -> {
+            // Register the variable for this definition.
+            GlyphValue varNameValue = ((VarDefinitionGlyph) varDefInstance.glyph).getVarNameValue(varDefInstance);
+            String varName = GlyphsRegistry.VAR_NAME_VALUE_TYPE.getVarName(varNameValue);
+            GlyphValueType varType = GlyphsRegistry.VAR_NAME_VALUE_TYPE.getVarValueType(varNameValue).orElse(null);
+            
+            registerVariable(varDefInstance, varName, varType);
+        });
+
+        // EnergyManipulation.LOGGER.info("Registered variables: {}", registeredVariables.values().stream().map(var -> var.name + " (" + Optional.ofNullable(var.valueType).map(Object::getClass).map(Class::getSimpleName).orElse("null") + ")").toList());
+    }
+    
+    // ~Variables
     /*================================================================================================================*/
     
     public String printCompatibleGlyphs(GlyphInstance glyphInstance, String pinName) {

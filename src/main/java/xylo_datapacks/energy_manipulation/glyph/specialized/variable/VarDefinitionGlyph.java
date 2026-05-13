@@ -2,6 +2,7 @@ package xylo_datapacks.energy_manipulation.glyph.specialized.variable;
 
 import xylo_datapacks.energy_manipulation.glyph.*;
 import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
+import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
@@ -76,5 +77,18 @@ public class VarDefinitionGlyph extends Glyph {
         // Register variable with default value.
         executionContext.setVariable(varName, varType.get().MakeDefaulted());
         return GlyphsRegistry.EXECUTION_VALUE_TYPE.makeExecutionGlyphValue(1);
+    }
+    
+    /** This is cheaty. It only exists for the editor. */
+    public GlyphValue getVarNameValue(GlyphInstance glyphInstance) {
+        String varName = this.getInputPin(glyphInstance, NAME_PIN).flatMap(InputPin::getConnectedGlyph)
+                .flatMap(nameRawValueInstance -> ((RawValueGlyph) nameRawValueInstance.glyph).getPayloadValue(nameRawValueInstance))
+                .map(GlyphsRegistry.STRING_VALUE_TYPE::getStringGlyphValue).orElse("");
+        
+        Optional<GlyphValueType> varType = this.getInputPin(glyphInstance, TYPE_PIN).flatMap(InputPin::getConnectedGlyph)
+                .flatMap(typeRawValueInstance -> ((RawValueGlyph) typeRawValueInstance.glyph).getPayloadValue(typeRawValueInstance))
+                .flatMap(GlyphsRegistry.CLASS_VALUE_TYPE::getClassGlyphValue);
+        
+        return GlyphsRegistry.VAR_NAME_VALUE_TYPE.makeVarNameValue(varName, varType.orElse(null));
     }
 }

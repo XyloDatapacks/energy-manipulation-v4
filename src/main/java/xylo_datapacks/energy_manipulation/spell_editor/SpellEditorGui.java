@@ -240,7 +240,7 @@ public class SpellEditorGui extends SimpleGui {
             }
             
             // Recursive call for the connected glyph.
-            recursiveCreateSpellGuiElements(glyphInstance.inputPins.get(i).getConnectedGlyph().get(), currentSlot);
+            recursiveCreateSpellGuiElements(glyphInstance.inputPins.get(i).getConnectedGlyph().orElse(null), currentSlot);
 
             if (!bHidden) {
                 // Add decorator for this pin to show after the pin itself and all its sub-pins.
