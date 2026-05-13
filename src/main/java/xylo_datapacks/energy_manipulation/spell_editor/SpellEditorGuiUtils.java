@@ -127,4 +127,15 @@ public class SpellEditorGuiUtils {
                 })
                 .build();
     }
+
+    public static SimpleGuiElement makeVariableOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, String name, GlyphValueType glyphValueType) {
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(glyphValueType))
+                .setName(Component.literal(name))
+                .setCallback(clickType -> {
+                    GlyphInstance glyphInstance = multipleChoiceInputGui.getGlyphInstance();
+                    ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, GlyphsRegistry.VAR_NAME_VALUE_TYPE.makeVarNameValue(name, glyphValueType));
+                    multipleChoiceInputGui.goBackToEditor();
+                })
+                .build();
+    }
 }

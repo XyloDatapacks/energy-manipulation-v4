@@ -395,6 +395,28 @@ public class SpellEditorGui extends SimpleGui {
                             })
                             .toList();
                 }
+
+                if (inputGui.getGlyphInstance().outputPin.valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE) {
+                    return editor.registeredVariables.entrySet().stream()
+                            .filter(entry -> {
+                                // Filter by rawValueGlyph's parent.
+                                Optional<GlyphInstance> parentInstance = inputGui.getGlyphInstance().glyph.getParentGlyphInstance(inputGui.getGlyphInstance());
+                                if (parentInstance.isPresent()) {
+                                    if (parentInstance.get().glyph == GlyphsRegistry.VAR_GETTER_GLYPH) {
+                                        return parentInstance.get().outputPin.valueType == entry.getValue().valueType();
+                                    }
+                                    
+                                    // Other filters by parent are to be put here.
+                                }
+                                
+                                return true; // TODO: filter so that only variables in scope are shown.
+                            })
+                            .map(entry -> {
+                                return SpellEditorGuiUtils.makeVariableOptionElement(inputGui, entry.getValue().name(), entry.getValue().valueType());
+                            })
+                            .toList();
+                }
+                
                 return new ArrayList<>();
             });
         }
