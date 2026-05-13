@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class IntValueType extends GlyphValueType implements NumericGlyphValueInterface, ComparableGlyphValueInterface, SortableGlyphValueInterface, StringConvertibleValueInterface {
    
-    class IntGlyphValue extends BaseGlyphValue {
+    static class IntGlyphValue extends BaseGlyphValue {
         public int value;
         
         IntGlyphValue(int value) {

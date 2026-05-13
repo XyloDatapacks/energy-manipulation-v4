@@ -11,7 +11,7 @@ public class VarNameValueType extends GlyphValueType {
     static public String NAME_NBT_KEY = "name";
     static public String TYPE_NBT_KEY = "type";
     
-    class VarNameGlyphValue extends BaseGlyphValue {
+    static class VarNameGlyphValue extends BaseGlyphValue {
         public String name;
         public GlyphValueType valueType;
 

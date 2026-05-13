@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class ExecutionValueType extends GlyphValueType {
     
-    class ExecutionGlyphValue extends BaseGlyphValue {
+    static class ExecutionGlyphValue extends BaseGlyphValue {
         public int value;
         
         ExecutionGlyphValue(int value) {

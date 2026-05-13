@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class ClassValueType extends GlyphValueType {
 
-    class ClassGlyphValue extends BaseGlyphValue {
+    static class ClassGlyphValue extends BaseGlyphValue {
         public GlyphValueType value;
 
         ClassGlyphValue(GlyphValueType value) {

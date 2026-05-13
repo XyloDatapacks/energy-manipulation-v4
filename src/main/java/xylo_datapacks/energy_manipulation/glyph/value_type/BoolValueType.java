@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class BoolValueType extends GlyphValueType implements ComparableGlyphValueInterface {
     
-    class BoolGlyphValue extends BaseGlyphValue {
+    static class BoolGlyphValue extends BaseGlyphValue {
         public boolean value;
         
         BoolGlyphValue(boolean value) {

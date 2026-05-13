@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class ExecutionErrorValueType extends GlyphValueType {
    
-    class ExecutionErrorGlyphValue extends BaseGlyphValue {
+    static class ExecutionErrorGlyphValue extends BaseGlyphValue {
         public String message;
         
         ExecutionErrorGlyphValue(String message) {

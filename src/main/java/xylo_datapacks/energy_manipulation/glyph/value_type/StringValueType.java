@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class StringValueType extends GlyphValueType implements StringGlyphValueInterface, ComparableGlyphValueInterface, StringConvertibleValueInterface {
     
-    class StringGlyphValue extends BaseGlyphValue {
+    static class StringGlyphValue extends BaseGlyphValue {
         public String value;
         
         StringGlyphValue(String value) {
