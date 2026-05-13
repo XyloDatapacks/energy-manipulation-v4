@@ -11,9 +11,8 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.S
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.DebugGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.PrintStringGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.ProgramGlyph;
-import xylo_datapacks.energy_manipulation.glyph.specialized.variable.FromConversionGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.variable.*;
 import xylo_datapacks.energy_manipulation.glyph.value_type.*;
-import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 
 import java.util.function.Supplier;
 
@@ -32,6 +31,9 @@ public class GlyphsRegistry {
     static public final OperationGlyph OPERATION_GLYPH = registerGlyph("operation_glyph", OperationGlyph::new);
     static public final SumOperatorGlyph SUM_OPERATOR_GLYPH = registerGlyph("sum_operator_glyph", SumOperatorGlyph::new);
     static public final FromConversionGlyph FROM_CONVERSION_GLYPH = registerGlyph("from_conversion_glyph", FromConversionGlyph::new);
+    static public final VarDefinitionGlyph VAR_DEFINITION_GLYPH = registerGlyph("var_definition_glyph", VarDefinitionGlyph::new);
+    static public final VarSetterGlyph VAR_SETTER_GLYPH = registerGlyph("var_setter_glyph", VarSetterGlyph::new);
+    static public final VarGetterGlyph VAR_GETTER_GLYPH = registerGlyph("var_getter_glyph", VarGetterGlyph::new);
     
     static public final ClassValueType CLASS_VALUE_TYPE = registerValueType("class_value_type", ClassValueType::new);
     static public final StringValueType STRING_VALUE_TYPE = registerValueType("string_value_type", StringValueType::new);
@@ -39,6 +41,7 @@ public class GlyphsRegistry {
     static public final IntValueType INT_VALUE_TYPE = registerValueType("int_value_type", IntValueType::new);
     static public final ExecutionValueType EXECUTION_VALUE_TYPE = registerValueType("execution_value_type", ExecutionValueType::new);
     static public final ExecutionErrorValueType EXECUTION_ERROR_VALUE_TYPE = registerValueType("execution_error_value_type", ExecutionErrorValueType::new);
+    static public final VarNameValueType VAR_NAME_VALUE_TYPE = registerValueType("var_name_value_type", VarNameValueType::new);
 
     public static <T extends Glyph> T registerGlyph(String name, Supplier<T> factory) {
         T glyph = factory.get();

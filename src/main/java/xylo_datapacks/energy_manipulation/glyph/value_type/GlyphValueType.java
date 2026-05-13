@@ -12,8 +12,6 @@ public abstract class GlyphValueType {
         public final boolean isOfType(GlyphValueType glyphValueType) {
             return glyphValueType == getValueType();
         }
-
-        public abstract GlyphValueType getValueType();
     }
     
     public abstract GlyphValue MakeDefaulted();
