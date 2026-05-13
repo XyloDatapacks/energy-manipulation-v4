@@ -6,6 +6,7 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
+import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
@@ -50,10 +51,10 @@ public class VarSetterGlyph extends Glyph {
     public void onInputPinGlyphPayloadChanged(GlyphInstance glyphInstance, int pinIndex) {
         // If the name pin changed, we want to update the value type of VALUE_PIN according to the variable type.
         if (this.getInputPinDefinition(pinIndex).get().pinName.equals(NAME_PIN)) {
-            this.getInputPin(glyphInstance, VALUE_PIN).ifPresent(inputPin -> {
+            this.getInputPin(glyphInstance, VALUE_PIN).ifPresent(valuePin -> {
 
                 // Get variable name value from NAME_PIN.
-                GlyphInstance rawValueGlyphInstance = this.getInputPin(glyphInstance, NAME_PIN).get().connectedGlyph;
+                GlyphInstance rawValueGlyphInstance = this.getInputPin(glyphInstance, NAME_PIN).flatMap(InputPin::getConnectedGlyph).get();
                 Optional<GlyphValue> varNameValue = ((RawValueGlyph) rawValueGlyphInstance.glyph).getPayloadValue(rawValueGlyphInstance);
                 
                 // Get the new value type from var name value
@@ -61,11 +62,11 @@ public class VarSetterGlyph extends Glyph {
 
                 if (newValueType.isPresent()) {
                     // Update value type for VALUE_PIN.
-                    GlyphValueType oldValueType = inputPin.valueType;
-                    inputPin.valueType = newValueType.get();
+                    GlyphValueType oldValueType = valuePin.valueType;
+                    valuePin.valueType = newValueType.get();
 
                     // If the value type of VALUE_PIN changed, reset the connection.
-                    if (oldValueType != inputPin.valueType) {
+                    if (oldValueType != valuePin.valueType) {
                         this.resetConnection(glyphInstance, VALUE_PIN);
                     }
                 }

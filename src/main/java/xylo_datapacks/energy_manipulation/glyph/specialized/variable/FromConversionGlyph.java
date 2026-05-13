@@ -2,6 +2,7 @@ package xylo_datapacks.energy_manipulation.glyph.specialized.variable;
 
 import xylo_datapacks.energy_manipulation.glyph.*;
 import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
+import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
@@ -54,20 +55,20 @@ public class FromConversionGlyph extends Glyph {
     public void onInputPinGlyphPayloadChanged(GlyphInstance glyphInstance, int pinIndex) {
         // When the payload, of the raw value glyph, connected to TYPE_PIN, changes, we want to update the value type of VALUE_PIN.
         if (this.getInputPinDefinition(pinIndex).get().pinName.equals(TYPE_PIN)) {
-            this.getInputPin(glyphInstance, VALUE_PIN).ifPresent(inputPin -> {
+            this.getInputPin(glyphInstance, VALUE_PIN).ifPresent(valuePin -> {
                 
                 // newValueType is the payload from the raw value glyph connected to TYPE_PIN.
-                GlyphInstance rawValueGlyphInstance = this.getInputPin(glyphInstance, TYPE_PIN).get().connectedGlyph;
+                GlyphInstance rawValueGlyphInstance = this.getInputPin(glyphInstance, TYPE_PIN).flatMap(InputPin::getConnectedGlyph).get();
                 Optional<GlyphValue> classValue = ((RawValueGlyph) rawValueGlyphInstance.glyph).getPayloadValue(rawValueGlyphInstance);
                 Optional<GlyphValueType> newValueType = classValue.flatMap(GlyphsRegistry.CLASS_VALUE_TYPE::getClassGlyphValue);
                 
                 if (newValueType.isPresent()) {
                     // Update value typ for VALUE_PIN.
-                    GlyphValueType oldValueType = inputPin.valueType;
-                    inputPin.valueType = newValueType.get();
+                    GlyphValueType oldValueType = valuePin.valueType;
+                    valuePin.valueType = newValueType.get();
                     
                     // If the value type of VALUE_PIN changed, reset the connection.
-                    if (oldValueType != inputPin.valueType) {
+                    if (oldValueType != valuePin.valueType) {
                         this.resetConnection(glyphInstance, VALUE_PIN);
                     }
                 }

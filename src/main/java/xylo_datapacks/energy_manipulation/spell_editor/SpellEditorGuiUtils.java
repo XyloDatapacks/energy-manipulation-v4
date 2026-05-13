@@ -52,7 +52,7 @@ public class SpellEditorGuiUtils {
     
     public static SimpleGuiElement makePinGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance, int pinIndex) {
         InputPin pinToDisplay = glyphInstance.glyph.getInputPin(glyphInstance, pinIndex).get();
-        GlyphInstance connectedGlyphInstance = pinToDisplay.connectedGlyph;
+        GlyphInstance connectedGlyphInstance = pinToDisplay.getConnectedGlyph().get();
         String connectedGlyphDisplayName = connectedGlyphInstance != null ? connectedGlyphInstance.glyph.getClass().getSimpleName() : "None";
 
         InputPinDefinition pinDefinitionToDisplay = glyphInstance.glyph.getInputPinDefinition(pinIndex).get();

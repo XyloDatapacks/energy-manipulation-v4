@@ -4,6 +4,7 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 
 import java.lang.ref.WeakReference;
+import java.util.Optional;
 
 public class OutputPin {
 
@@ -14,9 +15,17 @@ public class OutputPin {
     public GlyphValueType valueType;
 
     /** We keep a weak reference to the pin connected to this output pin, to allow navigating backward. */
-    public WeakReference<InputPin> connectedPin = new WeakReference<>(null);
+    protected WeakReference<InputPin> connectedPin = new WeakReference<>(null);
     
     public OutputPin(WeakReference<GlyphInstance> owner) {
         this.owner = owner;
+    }
+    
+    public Optional<InputPin> getConnectedPin() {
+        return Optional.ofNullable(this.connectedPin.get());
+    }
+    
+    public void setConnectedPin(InputPin pin) {
+        this.connectedPin = new WeakReference<>(pin);
     }
 }

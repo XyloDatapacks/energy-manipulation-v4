@@ -3,6 +3,7 @@ package xylo_datapacks.energy_manipulation.glyph;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.editor_data.GlyphEditorData;
 import xylo_datapacks.energy_manipulation.glyph.editor_data.InputPinEditorData;
@@ -116,7 +117,7 @@ public class Glyph {
     public void NotifyPayloadChanged(GlyphInstance glyphInstance) {
         this.onPayloadChanged(glyphInstance);
 
-        Optional<InputPin> parentInputPin = Optional.ofNullable(glyphInstance.outputPin.connectedPin.get());
+        Optional<InputPin> parentInputPin = glyphInstance.outputPin.getConnectedPin();
         Optional<GlyphInstance> parentGlyphInstance = parentInputPin.map(pin -> pin.owner.get());
         if (parentGlyphInstance.isPresent()) {
             int parentInputPinIndex = parentGlyphInstance.get().inputPins.indexOf(parentInputPin.get());
@@ -244,8 +245,24 @@ public class Glyph {
     // Connections
     
     public Optional<GlyphInstance> getParentGlyphInstance(GlyphInstance glyphInstance) {
-        Optional<InputPin> parentInputPin = Optional.ofNullable(glyphInstance.outputPin.connectedPin.get());
+        Optional<InputPin> parentInputPin = glyphInstance.outputPin.getConnectedPin();
         return parentInputPin.map(pin -> pin.owner.get());
+    }
+    
+    public void getDescendants(GlyphInstance glyphInstance, List<GlyphInstance> destination, Predicate<GlyphInstance> glyphFilter) {
+        for (InputPin inputPin : glyphInstance.inputPins) {
+            if (inputPin != null) {
+                inputPin.getConnectedGlyph().ifPresent(connectedGlyph -> {
+                    // If the connected instance passes the filter, add it to the destination list.
+                    if (glyphFilter.test(connectedGlyph)) {
+                        destination.add(connectedGlyph);
+                    }
+
+                    // Recursively get descendants of the connected instance.
+                    connectedGlyph.glyph.getDescendants(connectedGlyph, destination, glyphFilter); 
+                });
+            }
+        }
     }
     
     protected boolean canConnectToPin_Internal(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
@@ -304,8 +321,8 @@ public class Glyph {
         }
         
         InputPin targetPin = glyphInstance.inputPins.get(pinIndex);
-        targetPin.connectedGlyph = glyphToConnect;
-        glyphToConnect.outputPin.connectedPin = new WeakReference<>(targetPin);
+        targetPin.setConnectedGlyph(glyphToConnect);
+        glyphToConnect.outputPin.setConnectedPin(targetPin);
         
         this.NotifyInputPinConnectionChanged(glyphInstance, pinIndex);
         glyphToConnect.glyph.NotifyConnected(glyphToConnect);
@@ -333,7 +350,7 @@ public class Glyph {
         }
 
         InputPin targetPin = glyphInstance.inputPins.get(pinIndex);
-        targetPin.connectedGlyph = null;
+        targetPin.setConnectedGlyph(null);
         this.NotifyInputPinConnectionChanged(glyphInstance, pinIndex);
     }
     
@@ -345,7 +362,7 @@ public class Glyph {
     public void NotifyInputPinConnectionChanged(GlyphInstance glyphInstance, int pinIndex) {
         this.onInputPinConnectionChanged(glyphInstance, pinIndex);
 
-        Optional<InputPin> parentInputPin = Optional.ofNullable(glyphInstance.outputPin.connectedPin.get());
+        Optional<InputPin> parentInputPin = glyphInstance.outputPin.getConnectedPin();
         Optional<GlyphInstance> parentGlyphInstance = parentInputPin.map(pin -> pin.owner.get());
         if (parentGlyphInstance.isPresent()) {
             int parentInputPinIndex = parentGlyphInstance.get().inputPins.indexOf(parentInputPin.get());
@@ -405,17 +422,17 @@ public class Glyph {
         return this.evaluatePin_Internal(executionContext, glyphInstance, targetPin.orElse(null));
     }
 
-    protected GlyphValue evaluatePin_Internal(ExecutionContext executionContext, GlyphInstance glyphInstance, InputPin targetPin) {
+    protected GlyphValue evaluatePin_Internal(ExecutionContext executionContext, GlyphInstance glyphInstance, @Nullable InputPin targetPin) {
         GlyphValue glyphValue;
 
         if (targetPin == null) {
             glyphValue = GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("Cannot evaluate a non existent pin!");
         } 
-        else if (targetPin.connectedGlyph == null) {
+        else if (targetPin.getConnectedGlyph().isEmpty()) {
             glyphValue = GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue("Cannot evaluate a pin with no connection!");
         } 
         else {
-            GlyphInstance instanceAtPin = targetPin.connectedGlyph;
+            GlyphInstance instanceAtPin = targetPin.getConnectedGlyph().get();
             glyphValue = instanceAtPin.glyph.execute(executionContext, instanceAtPin);
 
             if (glyphValue == null) {
@@ -484,7 +501,7 @@ public class Glyph {
             ListTag inputPins = new ListTag();
             glyphInstance.inputPins.forEach(pin -> {
                 // Since we are not storing index or id, we must store the empty connections too.
-                inputPins.add(Optional.ofNullable(pin.connectedGlyph).map(GlyphUtils::serializeInstance).orElse(new CompoundTag()));
+                inputPins.add(pin.getConnectedGlyph().map(GlyphUtils::serializeInstance).orElse(new CompoundTag()));
             });
             output.put("inputs", inputPins);
         }

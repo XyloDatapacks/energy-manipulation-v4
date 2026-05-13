@@ -31,11 +31,9 @@ public class DebugGlyph extends Glyph {
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         GlyphValue outputValue = this.evaluatePin(executionContext, glyphInstance, INPUT_PIN);
 
-        Optional<InputPin> inputPin = this.getInputPin(glyphInstance, INPUT_PIN);
-        
-        if (inputPin.isPresent() && inputPin.get().connectedGlyph != null) {
-            EnergyManipulation.LOGGER.info("Executing [{}] with result [{}]", inputPin.get().connectedGlyph.glyph.getClass().getSimpleName(), outputValue.getDebugString());
-        }
+        this.getInputPin(glyphInstance, INPUT_PIN).flatMap(InputPin::getConnectedGlyph).ifPresent(connectedGlyph -> {
+            EnergyManipulation.LOGGER.info("Executing [{}] with result [{}]", connectedGlyph.glyph.getClass().getSimpleName(), outputValue.getDebugString());
+        });
         
         return outputValue;
     }

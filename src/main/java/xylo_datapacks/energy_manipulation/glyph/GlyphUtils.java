@@ -36,7 +36,7 @@ public class GlyphUtils {
     /** @param callback consumer passing as parameter the newly created GlyphInstance. */
     public static boolean connectNewGlyphWithCallback(GlyphInstance glyphInstance, String pinName, Glyph glyphToCreate, Consumer<GlyphInstance> callback) {
         if (connectNewGlyph(glyphInstance, pinName, glyphToCreate)) {
-            callback.accept(glyphInstance.glyph.getInputPin(glyphInstance, pinName).get().connectedGlyph);
+            callback.accept(glyphInstance.glyph.getInputPin(glyphInstance, pinName).flatMap(InputPin::getConnectedGlyph).get());
             return true;
         }
         return false;
@@ -45,7 +45,7 @@ public class GlyphUtils {
     /** @param callback consumer passing as parameter the newly created GlyphInstance. */
     public static boolean connectNewGlyphWithCallback(GlyphInstance glyphInstance, int pinIndex, Glyph glyphToCreate, Consumer<GlyphInstance> callback) {
         if (connectNewGlyph(glyphInstance, pinIndex, glyphToCreate)) {
-            callback.accept(glyphInstance.glyph.getInputPin(glyphInstance, pinIndex).get().connectedGlyph);
+            callback.accept(glyphInstance.glyph.getInputPin(glyphInstance, pinIndex).flatMap(InputPin::getConnectedGlyph).get());
             return true;
         }
         return false;

@@ -17,6 +17,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import xylo_datapacks.energy_manipulation.font.EnergyManipulationFonts;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
@@ -214,7 +215,7 @@ public class SpellEditorGui extends SimpleGui {
         refreshPageButtons();
     }
     
-    public void recursiveCreateSpellGuiElements(GlyphInstance glyphInstance, AtomicInteger currentSlot) {
+    public void recursiveCreateSpellGuiElements(@Nullable GlyphInstance glyphInstance, AtomicInteger currentSlot) {
         // Stop this branch if no glyph instance.
         if (glyphInstance == null || isOutOfGlyphsDrawingSpace(currentSlot)) {
             return;
@@ -239,7 +240,7 @@ public class SpellEditorGui extends SimpleGui {
             }
             
             // Recursive call for the connected glyph.
-            recursiveCreateSpellGuiElements(glyphInstance.inputPins.get(i).connectedGlyph, currentSlot);
+            recursiveCreateSpellGuiElements(glyphInstance.inputPins.get(i).getConnectedGlyph().get(), currentSlot);
 
             if (!bHidden) {
                 // Add decorator for this pin to show after the pin itself and all its sub-pins.
