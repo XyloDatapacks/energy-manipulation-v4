@@ -52,8 +52,8 @@ public class ClassValueType extends GlyphValueType {
 
     @Override
     public Optional<Tag> serialize(GlyphValue value) {
-        String IdentifierString = getClassGlyphValue(value).map(GlyphsRegistry.VALUE_TYPE::getKey).map(String::valueOf).orElse("null");
-        return Codec.STRING.encodeStart(NbtOps.INSTANCE, IdentifierString)
+        String valueTypeIdentifierString = getClassGlyphValue(value).map(GlyphsRegistry.VALUE_TYPE::getKey).map(String::valueOf).orElse("null");
+        return Codec.STRING.encodeStart(NbtOps.INSTANCE, valueTypeIdentifierString)
                 .resultOrPartial(err -> System.err.println("Failed to encode class glyph value: " + err));
     }
 
