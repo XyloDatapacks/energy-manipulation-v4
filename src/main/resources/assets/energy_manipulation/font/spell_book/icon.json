@@ -1,0 +1,18 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "energy_manipulation:item/gui/icon/right_click.png",
+      "ascent": 8,
+      "height": 10,
+      "chars": ["R"]
+    },
+    {
+      "type": "bitmap",
+      "file": "energy_manipulation:item/gui/icon/left_click.png",
+      "ascent": 8,
+      "height": 10,
+      "chars": ["L"]
+    }
+  ]
+}

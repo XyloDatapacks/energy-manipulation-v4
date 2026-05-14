@@ -4,7 +4,12 @@ import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.contents.objects.ObjectInfo;
 import net.minecraft.world.item.ItemStack;
+import xylo_datapacks.energy_manipulation.font.EnergyManipulationFonts;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
@@ -17,6 +22,8 @@ import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 
+import java.awt.*;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -60,14 +67,16 @@ public class SpellEditorGuiUtils {
         
         ItemStack buttonStack = connectedGlyphInstance != null ? SpellEditorButtonsRegistry.getGlyphButtonStack(connectedGlyphInstance.glyph, pinToDisplay.valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
-                .setName(Component.literal("Pin: " + pinDisplayName + " | " + connectedGlyphDisplayName))
+                .setName(Component.literal("[" + pinDisplayName + "]"))
+                .setLore(List.of(Component.literal("> " + connectedGlyphDisplayName), Component.literal(""), makeClickActionComponent("L", "Change Glyph")))
                 .setCallback(clickType -> editorGui.openGlyphSelector(glyphInstance, pinIndex))
                 .build();
     }
     
     public static SimpleGuiElement makeArrayPinDecoratorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance, int pinIndex) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.INSERT_OR_REMOVE_ELEMENT_BUTTON.get())
-                .setName(Component.literal("+ / -"))
+                .setName(makeClickActionComponent("L", "Add pin"))
+                .setLore(List.of(makeClickActionComponent("R", "Remove pin")))
                 .setCallback(clickType -> {
                     if (clickType.isRight) {
                         editorGui.removeArrayPin(glyphInstance, pinIndex);
@@ -88,7 +97,7 @@ public class SpellEditorGuiUtils {
 
     public static SimpleGuiElement makeArrayGlyphTerminatorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.ADD_ELEMENT_BUTTON.get())
-                .setName(Component.literal(")+"))
+                .setName(makeClickActionComponent("L", "Add pin"))
                 .setCallback(clickType -> editorGui.addArrayPin(glyphInstance))
                 .build();
     }
@@ -111,6 +120,7 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeGlyphOptionGuiElement(GlyphSelectorGui selectorGui, Glyph glyph, GlyphValueType valueType) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getGlyphButtonStack(glyph, valueType))
                 .setName(Component.literal(glyph.getClass().getSimpleName()))
+                .setLore(List.of(Component.literal("..."), Component.literal(""), makeClickActionComponent("L", "Select Glyph")))
                 .setCallback(clickType -> {
                     GlyphUtils.connectNewGlyph(selectorGui.getGlyphInstance(), selectorGui.getPinIndex(), glyph);
                     selectorGui.goBackToEditor();
@@ -128,6 +138,7 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeValueTypeOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, GlyphValueType valueType) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType))
                 .setName(Component.literal(valueType.getClass().getSimpleName()))
+                .setLore(List.of(Component.literal("..."), Component.literal(""), makeClickActionComponent("L", "Select Value Type")))
                 .setCallback(clickType -> {
                     GlyphInstance glyphInstance = multipleChoiceInputGui.getGlyphInstance();
                     ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, GlyphsRegistry.CLASS_VALUE_TYPE.makeClassGlyphValue(valueType));
@@ -139,11 +150,17 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeVariableOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, String name, GlyphValueType glyphValueType) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(glyphValueType))
                 .setName(Component.literal(name))
+                .setLore(List.of(Component.literal(""), makeClickActionComponent("L", "Select Variable")))
                 .setCallback(clickType -> {
                     GlyphInstance glyphInstance = multipleChoiceInputGui.getGlyphInstance();
                     ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, GlyphsRegistry.VAR_NAME_VALUE_TYPE.makeVarNameValue(name, glyphValueType));
                     multipleChoiceInputGui.goBackToEditor();
                 })
                 .build();
+    }
+    
+    public static Component makeClickActionComponent(String click, String action) {
+        return Component.literal(click).setStyle(Style.EMPTY.withFont(EnergyManipulationFonts.SPELL_BOOK_ICON).withColor(Color.white.getRGB()))
+                .append(Component.literal(" " + action).setStyle(Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(Color.lightGray.getRGB())));
     }
 }
