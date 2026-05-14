@@ -48,6 +48,19 @@ public class StringInputGui extends AnvilInputGui {
     }
 
     @Override
+    public void updateDefaultInputItem(String input) {
+        var itemStack = createInputItem(input);
+        this.setSlot(0, new GuiElementBuilder(itemStack)
+                .hideTooltip()
+                .setCallback((index, type1, action, gui) -> {
+                    this.reOpen = true;
+                    this.inputText = this.defaultText;
+                    this.sendGui();
+                })
+                .build());
+    }
+
+    @Override
     public void onInput(String input) {
         refreshConfirmButton();
     }
@@ -69,6 +82,7 @@ public class StringInputGui extends AnvilInputGui {
     protected void setupToolbar() {
         this.setSlot(1, new GuiElementBuilder(SpellEditorButtonsRegistry.CANCEL_BUTTON.get())
                 .setName(Component.literal("Cancel"))
+                .hideTooltip()
                 .setCallback(clickType -> {
                     setValueFromString(defaultText);
                     goBackToEditor();
@@ -82,6 +96,7 @@ public class StringInputGui extends AnvilInputGui {
         ItemStack confirmButtonStack = isValidInput(getInput()) ? SpellEditorButtonsRegistry.CONFIRM_BUTTON.get() : SpellEditorButtonsRegistry.CONFIRM_BUTTON_DISABLED.get();
         this.setSlot(2, new GuiElementBuilder(confirmButtonStack)
                 .setName(Component.literal("Confirm"))
+                .hideTooltip()
                 .setCallback(clickType -> {
                     if (isValidInput(getInput())) {
                         setValueFromString(getInput());

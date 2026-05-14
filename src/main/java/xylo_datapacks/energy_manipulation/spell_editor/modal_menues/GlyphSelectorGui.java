@@ -56,6 +56,7 @@ public class GlyphSelectorGui extends SimpleGui {
     protected void setupToolbar() {
         this.setSlot(26, new GuiElementBuilder(SpellEditorButtonsRegistry.CANCEL_BUTTON.get())
                 .setName(Component.literal("Cancel"))
+                .hideTooltip()
                 .setCallback(clickType -> {
                     goBackToEditor();
                 })

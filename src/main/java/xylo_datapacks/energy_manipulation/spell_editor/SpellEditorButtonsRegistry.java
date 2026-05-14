@@ -61,6 +61,26 @@ public class SpellEditorButtonsRegistry {
         return operatorSeparatorButtonStack;
     }
 
+    protected static void setCustomModelData(ItemStack stack, String name) {
+        stack.update(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY, customModelData -> {
+            List<String> strings = new ArrayList<>(customModelData.strings());
+
+            if (strings.size() <= 0) {
+                strings.add("");
+            }
+            strings.set(0, name);
+
+            return new CustomModelData(
+                    customModelData.floats(),
+                    customModelData.flags(),
+                    strings,
+                    customModelData.colors()
+            );
+        });
+    }
+    
+    /*--------------------------------------------------------------------------------------*/
+
     public static Supplier<ItemStack> registerGlyphButton(String name, Supplier<ItemStack> factory) {
         Supplier<ItemStack> output = () -> {
             ItemStack stack = factory.get();
@@ -79,24 +99,6 @@ public class SpellEditorButtonsRegistry {
         };
         Registry.register(SPELL_EDITOR_BUTTON, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, name), output);
         return output;
-    }
-    
-    protected static void setCustomModelData(ItemStack stack, String name) {
-        stack.update(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY, customModelData -> {
-            List<String> strings = new ArrayList<>(customModelData.strings());
-
-            if (strings.size() <= 0) {
-                strings.add("");
-            }
-            strings.set(0, name);
-
-            return new CustomModelData(
-                    customModelData.floats(),
-                    customModelData.flags(),
-                    strings,
-                    customModelData.colors()
-            );
-        });
     }
 
     public static void initialize() {

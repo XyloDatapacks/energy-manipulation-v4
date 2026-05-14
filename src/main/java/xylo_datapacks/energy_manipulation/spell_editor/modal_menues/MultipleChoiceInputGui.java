@@ -63,6 +63,7 @@ public class MultipleChoiceInputGui extends SimpleGui {
     protected void setupToolbar() {
         this.setSlot(26, new GuiElementBuilder(SpellEditorButtonsRegistry.CANCEL_BUTTON.get())
                 .setName(Component.literal("Cancel"))
+                .hideTooltip()
                 .setCallback(clickType -> {
                     GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(instance, initialValue);
                     goBackToEditor();

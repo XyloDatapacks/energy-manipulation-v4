@@ -82,6 +82,7 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeArrayGlyphOpenerGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.ARRAY_START_BUTTON.get())
                 .setName(Component.literal("("))
+                .hideTooltip()
                 .build();
     }
 
@@ -120,6 +121,7 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeOperatorPinDecoratorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance, int pinIndex) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getOperatorSeparatorButtonStack(glyphInstance.glyph))
                 .setName(Component.literal(""))
+                .hideTooltip()
                 .build();
     }
 

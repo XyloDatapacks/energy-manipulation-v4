@@ -102,11 +102,13 @@ public class SpellEditorGui extends SimpleGui {
         
         this.setSlot(50, new GuiElementBuilder(SpellEditorButtonsRegistry.CANCEL_BUTTON.get())
                 .setName(Component.literal("Cancel"))
+                .hideTooltip()
                 .setCallback(this::revertSpellChanges)
                 .build());
 
         this.setSlot(51, new GuiElementBuilder(SpellEditorButtonsRegistry.CONFIRM_BUTTON.get())
                 .setName(Component.literal("Confirm"))
+                .hideTooltip()
                 .setCallback(this::saveSpellChanges)
                 .build());
         
@@ -117,12 +119,14 @@ public class SpellEditorGui extends SimpleGui {
         ItemStack prevPageStack = currentPage > 0 ? SpellEditorButtonsRegistry.PREVIOUS_PAGE_BUTTON.get() : SpellEditorButtonsRegistry.PREVIOUS_PAGE_BUTTON_DISABLED.get();
         this.setSlot(52, new GuiElementBuilder(prevPageStack)
                 .setName(Component.literal("Previous Page"))
+                .hideTooltip()
                 .setCallback(this::previousPage)
                 .build());
 
         ItemStack nextPageStack = !bIsLastPage ? SpellEditorButtonsRegistry.NEXT_PAGE_BUTTON.get() : SpellEditorButtonsRegistry.NEXT_PAGE_BUTTON_DISABLED.get();
         this.setSlot(53, new GuiElementBuilder(nextPageStack)
                 .setName(Component.literal("Next Page"))
+                .hideTooltip()
                 .setCallback(this::nextPage)
                 .build());
     }
