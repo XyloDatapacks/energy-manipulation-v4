@@ -401,7 +401,7 @@ public class Glyph {
         
         // Propagate the change to the parent glyph instance, if any.
         this.getParentGlyphInstance(glyphInstance).ifPresent(parentGlyphInstance -> {
-            parentGlyphInstance.glyph.NotifyDescendantGlyphStateChanged(parentGlyphInstance, glyphInstance, pinIndex);
+            parentGlyphInstance.glyph.NotifyDescendantGlyphStateChanged(parentGlyphInstance, descendantInstance, pinIndex);
         });
     }
     
