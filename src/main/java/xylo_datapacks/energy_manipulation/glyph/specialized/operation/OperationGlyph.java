@@ -8,7 +8,7 @@ import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 
 public class OperationGlyph extends Glyph {
-    static public String OPERATOR_PIN = "Operator";
+    static public String OPERATOR_PIN = "operator";
     
     public OperationGlyph() {
         super();

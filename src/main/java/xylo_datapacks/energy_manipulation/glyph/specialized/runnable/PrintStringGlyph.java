@@ -10,7 +10,7 @@ import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 
 public class PrintStringGlyph extends Glyph {
-    static public String STRING_PIN = "String";
+    static public String STRING_PIN = "string";
     
     public PrintStringGlyph() {
         super();

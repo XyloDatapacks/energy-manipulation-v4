@@ -11,7 +11,7 @@ import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProgramGlyph extends Glyph {
-    static public String INSTRUCTION_PIN = "Instruction";
+    static public String INSTRUCTION_PIN = "instruction";
 
     public ProgramGlyph() {
         super();

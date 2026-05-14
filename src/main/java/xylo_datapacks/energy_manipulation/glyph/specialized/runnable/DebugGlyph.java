@@ -11,7 +11,7 @@ import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import java.util.Optional;
 
 public class DebugGlyph extends Glyph {
-    static public String INPUT_PIN = "Input";
+    static public String INPUT_PIN = "input";
 
     public DebugGlyph() {
         super();

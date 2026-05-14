@@ -10,8 +10,8 @@ import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.NumericGlyphValueInterface;
 
 public class SumOperatorGlyph extends Glyph implements OperatorGlyphInterface {
-    static public String FIRST_VALUE_PIN = "A";
-    static public String SECOND_VALUE_PIN = "B";
+    static public String FIRST_VALUE_PIN = "first_value";
+    static public String SECOND_VALUE_PIN = "second_value";
     
     public SumOperatorGlyph() {
         super();
