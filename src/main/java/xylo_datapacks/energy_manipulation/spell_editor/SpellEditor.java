@@ -161,6 +161,15 @@ public class SpellEditor {
         // Check if the variable name selector instance is in the scope of the variable definition instance.
         return varNameSelectorInstance.glyph.getClosestParent(varNameSelectorInstance, parent -> parent == scopeEnclosingInstance.get()).isPresent();
     }
+
+    public boolean isInScope(String varName, GlyphInstance varNameSelectorInstance) {
+
+        GlyphInstance varDefInstance = registeredVariables.entrySet().stream()
+                .filter(entry -> entry.getValue().name.equals(varName))
+                .map(Map.Entry::getKey).findFirst().orElse(null);
+        
+        return varDefInstance != null && isInScope(varDefInstance, varNameSelectorInstance);
+    }
     
     public Map<GlyphInstance, SpellEditorVariable> getInScopeVariables(GlyphInstance varNameSelectorInstance) {
         Map<GlyphInstance, SpellEditorVariable> output = new LinkedHashMap<>();
