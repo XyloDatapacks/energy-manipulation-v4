@@ -29,6 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class SpellEditorGuiUtils {
+    static final Style PRIMARY_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(Color.black.getRGB()).withoutShadow();
+    static final Style ADVICE_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(Color.darkGray.getRGB()).withoutShadow();
+    static final Style ICON_TOOLTIP_STYLE = Style.EMPTY.withFont(EnergyManipulationFonts.SPELL_BOOK_ICON).withColor(Color.white.getRGB()).withoutShadow();
 
     /** @return true if currentSlot is out of bounds. */
     public static boolean isOutOfGlyphsDrawingSpace(int pageSize, int currentPage, AtomicInteger currentSlot) {
@@ -67,8 +70,12 @@ public class SpellEditorGuiUtils {
         
         ItemStack buttonStack = connectedGlyphInstance != null ? SpellEditorButtonsRegistry.getGlyphButtonStack(connectedGlyphInstance.glyph, pinToDisplay.valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
-                .setName(Component.literal("[" + pinDisplayName + "]"))
-                .setLore(List.of(Component.literal("> " + connectedGlyphDisplayName), Component.literal(""), makeClickActionComponent("L", "Change Glyph")))
+                .setName(Component.literal("[" + pinDisplayName + "]").setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setLore(List.of(
+                        Component.literal("> " + connectedGlyphDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE), 
+                        Component.literal(""), 
+                        makeClickActionComponent("L", "Change Glyph")
+                ))
                 .setCallback(clickType -> editorGui.openGlyphSelector(glyphInstance, pinIndex))
                 .build();
     }
@@ -76,7 +83,9 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeArrayPinDecoratorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance, int pinIndex) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.INSERT_OR_REMOVE_ELEMENT_BUTTON.get())
                 .setName(makeClickActionComponent("L", "Add pin"))
-                .setLore(List.of(makeClickActionComponent("R", "Remove pin")))
+                .setLore(List.of(
+                        makeClickActionComponent("R", "Remove pin")
+                ))
                 .setCallback(clickType -> {
                     if (clickType.isRight) {
                         editorGui.removeArrayPin(glyphInstance, pinIndex);
@@ -112,15 +121,19 @@ public class SpellEditorGuiUtils {
         
         ItemStack buttonStack = valueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
-                .setName(Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value"))
+                .setName(Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value").setStyle(PRIMARY_TOOLTIP_STYLE))
                 .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
                 .build();
     }
 
     public static SimpleGuiElement makeGlyphOptionGuiElement(GlyphSelectorGui selectorGui, Glyph glyph, GlyphValueType valueType) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getGlyphButtonStack(glyph, valueType))
-                .setName(Component.literal(glyph.getClass().getSimpleName()))
-                .setLore(List.of(Component.literal("..."), Component.literal(""), makeClickActionComponent("L", "Select Glyph")))
+                .setName(Component.literal(glyph.getClass().getSimpleName()).setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setLore(List.of(
+                        Component.literal("...").setStyle(PRIMARY_TOOLTIP_STYLE), 
+                        Component.literal(""), 
+                        makeClickActionComponent("L", "Select Glyph")
+                ))
                 .setCallback(clickType -> {
                     GlyphUtils.connectNewGlyph(selectorGui.getGlyphInstance(), selectorGui.getPinIndex(), glyph);
                     selectorGui.goBackToEditor();
@@ -137,8 +150,12 @@ public class SpellEditorGuiUtils {
 
     public static SimpleGuiElement makeValueTypeOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, GlyphValueType valueType) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType))
-                .setName(Component.literal(valueType.getClass().getSimpleName()))
-                .setLore(List.of(Component.literal("..."), Component.literal(""), makeClickActionComponent("L", "Select Value Type")))
+                .setName(Component.literal(valueType.getClass().getSimpleName()).setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setLore(List.of(
+                        Component.literal("...").setStyle(PRIMARY_TOOLTIP_STYLE), 
+                        Component.literal(""), 
+                        makeClickActionComponent("L", "Select Value Type")
+                ))
                 .setCallback(clickType -> {
                     GlyphInstance glyphInstance = multipleChoiceInputGui.getGlyphInstance();
                     ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, GlyphsRegistry.CLASS_VALUE_TYPE.makeClassGlyphValue(valueType));
@@ -149,8 +166,11 @@ public class SpellEditorGuiUtils {
 
     public static SimpleGuiElement makeVariableOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, String name, GlyphValueType glyphValueType) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(glyphValueType))
-                .setName(Component.literal(name))
-                .setLore(List.of(Component.literal(""), makeClickActionComponent("L", "Select Variable")))
+                .setName(Component.literal(name).setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setLore(List.of(
+                        Component.literal(""), 
+                        makeClickActionComponent("L", "Select Variable")
+                ))
                 .setCallback(clickType -> {
                     GlyphInstance glyphInstance = multipleChoiceInputGui.getGlyphInstance();
                     ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, GlyphsRegistry.VAR_NAME_VALUE_TYPE.makeVarNameValue(name, glyphValueType));
@@ -160,7 +180,7 @@ public class SpellEditorGuiUtils {
     }
     
     public static Component makeClickActionComponent(String click, String action) {
-        return Component.literal(click).setStyle(Style.EMPTY.withFont(EnergyManipulationFonts.SPELL_BOOK_ICON).withColor(Color.white.getRGB()))
-                .append(Component.literal(" " + action).setStyle(Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(Color.lightGray.getRGB())));
+        return Component.literal(click).setStyle(ICON_TOOLTIP_STYLE)
+                .append(Component.literal(" " + action).setStyle(ADVICE_TOOLTIP_STYLE));
     }
 }

@@ -26,21 +26,21 @@ public class SpellEditorButtonsRegistry {
     public static final ResourceKey<Registry<Supplier<ItemStack>>> SPELL_EDITOR_GLYPH_BUTTON_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "spell_editor_glyph_button_registry"));
     public static final Registry<Supplier<ItemStack>> SPELL_EDITOR_GLYPH_BUTTON = FabricRegistryBuilder.create(SPELL_EDITOR_GLYPH_BUTTON_REGISTRY_KEY).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
     
-    public static final Supplier<ItemStack> CONFIRM_BUTTON = registerButton("confirm_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> CONFIRM_BUTTON_DISABLED = registerButton("confirm_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> CANCEL_BUTTON = registerButton("cancel_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> NEXT_PAGE_BUTTON = registerButton("next_page_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON = registerButton("previous_page_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> NEXT_PAGE_BUTTON_DISABLED = registerButton("next_page_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON_DISABLED = registerButton("previous_page_button_disabled", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> CONFIRM_BUTTON = registerButton("confirm_button", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
+    public static final Supplier<ItemStack> CONFIRM_BUTTON_DISABLED = registerButton("confirm_button_disabled", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
+    public static final Supplier<ItemStack> CANCEL_BUTTON = registerButton("cancel_button", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
+    public static final Supplier<ItemStack> NEXT_PAGE_BUTTON = registerButton("next_page_button", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
+    public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON = registerButton("previous_page_button", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
+    public static final Supplier<ItemStack> NEXT_PAGE_BUTTON_DISABLED = registerButton("next_page_button_disabled", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
+    public static final Supplier<ItemStack> PREVIOUS_PAGE_BUTTON_DISABLED = registerButton("previous_page_button_disabled", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
     
-    public static final Supplier<ItemStack> INSERT_OR_REMOVE_ELEMENT_BUTTON = registerGlyphButton("insert_or_remove_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> ADD_ELEMENT_BUTTON = registerGlyphButton("add_element_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> ARRAY_START_BUTTON = registerGlyphButton("array_start_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
-    public static final Supplier<ItemStack> EMPTY_PIN_BUTTON = registerGlyphButton("empty_pin_button", EnergyManipulationItems.GUI_BUTTON::getDefaultInstance);
+    public static final Supplier<ItemStack> INSERT_OR_REMOVE_ELEMENT_BUTTON = registerGlyphButton("insert_or_remove_element_button", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
+    public static final Supplier<ItemStack> ADD_ELEMENT_BUTTON = registerGlyphButton("add_element_button", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
+    public static final Supplier<ItemStack> ARRAY_START_BUTTON = registerGlyphButton("array_start_button", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
+    public static final Supplier<ItemStack> EMPTY_PIN_BUTTON = registerGlyphButton("empty_pin_button", () -> setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance()));
     
     public static ItemStack getGlyphButtonStack(Glyph glyph, GlyphValueType outputValueType) {
-        ItemStack glyphButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
+        ItemStack glyphButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
         String customModelDataName = GlyphsRegistry.GLYPH.getKey(glyph).getPath();
         if (glyph.getEditorData().bHasTypeDependentTexture) {
             customModelDataName = customModelDataName + "_" + GlyphsRegistry.VALUE_TYPE.getKey(outputValueType).getPath();
@@ -50,13 +50,13 @@ public class SpellEditorButtonsRegistry {
     }
 
     public static ItemStack getValueTypeButtonStack(GlyphValueType valueType) {
-        ItemStack valueSelectorButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
+        ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
         setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath());
         return valueSelectorButtonStack;
     }
 
     public static ItemStack getOperatorSeparatorButtonStack(Glyph glyph) {
-        ItemStack operatorSeparatorButtonStack = EnergyManipulationItems.GUI_BUTTON.getDefaultInstance();
+        ItemStack operatorSeparatorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
         setCustomModelData(operatorSeparatorButtonStack, GlyphsRegistry.GLYPH.getKey(glyph).getPath() + "_separator");
         return operatorSeparatorButtonStack;
     }
@@ -77,6 +77,11 @@ public class SpellEditorButtonsRegistry {
                     customModelData.colors()
             );
         });
+    }
+    
+    public static ItemStack setTooltipStyle(ItemStack stack) {
+        stack.set(DataComponents.TOOLTIP_STYLE, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "spell_book/button"));
+        return stack;
     }
     
     /*--------------------------------------------------------------------------------------*/
