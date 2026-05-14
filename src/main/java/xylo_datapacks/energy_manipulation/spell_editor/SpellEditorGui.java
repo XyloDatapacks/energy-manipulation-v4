@@ -409,7 +409,7 @@ public class SpellEditorGui extends SimpleGui {
 
                 // Options for VAR_NAME_VALUE_TYPE outputs.
                 if (inputGui.getGlyphInstance().outputPin.valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE) {
-                    return editor.registeredVariables.entrySet().stream()
+                    return editor.getInScopeVariables(inputGui.getGlyphInstance()).entrySet().stream()
                             .filter(entry -> {
                                 // Filter by rawValueGlyph's parent.
                                 Optional<GlyphInstance> parentInstance = inputGui.getGlyphInstance().glyph.getParentGlyphInstance(inputGui.getGlyphInstance());

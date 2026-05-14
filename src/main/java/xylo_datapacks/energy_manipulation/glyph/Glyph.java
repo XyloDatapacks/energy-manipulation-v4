@@ -265,6 +265,15 @@ public class Glyph {
         }
     }
     
+    public Optional<GlyphInstance> getClosestParent(GlyphInstance glyphInstance, Predicate<GlyphInstance> glyphFilter) {
+        return this.getParentGlyphInstance(glyphInstance).flatMap(parent -> {
+            if (glyphFilter.test(parent)) {
+                return Optional.of(parent);
+            }
+            return parent.glyph.getClosestParent(parent, glyphFilter);
+        });
+    }
+    
     protected boolean canConnectToPin_Internal(GlyphInstance glyphInstance, int pinIndex, GlyphInstance glyphToConnect) {
         Optional<InputPin> inputPin = this.getInputPin(glyphInstance, pinIndex);
         Optional<InputPinDefinition> inputPinDefinition = this.getInputPinDefinition(pinIndex);

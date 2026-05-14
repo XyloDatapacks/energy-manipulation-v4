@@ -23,7 +23,7 @@ public class SpellEditor {
     protected GlyphInstance currentGlyphInstance;
     protected Map<GlyphInstance, SpellEditorVariable> registeredVariables = new LinkedHashMap<>();
 
-    protected record SpellEditorVariable(String name, GlyphValueType valueType) {} 
+    public record SpellEditorVariable(String name, GlyphValueType valueType) {} 
 
     /*================================================================================================================*/
     // RootGlyph
@@ -144,6 +144,34 @@ public class SpellEditor {
         });
 
         // EnergyManipulation.LOGGER.info("Registered variables: {}", registeredVariables.values().stream().map(var -> var.name + " (" + Optional.ofNullable(var.valueType).map(Object::getClass).map(Class::getSimpleName).orElse("null") + ")").toList());
+    }
+    
+    public boolean isInScope(GlyphInstance varDefInstance, GlyphInstance varNameSelectorInstance) {
+        // Get the enclosing scope of the variable definition instance.
+        Optional<GlyphInstance> scopeEnclosingInstance = varDefInstance.glyph.getClosestParent(varDefInstance, parent -> parent.glyph == GlyphsRegistry.PROGRAM_GLYPH);
+        if (scopeEnclosingInstance.isEmpty()) {
+            // The variable definition instance is detached.
+            return false;
+        }
+        
+        // TODO: to account for new execution contexts like a GenerateShape glyph, when getting the parent of 
+        //  varNameSelectorInstance, get either the enclosing scope or any context-changing glyph.
+        //  Then we return true only if the found parent IS the enclosing scope.
+        
+        // Check if the variable name selector instance is in the scope of the variable definition instance.
+        return varNameSelectorInstance.glyph.getClosestParent(varNameSelectorInstance, parent -> parent == scopeEnclosingInstance.get()).isPresent();
+    }
+    
+    public Map<GlyphInstance, SpellEditorVariable> getInScopeVariables(GlyphInstance varNameSelectorInstance) {
+        Map<GlyphInstance, SpellEditorVariable> output = new LinkedHashMap<>();
+        
+        registeredVariables.forEach((varDefInstance, editorVar) -> {
+            if (isInScope(varDefInstance, varNameSelectorInstance)) {
+                output.put(varDefInstance, editorVar);
+            }
+        });
+        
+        return output;    
     }
     
     // ~Variables
