@@ -70,7 +70,7 @@ public class SpellEditorGuiUtils {
         
         ItemStack buttonStack = connectedGlyphInstance != null ? SpellEditorButtonsRegistry.getGlyphButtonStack(connectedGlyphInstance.glyph, pinToDisplay.valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
-                .setName(Component.literal("[" + pinDisplayName + "]").setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setName(Component.literal(connectedGlyphInstance == null ? "\uE000" : "\uE001").setStyle(ICON_TOOLTIP_STYLE).append(Component.literal(pinDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)))
                 .setLore(List.of(
                         Component.literal("> " + connectedGlyphDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE), 
                         Component.literal(""), 

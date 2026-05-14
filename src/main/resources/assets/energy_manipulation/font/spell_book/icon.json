@@ -13,6 +13,20 @@
       "ascent": 9,
       "height": 10,
       "chars": ["L"]
+    },
+    {
+      "type": "bitmap",
+      "file": "energy_manipulation:item/gui/icon/pin_empty.png",
+      "ascent": 6,
+      "height": 6,
+      "chars": ["\uE000"]
+    },
+    {
+      "type": "bitmap",
+      "file": "energy_manipulation:item/gui/icon/pin.png",
+      "ascent": 6,
+      "height": 6,
+      "chars": ["\uE001"]
     }
   ]
 }
