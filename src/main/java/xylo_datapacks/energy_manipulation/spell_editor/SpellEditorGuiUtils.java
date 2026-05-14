@@ -94,8 +94,14 @@ public class SpellEditorGuiUtils {
 
     public static SimpleGuiElement makeRawValueSelectorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
         Optional<GlyphValue> glyphValue = GlyphsRegistry.RAW_VALUE_GLYPH.getPayloadValue(glyphInstance);
+        GlyphValueType valueType = glyphInstance.outputPin.valueType;
         
-        return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(glyphInstance.outputPin.valueType))
+        if (valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE) {
+            valueType = glyphValue.flatMap(GlyphsRegistry.VAR_NAME_VALUE_TYPE::getVarValueType).orElse(null);
+        }
+        
+        ItemStack buttonStack = valueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
+        return new GuiElementBuilder(buttonStack)
                 .setName(Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value"))
                 .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
                 .build();
