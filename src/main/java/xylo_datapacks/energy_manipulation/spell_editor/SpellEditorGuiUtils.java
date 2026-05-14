@@ -20,6 +20,7 @@ import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
+import xylo_datapacks.energy_manipulation.glyph.value_type.VarNameValueType;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 
@@ -120,9 +121,11 @@ public class SpellEditorGuiUtils {
         boolean bValidValue = true;
         
         if (valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE) {
-            valueType = glyphValue.flatMap(GlyphsRegistry.VAR_NAME_VALUE_TYPE::getVarValueType).orElse(null);
-            displayValue = glyphValue.map(GlyphsRegistry.VAR_NAME_VALUE_TYPE::getVarName).orElse("[-]");
-            bValidValue = editorGui.editor.isInScope(displayValue, glyphInstance);
+            VarNameValueType.VariableDescription varDescription = glyphValue.map(GlyphsRegistry.VAR_NAME_VALUE_TYPE::getVarDescription).orElse(new VarNameValueType.VariableDescription("", null));
+            displayValue = varDescription.name();
+            valueType = varDescription.valueType();
+            
+            bValidValue = editorGui.editor.isInScope(varDescription.name(), varDescription.valueType(), glyphInstance);
         }
         
         ItemStack buttonStack = valueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();

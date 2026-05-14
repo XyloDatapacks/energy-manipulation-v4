@@ -11,6 +11,8 @@ public class VarNameValueType extends GlyphValueType {
     static public String NAME_NBT_KEY = "name";
     static public String TYPE_NBT_KEY = "type";
     
+    public record VariableDescription(String name, GlyphValueType valueType) {}
+
     static class VarNameGlyphValue extends BaseGlyphValue {
         public String name;
         public GlyphValueType valueType;
@@ -35,6 +37,10 @@ public class VarNameValueType extends GlyphValueType {
     public GlyphValue makeVarNameValue(String value, GlyphValueType valueType) {
         return new VarNameGlyphValue(value, valueType);
     }
+
+    public GlyphValue makeVarNameValue(VariableDescription description) {
+        return makeVarNameValue(description.name, description.valueType);
+    }
     
     public String getVarName(GlyphValue glyphValue) {
         if (glyphValue instanceof VarNameGlyphValue varNameGlyphValue) {
@@ -48,6 +54,13 @@ public class VarNameValueType extends GlyphValueType {
             return Optional.ofNullable(varNameGlyphValue.valueType);
         }
         return Optional.empty();
+    }
+    
+    public VariableDescription getVarDescription(GlyphValue glyphValue) {
+        if (glyphValue instanceof VarNameGlyphValue varNameGlyphValue) {
+            return new VariableDescription(varNameGlyphValue.name, varNameGlyphValue.valueType);
+        }
+        return new VariableDescription("", null);
     }
 
     @Override

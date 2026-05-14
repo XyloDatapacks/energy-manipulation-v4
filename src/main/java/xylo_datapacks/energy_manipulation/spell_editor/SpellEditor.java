@@ -8,9 +8,11 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
+import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.VarDefinitionGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
+import xylo_datapacks.energy_manipulation.glyph.value_type.VarNameValueType;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -21,9 +23,8 @@ public class SpellEditor {
     protected final SpellEditorRootGlyphInstance rootGlyphInstance;
     protected GlyphInstance originalGlyphInstance;
     protected GlyphInstance currentGlyphInstance;
-    protected Map<GlyphInstance, SpellEditorVariable> registeredVariables = new LinkedHashMap<>();
+    protected Map<GlyphInstance, VarNameValueType.VariableDescription> registeredVariables = new LinkedHashMap<>();
 
-    public record SpellEditorVariable(String name, GlyphValueType valueType) {} 
 
     /*================================================================================================================*/
     // RootGlyph
@@ -108,6 +109,11 @@ public class SpellEditor {
     }
 
     public void onInstanceChanged(GlyphInstance changedInstance) {
+        // If the changed instance is a variable definition with an already registered variable, update the variable users.
+        if (changedInstance.glyph == GlyphsRegistry.VAR_DEFINITION_GLYPH && registeredVariables.containsKey(changedInstance)) {
+            updateVariableUsers(changedInstance);
+        }
+        
         UpdateVariableRegistry();
     }
 
@@ -118,11 +124,67 @@ public class SpellEditor {
     // Variables
     
     public void registerVariable(GlyphInstance varDefGlyphInstance, String name, GlyphValueType valueType) {
-        registeredVariables.put(varDefGlyphInstance, new SpellEditorVariable(name, valueType));
+        registeredVariables.put(varDefGlyphInstance, new VarNameValueType.VariableDescription(name, valueType));
     }
     
     public void unregisterVariable(GlyphInstance varDefGlyphInstance) {
         registeredVariables.remove(varDefGlyphInstance);
+    }
+    
+    /** find the raw value glyphs, outputting a var name value, that use the old name, so we can update 
+     * them to the new name. */
+    public void updateVariableUsers(GlyphInstance varDefInstance) {
+        // Get old variable description.
+        VarNameValueType.VariableDescription oldVarDescription = registeredVariables.get(varDefInstance);
+        // Get new variable description.
+        GlyphValue defVarNameValue = ((VarDefinitionGlyph) varDefInstance.glyph).getVarNameValue(varDefInstance);
+        VarNameValueType.VariableDescription newVarDescription = GlyphsRegistry.VAR_NAME_VALUE_TYPE.getVarDescription(defVarNameValue);
+
+        //EnergyManipulation.LOGGER.warn("old var {} -> new var {} ", oldVarDescription, newVarDescription);
+        
+        // Cannot update the variable name if the value type changed.
+        if (oldVarDescription.valueType() == newVarDescription.valueType()) {
+            GlyphInstance scopeEnclosingInstance = getScopeEnclosingInstance(varDefInstance).orElse(null);
+
+            if (scopeEnclosingInstance == null) {
+                // The variable definition instance is detached.
+                return;
+            }
+
+            //EnergyManipulation.LOGGER.warn("Found enclosing scope");
+
+            // Get all raw value glyphs that output a var name value.
+            List<GlyphInstance> varNameSelectorInstances = new ArrayList<>();
+            scopeEnclosingInstance.glyph.getDescendants(scopeEnclosingInstance, varNameSelectorInstances, instance -> {
+                return instance.glyph == GlyphsRegistry.RAW_VALUE_GLYPH && instance.outputPin.valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE;
+            });
+            
+            //EnergyManipulation.LOGGER.warn("Found {} raw value glyphs", varNameSelectorInstances.size());
+
+            // Filter found instances to only those that use the old variable name. Then update the variable name.
+            varNameSelectorInstances.stream().forEach(rawValueInstance -> {
+                VarNameValueType.VariableDescription instanceVarDescription = ((RawValueGlyph) rawValueInstance.glyph).getPayloadValue(rawValueInstance).map(GlyphsRegistry.VAR_NAME_VALUE_TYPE::getVarDescription).orElse(null);
+                if (instanceVarDescription == null) {
+                    return;
+                }
+                
+                // Only update the variable name if the name WAS the same.
+                if (!instanceVarDescription.name().equals(oldVarDescription.name())) {
+                    return;
+                }
+                
+                // Cannot update the variable name if the value type is different.
+                if (instanceVarDescription.valueType() != newVarDescription.valueType()) {
+                    return;
+                }
+                
+                // Update the variable name.
+                ((RawValueGlyph) rawValueInstance.glyph).setPayloadValue(
+                        rawValueInstance,
+                        GlyphsRegistry.VAR_NAME_VALUE_TYPE.makeVarNameValue(newVarDescription)
+                );
+            });
+        }
     }
     
     public void UpdateVariableRegistry() {
@@ -146,9 +208,13 @@ public class SpellEditor {
         // EnergyManipulation.LOGGER.info("Registered variables: {}", registeredVariables.values().stream().map(var -> var.name + " (" + Optional.ofNullable(var.valueType).map(Object::getClass).map(Class::getSimpleName).orElse("null") + ")").toList());
     }
     
+    protected Optional<GlyphInstance> getScopeEnclosingInstance(GlyphInstance varDefInstance) {
+        return varDefInstance.glyph.getClosestParent(varDefInstance, parent -> parent.glyph == GlyphsRegistry.PROGRAM_GLYPH);
+    }
+    
     public boolean isInScope(GlyphInstance varDefInstance, GlyphInstance varNameSelectorInstance) {
         // Get the enclosing scope of the variable definition instance.
-        Optional<GlyphInstance> scopeEnclosingInstance = varDefInstance.glyph.getClosestParent(varDefInstance, parent -> parent.glyph == GlyphsRegistry.PROGRAM_GLYPH);
+        Optional<GlyphInstance> scopeEnclosingInstance = getScopeEnclosingInstance(varDefInstance);
         if (scopeEnclosingInstance.isEmpty()) {
             // The variable definition instance is detached.
             return false;
@@ -162,17 +228,18 @@ public class SpellEditor {
         return varNameSelectorInstance.glyph.getClosestParent(varNameSelectorInstance, parent -> parent == scopeEnclosingInstance.get()).isPresent();
     }
 
-    public boolean isInScope(String varName, GlyphInstance varNameSelectorInstance) {
-
+    public boolean isInScope(String varName, GlyphValueType varValueType, GlyphInstance varNameSelectorInstance) {
         GlyphInstance varDefInstance = registeredVariables.entrySet().stream()
-                .filter(entry -> entry.getValue().name.equals(varName))
+                .filter(entry -> {
+                    return entry.getValue().name().equals(varName) && entry.getValue().valueType() == varValueType;
+                })
                 .map(Map.Entry::getKey).findFirst().orElse(null);
         
         return varDefInstance != null && isInScope(varDefInstance, varNameSelectorInstance);
     }
     
-    public Map<GlyphInstance, SpellEditorVariable> getInScopeVariables(GlyphInstance varNameSelectorInstance) {
-        Map<GlyphInstance, SpellEditorVariable> output = new LinkedHashMap<>();
+    public Map<GlyphInstance, VarNameValueType.VariableDescription> getInScopeVariables(GlyphInstance varNameSelectorInstance) {
+        Map<GlyphInstance, VarNameValueType.VariableDescription> output = new LinkedHashMap<>();
         
         registeredVariables.forEach((varDefInstance, editorVar) -> {
             if (isInScope(varDefInstance, varNameSelectorInstance)) {
