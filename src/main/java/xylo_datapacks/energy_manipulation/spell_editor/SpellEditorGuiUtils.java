@@ -3,6 +3,7 @@ package xylo_datapacks.energy_manipulation.spell_editor;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
@@ -29,9 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class SpellEditorGuiUtils {
-    static final Style PRIMARY_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(Color.black.getRGB()).withoutShadow();
-    static final Style ADVICE_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(Color.darkGray.getRGB()).withoutShadow();
-    static final Style ICON_TOOLTIP_STYLE = Style.EMPTY.withFont(EnergyManipulationFonts.SPELL_BOOK_ICON).withColor(Color.white.getRGB()).withoutShadow();
+    static final Style PRIMARY_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(ChatFormatting.BLACK).withoutShadow();
+    static final Style ERROR_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(ChatFormatting.DARK_RED).withoutShadow();
+    static final Style ADVICE_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(ChatFormatting.DARK_GRAY).withoutShadow();
+    static final Style ICON_TOOLTIP_STYLE = Style.EMPTY.withFont(EnergyManipulationFonts.SPELL_BOOK_ICON).withColor(ChatFormatting.WHITE).withoutShadow();
 
     /** @return true if currentSlot is out of bounds. */
     public static boolean isOutOfGlyphsDrawingSpace(int pageSize, int currentPage, AtomicInteger currentSlot) {
@@ -114,14 +116,18 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeRawValueSelectorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
         Optional<GlyphValue> glyphValue = GlyphsRegistry.RAW_VALUE_GLYPH.getPayloadValue(glyphInstance);
         GlyphValueType valueType = glyphInstance.outputPin.valueType;
+        String displayValue = glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value";
+        boolean bValidValue = true;
         
         if (valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE) {
             valueType = glyphValue.flatMap(GlyphsRegistry.VAR_NAME_VALUE_TYPE::getVarValueType).orElse(null);
+            displayValue = glyphValue.map(GlyphsRegistry.VAR_NAME_VALUE_TYPE::getVarName).orElse("[-]");
+            bValidValue = editorGui.editor.isInScope(displayValue, glyphInstance);
         }
         
         ItemStack buttonStack = valueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
-                .setName(Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value").setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setName(Component.literal(displayValue).setStyle(bValidValue ? PRIMARY_TOOLTIP_STYLE : ERROR_TOOLTIP_STYLE))
                 .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
                 .build();
     }
