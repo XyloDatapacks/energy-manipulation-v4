@@ -18,6 +18,8 @@ public abstract class GlyphValueType {
 
     public boolean hasOperations() { return false; }
     
+    public boolean canBeVariable() { return false; }
+    
     public ValueSelectorType getValueSelectorType() { return ValueSelectorType.NONE; }
 
     public boolean hasValueSelector() { return getValueSelectorType() != ValueSelectorType.NONE; }

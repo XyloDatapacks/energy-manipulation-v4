@@ -53,6 +53,11 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
     }
 
     @Override
+    public boolean canBeVariable() {
+        return true;
+    }
+
+    @Override
     public ValueSelectorType getValueSelectorType() { return ValueSelectorType.INPUT; }
 
     @Override

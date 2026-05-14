@@ -52,6 +52,11 @@ public class StringValueType extends GlyphValueType implements StringGlyphValueI
     }
 
     @Override
+    public boolean canBeVariable() {
+        return true;
+    }
+
+    @Override
     public ValueSelectorType getValueSelectorType() { return ValueSelectorType.INPUT; }
     
     @Override

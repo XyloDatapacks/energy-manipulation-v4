@@ -23,7 +23,7 @@ public class VarGetterGlyph extends Glyph {
             return glyph == GlyphsRegistry.RAW_VALUE_GLYPH;
         });
 
-        this.outputPinDefinition.valueTypeCompatibilityPredicate = valueType -> true;
+        this.outputPinDefinition.valueTypeCompatibilityPredicate = GlyphValueType::canBeVariable;
 
         this.getInputPinEditorData(NAME_PIN).ifPresent(pinEditorData -> pinEditorData.bHiddenInEditor = true);
     }

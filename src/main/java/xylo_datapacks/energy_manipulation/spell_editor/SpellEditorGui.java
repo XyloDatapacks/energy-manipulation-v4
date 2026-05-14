@@ -378,38 +378,53 @@ public class SpellEditorGui extends SimpleGui {
             }));
         } else {
             gui = new MultipleChoiceInputGui(getPlayer(), getSpellEditor(), getCurrentPage(), glyphInstance, inputGui -> {
+                
+                // Options for CLASS_VALUE_TYPE outputs.
                 if (inputGui.getGlyphInstance().outputPin.valueType == GlyphsRegistry.CLASS_VALUE_TYPE) {
                     return GlyphsRegistry.VALUE_TYPE.stream()
-                            .filter(valueType -> inputGui.getGlyphInstance().glyph.getParentGlyphInstance(inputGui.getGlyphInstance())
-                                    .map(parentInstance -> {
-                                        // Filter by rawValueGlyph's parent.
-                                        if (parentInstance.glyph == GlyphsRegistry.FROM_CONVERSION_GLYPH) {
-                                            return parentInstance.glyph.getOutputPinDefinition().valueTypeCompatibilityPredicate.test(valueType);
-                                        }
-                                        return true;
-                                    })
-                                    .orElse(true)
-                            )
+                            .filter(valueType -> {
+                                // Filter by rawValueGlyph's parent.
+                                Optional<GlyphInstance> parentInstance = inputGui.getGlyphInstance().glyph.getParentGlyphInstance(inputGui.getGlyphInstance());
+                                if (parentInstance.isPresent()) {
+
+                                    // If parent is FROM_CONVERSION_GLYPH, only show classes that allow conversion.
+                                    if (parentInstance.get().glyph == GlyphsRegistry.FROM_CONVERSION_GLYPH) {
+                                        return parentInstance.get().glyph.getOutputPinDefinition().valueTypeCompatibilityPredicate.test(valueType);
+                                    }
+
+                                    // If parent is VAR_DEFINITION_GLYPH, only show classes that can be variable.
+                                    if (parentInstance.get().glyph == GlyphsRegistry.VAR_DEFINITION_GLYPH) {
+                                        return valueType.canBeVariable();
+                                    }
+
+                                    // Other filters by parent are to be put here.
+                                }
+                                return true;
+                            })
                             .map(valueType -> {
                                 return SpellEditorGuiUtils.makeValueTypeOptionElement(inputGui, valueType);
                             })
                             .toList();
                 }
 
+                // Options for VAR_NAME_VALUE_TYPE outputs.
                 if (inputGui.getGlyphInstance().outputPin.valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE) {
                     return editor.registeredVariables.entrySet().stream()
                             .filter(entry -> {
                                 // Filter by rawValueGlyph's parent.
                                 Optional<GlyphInstance> parentInstance = inputGui.getGlyphInstance().glyph.getParentGlyphInstance(inputGui.getGlyphInstance());
                                 if (parentInstance.isPresent()) {
+
+                                    // If parent is VAR_GETTER_GLYPH, only show variables compatible with the output type.
                                     if (parentInstance.get().glyph == GlyphsRegistry.VAR_GETTER_GLYPH) {
                                         return parentInstance.get().outputPin.valueType == entry.getValue().valueType();
                                     }
                                     
                                     // Other filters by parent are to be put here.
                                 }
-                                
-                                return true; // TODO: filter so that only variables in scope are shown.
+
+                                // TODO: filter so that only variables in scope are shown.
+                                return true;
                             })
                             .map(entry -> {
                                 return SpellEditorGuiUtils.makeVariableOptionElement(inputGui, entry.getValue().name(), entry.getValue().valueType());
