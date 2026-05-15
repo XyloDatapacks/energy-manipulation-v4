@@ -115,18 +115,31 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeRawValueSelectorGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance) {
         Optional<GlyphValue> glyphValue = GlyphsRegistry.RAW_VALUE_GLYPH.getPayloadValue(glyphInstance);
         GlyphValueType valueType = glyphInstance.outputPin.valueType;
-        String displayValue = glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value";
+        
+        String displayValue;
+        ItemStack buttonStack;
         boolean bValidValue = true;
         
-        if (valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE) {
+        if (valueType instanceof EnumValueType<?> enumValueType) {
+            // Enums can be displayed as their value name and use the icon specific to the enum value.
+            displayValue = enumValueType.getValueId(glyphValue.get()); // TODO: translation string 
+            buttonStack = SpellEditorButtonsRegistry.getEnumValueButtonStack(enumValueType, displayValue);
+        }
+        else if (valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE) {
+            // Variables can be displayed as their name and use their type as icon.
             VarNameValueType.VariableDescription varDescription = glyphValue.map(GlyphsRegistry.VAR_NAME_VALUE_TYPE::getVarDescription).orElse(new VarNameValueType.VariableDescription("", null));
+            GlyphValueType varValueType = varDescription.valueType();
+
             displayValue = varDescription.name();
-            valueType = varDescription.valueType();
-            
+            buttonStack = varValueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(varValueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
             bValidValue = editorGui.editor.isInScope(varDescription.name(), varDescription.valueType(), glyphInstance);
         }
+        else {
+            // Simple values (numbers, strings, booleans, etc.) can just display the debug string and use the type as icon.
+            displayValue = glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value";
+            buttonStack = valueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
+        }
         
-        ItemStack buttonStack = valueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
                 .setName(Component.literal(displayValue).setStyle(bValidValue ? PRIMARY_TOOLTIP_STYLE : ERROR_TOOLTIP_STYLE))
                 .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
@@ -186,16 +199,16 @@ public class SpellEditorGuiUtils {
                 .build();
     }
 
-    public static SimpleGuiElement makeEnumOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, String name, EnumValueType<?> enumValueType) {
-        return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(enumValueType))
-                .setName(Component.literal(name).setStyle(PRIMARY_TOOLTIP_STYLE))
+    public static SimpleGuiElement makeEnumOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, String valueName, EnumValueType<?> enumValueType) {
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.getEnumValueButtonStack(enumValueType, valueName.toLowerCase()))
+                .setName(Component.literal(valueName.toLowerCase()).setStyle(PRIMARY_TOOLTIP_STYLE)) // TODO: translation string 
                 .setLore(List.of(
                         Component.literal(""),
                         makeClickActionComponent("L", "Select")
                 ))
                 .setCallback(clickType -> {
                     GlyphInstance glyphInstance = multipleChoiceInputGui.getGlyphInstance();
-                    ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, enumValueType.makeEnumGlyphValue(name));
+                    ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, enumValueType.makeEnumGlyphValue(valueName));
                     multipleChoiceInputGui.goBackToEditor();
                 })
                 .build();

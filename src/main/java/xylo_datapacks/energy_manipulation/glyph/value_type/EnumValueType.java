@@ -4,6 +4,8 @@ import com.mojang.serialization.Codec;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class EnumValueType<T extends Enum<T>> extends GlyphValueType {
@@ -62,6 +64,14 @@ public class EnumValueType<T extends Enum<T>> extends GlyphValueType {
     
     public Class<T> getEnumClass() {
         return enumClass;
+    }
+
+    public String getValueId(GlyphValue value) {
+        return getEnumGlyphValue(value).name().toLowerCase();
+    }
+    
+    public List<String> getValuesId() {
+        return Arrays.stream(enumClass.getEnumConstants()).map(Enum::name).map(String::toLowerCase).toList();
     }
 
     @Override

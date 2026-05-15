@@ -11,6 +11,7 @@ import net.minecraft.world.item.component.CustomModelData;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
+import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 
@@ -52,6 +53,12 @@ public class SpellEditorButtonsRegistry {
     public static ItemStack getValueTypeButtonStack(GlyphValueType valueType) {
         ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
         setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath());
+        return valueSelectorButtonStack;
+    }
+
+    public static ItemStack getEnumValueButtonStack(EnumValueType<?> enumValueType, String enumValueId) {
+        ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
+        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.VALUE_TYPE.getKey(enumValueType).getPath() + "_" + enumValueId);
         return valueSelectorButtonStack;
     }
 
