@@ -40,18 +40,14 @@ public class VarDefinitionGlyph extends Glyph {
             inputPin.valueType = GlyphsRegistry.CLASS_VALUE_TYPE;
 
             // Initialize connection to a raw value glyph (of CLASS_VALUE_TYPE)
-            GlyphUtils.connectNewGlyphWithCallback(glyphInstance, TYPE_PIN, GlyphsRegistry.RAW_VALUE_GLYPH, connectedInstance -> {
-                GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(connectedInstance, GlyphsRegistry.CLASS_VALUE_TYPE.MakeDefaulted());
-            });
+            GlyphUtils.connectNewGlyph(glyphInstance, TYPE_PIN, GlyphsRegistry.RAW_VALUE_GLYPH);
         });
 
         this.getInputPin(glyphInstance, NAME_PIN).ifPresent(inputPin -> {
             inputPin.valueType = GlyphsRegistry.STRING_VALUE_TYPE;
 
             // Initialize connection to a raw value glyph (of STRING_VALUE_TYPE)
-            GlyphUtils.connectNewGlyphWithCallback(glyphInstance, NAME_PIN, GlyphsRegistry.RAW_VALUE_GLYPH, connectedInstance -> {
-                GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(connectedInstance, GlyphsRegistry.STRING_VALUE_TYPE.MakeDefaulted());
-            });
+            GlyphUtils.connectNewGlyph(glyphInstance, NAME_PIN, GlyphsRegistry.RAW_VALUE_GLYPH);
         });
     }
 

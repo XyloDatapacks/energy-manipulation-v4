@@ -30,6 +30,11 @@ public class RawValueGlyph extends Glyph {
         return new GlyphGenericPayload();
     }
     
+    @Override
+    public void initializePayload(GlyphInstance glyphInstance) {
+        setPayloadValue(glyphInstance, glyphInstance.outputPin.valueType.MakeDefaulted());
+    }
+
     protected GlyphGenericPayload getPayload(GlyphInstance glyphInstance) {
         return (GlyphGenericPayload) glyphInstance.payload;
     }

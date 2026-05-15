@@ -41,9 +41,7 @@ public class VarSetterGlyph extends Glyph {
             inputPin.valueType = GlyphsRegistry.VAR_NAME_VALUE_TYPE;
 
             // Initialize connection to a raw value glyph (of VAR_NAME_VALUE_TYPE)
-            GlyphUtils.connectNewGlyphWithCallback(glyphInstance, NAME_PIN, GlyphsRegistry.RAW_VALUE_GLYPH, connectedInstance -> {
-                GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(connectedInstance, GlyphsRegistry.VAR_NAME_VALUE_TYPE.MakeDefaulted());
-            });
+            GlyphUtils.connectNewGlyph(glyphInstance, NAME_PIN, GlyphsRegistry.RAW_VALUE_GLYPH);
         });
     }
 

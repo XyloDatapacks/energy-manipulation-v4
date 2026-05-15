@@ -45,9 +45,7 @@ public class FromConversionGlyph extends Glyph {
             inputPin.valueType = GlyphsRegistry.CLASS_VALUE_TYPE;
             
             // Initialize connection to a raw value glyph (of CLASS_VALUE_TYPE)
-            GlyphUtils.connectNewGlyphWithCallback(glyphInstance, TYPE_PIN, GlyphsRegistry.RAW_VALUE_GLYPH, connectedInstance -> {
-                GlyphsRegistry.RAW_VALUE_GLYPH.setPayloadValue(connectedInstance, GlyphsRegistry.CLASS_VALUE_TYPE.MakeDefaulted());
-            });
+            GlyphUtils.connectNewGlyph(glyphInstance, TYPE_PIN, GlyphsRegistry.RAW_VALUE_GLYPH);
         });
     }
 
