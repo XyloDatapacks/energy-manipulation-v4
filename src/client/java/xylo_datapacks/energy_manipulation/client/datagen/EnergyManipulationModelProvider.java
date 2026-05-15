@@ -23,7 +23,6 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
-import xylo_datapacks.energy_manipulation.glyph.value_type.ValueSelectorType;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorButtonsRegistry;
 
@@ -67,24 +66,22 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
                 .toList());
         enumValueTypes.forEach(enumValueType -> {
             allGlyphs.addAll(enumValueType.getValuesId().stream()
-                    .map(enumValue -> GlyphsRegistry.VALUE_TYPE.getKey(enumValueType).getPath() + "_" + enumValue)
+                    .map(enumValue -> GlyphsRegistry.getValueTypePath(enumValueType) + "/" + enumValue)
                     .toList());
         });
         // Type-specific glyphs
-        List<String> typeSpecificGlyphs = new ArrayList<>(GlyphsRegistry.GLYPH.stream()
+        GlyphsRegistry.GLYPH.stream()
                 .filter(glyph -> glyph.getEditorData().bHasTypeDependentTexture)
-                .map(valueType -> GlyphsRegistry.GLYPH.getKey(valueType).getPath())
-                .toList());
-        typeSpecificGlyphs.forEach(glyphName -> {
-            allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.stream()
-                    .filter(GlyphValueType::hasValueSelector)
-                    .map(valueType -> glyphName + "_" + GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath())
-                    .toList());
-        });
+                .forEach(typeSpecificGlyph -> {
+                    allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.stream()
+                            .filter(GlyphValueType::hasValueSelector)
+                            .map(valueType -> GlyphsRegistry.getGlyphTypeSpecifyPath(typeSpecificGlyph, valueType))
+                            .toList());
+                });
         // Operator glyphs pin separator
         allGlyphs.addAll(GlyphsRegistry.GLYPH.stream()
                 .filter(OperatorGlyphInterface.class::isInstance)
-                .map(valueType -> GlyphsRegistry.GLYPH.getKey(valueType).getPath() + "_separator")
+                .map(glyph -> GlyphsRegistry.getGlyphPath(glyph) + "_separator")
                 .toList());
         // Glyph buttons (treating them as glyphs since they need to be scaled too)
         allGlyphs.addAll(SpellEditorButtonsRegistry.SPELL_EDITOR_GLYPH_BUTTON.keySet().stream().map(Identifier::getPath).toList());

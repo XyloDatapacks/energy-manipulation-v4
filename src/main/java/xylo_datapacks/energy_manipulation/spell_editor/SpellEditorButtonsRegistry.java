@@ -42,29 +42,26 @@ public class SpellEditorButtonsRegistry {
     
     public static ItemStack getGlyphButtonStack(Glyph glyph, GlyphValueType outputValueType) {
         ItemStack glyphButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        String customModelDataName = GlyphsRegistry.GLYPH.getKey(glyph).getPath();
-        if (glyph.getEditorData().bHasTypeDependentTexture) {
-            customModelDataName = customModelDataName + "_" + GlyphsRegistry.VALUE_TYPE.getKey(outputValueType).getPath();
-        }
+        String customModelDataName = glyph.getEditorData().bHasTypeDependentTexture ?  GlyphsRegistry.getGlyphTypeSpecifyPath(glyph, outputValueType) : GlyphsRegistry.getGlyphPath(glyph);
         setCustomModelData(glyphButtonStack, customModelDataName);
         return glyphButtonStack;
     }
 
     public static ItemStack getValueTypeButtonStack(GlyphValueType valueType) {
         ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath());
+        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(valueType));
         return valueSelectorButtonStack;
     }
 
     public static ItemStack getEnumValueButtonStack(EnumValueType<?> enumValueType, String enumValueId) {
         ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.VALUE_TYPE.getKey(enumValueType).getPath() + "_" + enumValueId);
+        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(enumValueType) + "_" + enumValueId);
         return valueSelectorButtonStack;
     }
 
     public static ItemStack getOperatorSeparatorButtonStack(Glyph glyph) {
         ItemStack operatorSeparatorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        setCustomModelData(operatorSeparatorButtonStack, GlyphsRegistry.GLYPH.getKey(glyph).getPath() + "_separator");
+        setCustomModelData(operatorSeparatorButtonStack, GlyphsRegistry.getGlyphPath(glyph) + "_separator");
         return operatorSeparatorButtonStack;
     }
 
