@@ -54,6 +54,10 @@ public class GlyphsRegistry {
     public static String getGlyphSimplePath(Glyph glyph) {
         return getGlyphPath(glyph).replace(GLYPH_PATH + "/", "");
     }
+
+    public static String getGlyphTranslationKey(Glyph glyph) {
+        return GLYPH_PATH + "." + EnergyManipulation.MOD_ID + "." + getGlyphSimplePath(glyph);   
+    }
     
     public static String makeGlyphSimplePath(Identifier glyphIdentifier) {
         return glyphIdentifier.getPath().replace(GLYPH_PATH + "/", "");
@@ -75,6 +79,10 @@ public class GlyphsRegistry {
 
     public static String getValueTypeSimplePath(GlyphValueType valueType) {
         return getValueTypePath(valueType).replace(VALUE_TYPE_PATH + "/", "");
+    }
+    
+    public static String getValueTypeTranslationKey(GlyphValueType valueType) {
+        return VALUE_TYPE_PATH + "." + EnergyManipulation.MOD_ID + "." + getValueTypeSimplePath(valueType);
     }
 
     public static String makeValueTypeSimplePath(Identifier valueTypeIdentifier) {

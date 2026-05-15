@@ -6,6 +6,7 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.ItemStack;
 import xylo_datapacks.energy_manipulation.font.EnergyManipulationFonts;
@@ -16,10 +17,7 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
-import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
-import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
-import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
-import xylo_datapacks.energy_manipulation.glyph.value_type.VarNameValueType;
+import xylo_datapacks.energy_manipulation.glyph.value_type.*;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 
@@ -64,16 +62,16 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makePinGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance, int pinIndex) {
         InputPin pinToDisplay = glyphInstance.glyph.getInputPin(glyphInstance, pinIndex).get();
         GlyphInstance connectedGlyphInstance = pinToDisplay.getConnectedGlyph().orElse(null);
-        String connectedGlyphDisplayName = connectedGlyphInstance != null ? connectedGlyphInstance.glyph.getClass().getSimpleName() : "None";
+        String connectedGlyphDisplayName = connectedGlyphInstance != null ? GlyphsRegistry.getGlyphTranslationKey(connectedGlyphInstance.glyph) : "None";
 
         InputPinDefinition pinDefinitionToDisplay = glyphInstance.glyph.getInputPinDefinition(pinIndex).get();
-        String pinDisplayName = pinDefinitionToDisplay.pinName;
+        String pinDisplayName = GlyphsRegistry.getGlyphTranslationKey(glyphInstance.glyph) + "." + pinDefinitionToDisplay.pinName;
         
         ItemStack buttonStack = connectedGlyphInstance != null ? SpellEditorButtonsRegistry.getGlyphButtonStack(connectedGlyphInstance.glyph, pinToDisplay.valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
-                .setName(Component.literal(connectedGlyphInstance == null ? "\uE000" : "\uE001").setStyle(ICON_TOOLTIP_STYLE).append(Component.literal(pinDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)))
+                .setName(Component.literal(connectedGlyphInstance == null ? "\uE000" : "\uE001").setStyle(ICON_TOOLTIP_STYLE).append(Component.translatable(pinDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)))
                 .setLore(List.of(
-                        Component.literal("> " + connectedGlyphDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE), 
+                        Component.literal("> ").setStyle(PRIMARY_TOOLTIP_STYLE).append(Component.translatable(connectedGlyphDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)), 
                         Component.literal(""), 
                         makeClickActionComponent("L", "Change Glyph")
                 ))
@@ -116,39 +114,48 @@ public class SpellEditorGuiUtils {
         Optional<GlyphValue> glyphValue = GlyphsRegistry.RAW_VALUE_GLYPH.getPayloadValue(glyphInstance);
         GlyphValueType valueType = glyphInstance.outputPin.valueType;
         
-        String displayValue;
+        MutableComponent displayValue;
         ItemStack buttonStack;
         boolean bValidValue = true;
         
         if (valueType instanceof EnumValueType<?> enumValueType) {
             // Enums can be displayed as their value name and use the icon specific to the enum value.
-            displayValue = enumValueType.getValueId(glyphValue.get()); // TODO: translation string 
-            buttonStack = SpellEditorButtonsRegistry.getEnumValueButtonStack(enumValueType, displayValue);
+            String enumValueId = enumValueType.getValueId(glyphValue.get());
+            displayValue = Component.translatable(GlyphsRegistry.getValueTypeTranslationKey(valueType) + "." + enumValueId);
+            buttonStack = SpellEditorButtonsRegistry.getEnumValueButtonStack(enumValueType, enumValueId);
         }
         else if (valueType == GlyphsRegistry.VAR_NAME_VALUE_TYPE) {
             // Variables can be displayed as their name and use their type as icon.
             VarNameValueType.VariableDescription varDescription = glyphValue.map(GlyphsRegistry.VAR_NAME_VALUE_TYPE::getVarDescription).orElse(new VarNameValueType.VariableDescription("", null));
             GlyphValueType varValueType = varDescription.valueType();
 
-            displayValue = varDescription.name();
+            displayValue = Component.literal(varDescription.name());
             buttonStack = varValueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(varValueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
             bValidValue = editorGui.editor.isInScope(varDescription.name(), varDescription.valueType(), glyphInstance);
         }
         else {
-            // Simple values (numbers, strings, booleans, etc.) can just display the debug string and use the type as icon.
-            displayValue = glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value";
+            if (valueType == GlyphsRegistry.CLASS_VALUE_TYPE) {
+                // Use the value type name.
+                displayValue = ((ClassValueType) valueType).getClassGlyphValue(glyphValue.get()).map(classValueType -> {
+                    return Component.translatable(GlyphsRegistry.getValueTypeTranslationKey(classValueType));
+                }).orElse(Component.literal(""));
+            }
+            else {
+                // Simple values (numbers, strings, booleans, etc.) can just display the debug string and use the type as icon.
+                displayValue = Component.literal(glyphValue.isPresent() ? glyphValue.get().getDebugString() : "Unset Value");
+            }
             buttonStack = valueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         }
         
         return new GuiElementBuilder(buttonStack)
-                .setName(Component.literal(displayValue).setStyle(bValidValue ? PRIMARY_TOOLTIP_STYLE : ERROR_TOOLTIP_STYLE))
+                .setName(displayValue.setStyle(bValidValue ? PRIMARY_TOOLTIP_STYLE : ERROR_TOOLTIP_STYLE))
                 .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
                 .build();
     }
 
     public static SimpleGuiElement makeGlyphOptionGuiElement(GlyphSelectorGui selectorGui, Glyph glyph, GlyphValueType valueType) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getGlyphButtonStack(glyph, valueType))
-                .setName(Component.literal(glyph.getClass().getSimpleName()).setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setName(Component.translatable(GlyphsRegistry.getGlyphTranslationKey(glyph)).setStyle(PRIMARY_TOOLTIP_STYLE))
                 .setLore(List.of(
                         Component.literal("...").setStyle(PRIMARY_TOOLTIP_STYLE), 
                         Component.literal(""), 
@@ -170,7 +177,7 @@ public class SpellEditorGuiUtils {
 
     public static SimpleGuiElement makeValueTypeOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, GlyphValueType valueType) {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType))
-                .setName(Component.literal(valueType.getClass().getSimpleName()).setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setName(Component.translatable(GlyphsRegistry.getValueTypeTranslationKey(valueType)).setStyle(PRIMARY_TOOLTIP_STYLE))
                 .setLore(List.of(
                         Component.literal("...").setStyle(PRIMARY_TOOLTIP_STYLE), 
                         Component.literal(""), 
@@ -209,7 +216,7 @@ public class SpellEditorGuiUtils {
         String valueId = enumValueType.getValueId(enumValue);
         
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getEnumValueButtonStack(enumValueType, valueId))
-                .setName(Component.literal(valueId).setStyle(PRIMARY_TOOLTIP_STYLE)) // TODO: translation string 
+                .setName(Component.translatable(GlyphsRegistry.getValueTypeTranslationKey(enumValueType) + "." + valueId).setStyle(PRIMARY_TOOLTIP_STYLE))
                 .setLore(List.of(
                         Component.literal(""),
                         makeClickActionComponent("L", "Select")

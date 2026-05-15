@@ -55,7 +55,7 @@ public class SpellEditorButtonsRegistry {
 
     public static ItemStack getEnumValueButtonStack(EnumValueType<?> enumValueType, String enumValueId) {
         ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(enumValueType) + "_" + enumValueId);
+        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(enumValueType) + "/" + enumValueId);
         return valueSelectorButtonStack;
     }
 
