@@ -4,7 +4,6 @@ import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.elements.SimpleGuiElement;
 import eu.pb4.sgui.api.gui.SimpleGui;
-import eu.pb4.sgui.mixin.ScreenHandlerAccessor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.MutableComponent;
@@ -35,7 +34,6 @@ import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputG
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -440,11 +438,7 @@ public class SpellEditorGui extends SimpleGui {
 
                 // Options for VAR_NAME_VALUE_TYPE outputs.
                 if (inputGui.getGlyphInstance().outputPin.valueType instanceof EnumValueType<?> enumValueType) {
-                    return Arrays.stream(enumValueType.getEnumClass().getEnumConstants()).map(Enum::name)
-                            .map(name -> {
-                                return SpellEditorGuiUtils.makeEnumOptionElement(inputGui, name, enumValueType);
-                            })
-                            .toList();
+                    return SpellEditorGuiUtils.makeEnumOptionElements(inputGui, enumValueType);
                 }
                 
                 return new ArrayList<>();

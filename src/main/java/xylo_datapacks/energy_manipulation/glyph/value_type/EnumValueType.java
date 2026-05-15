@@ -7,6 +7,7 @@ import net.minecraft.nbt.Tag;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class EnumValueType<T extends Enum<T>> extends GlyphValueType {
     protected final Class<T> enumClass;
@@ -48,10 +49,6 @@ public class EnumValueType<T extends Enum<T>> extends GlyphValueType {
     public GlyphValue makeEnumGlyphValue(T value) {
         return new EnumGlyphValue<T>(this, value);
     }
-
-    public GlyphValue makeEnumGlyphValue(String valueName) {
-        return makeEnumGlyphValue(Enum.valueOf(enumClass, valueName));
-    }
     
     public T getEnumGlyphValue(GlyphValue glyphValue) {
         if (glyphValue instanceof EnumGlyphValue<?> enumGlyphValue) {
@@ -66,8 +63,16 @@ public class EnumValueType<T extends Enum<T>> extends GlyphValueType {
         return enumClass;
     }
 
+    public Stream<T> getConstantsStream() {
+        return Arrays.stream(enumClass.getEnumConstants());
+    }
+
     public String getValueId(GlyphValue value) {
-        return getEnumGlyphValue(value).name().toLowerCase();
+        return getValueId(getEnumGlyphValue(value));
+    }
+
+    public String getValueId(T value) {
+        return value.name().toLowerCase();
     }
     
     public List<String> getValuesId() {

@@ -199,16 +199,24 @@ public class SpellEditorGuiUtils {
                 .build();
     }
 
-    public static SimpleGuiElement makeEnumOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, String valueName, EnumValueType<?> enumValueType) {
-        return new GuiElementBuilder(SpellEditorButtonsRegistry.getEnumValueButtonStack(enumValueType, valueName.toLowerCase()))
-                .setName(Component.literal(valueName.toLowerCase()).setStyle(PRIMARY_TOOLTIP_STYLE)) // TODO: translation string 
+    public static <E extends Enum<E>> List<SimpleGuiElement> makeEnumOptionElements(MultipleChoiceInputGui multipleChoiceInputGui, EnumValueType<E> enumValueType) {
+        return enumValueType.getConstantsStream()
+                .map(enumValue -> SpellEditorGuiUtils.makeEnumOptionElement(multipleChoiceInputGui, enumValueType, enumValue))
+                .toList();
+    }
+
+    public static <E extends Enum<E>> SimpleGuiElement makeEnumOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, EnumValueType<E> enumValueType, E enumValue) {
+        String valueId = enumValueType.getValueId(enumValue);
+        
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.getEnumValueButtonStack(enumValueType, valueId))
+                .setName(Component.literal(valueId).setStyle(PRIMARY_TOOLTIP_STYLE)) // TODO: translation string 
                 .setLore(List.of(
                         Component.literal(""),
                         makeClickActionComponent("L", "Select")
                 ))
                 .setCallback(clickType -> {
                     GlyphInstance glyphInstance = multipleChoiceInputGui.getGlyphInstance();
-                    ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, enumValueType.makeEnumGlyphValue(valueName));
+                    ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, enumValueType.makeEnumGlyphValue(enumValue));
                     multipleChoiceInputGui.goBackToEditor();
                 })
                 .build();
