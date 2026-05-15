@@ -21,6 +21,7 @@ import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.client.utils.EnergyManipulationModelTemplate;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
+import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.ValueSelectorType;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
@@ -59,6 +60,16 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         allGlyphs.addAll(GlyphsRegistry.GLYPH.keySet().stream().map(Identifier::getPath).toList());
         // Value types
         allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.keySet().stream().map(Identifier::getPath).toList());
+        // Enum values
+        List<EnumValueType<?>> enumValueTypes = new ArrayList<>(GlyphsRegistry.VALUE_TYPE.stream()
+                .filter(EnumValueType.class::isInstance)
+                .map(element -> (EnumValueType<?>) element)
+                .toList());
+        enumValueTypes.forEach(enumValueType -> {
+            allGlyphs.addAll(enumValueType.getValuesId().stream()
+                    .map(enumValue -> GlyphsRegistry.VALUE_TYPE.getKey(enumValueType).getPath() + "_" + enumValue)
+                    .toList());
+        });
         // Type-specific glyphs
         List<String> typeSpecificGlyphs = new ArrayList<>(GlyphsRegistry.GLYPH.stream()
                 .filter(glyph -> glyph.getEditorData().bHasTypeDependentTexture)
