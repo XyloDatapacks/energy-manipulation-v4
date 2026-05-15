@@ -51,21 +51,41 @@ public class GlyphsRegistry {
         return GlyphsRegistry.GLYPH.getKey(glyph).getPath();
     }
     
-    public static String getValueTypePath(GlyphValueType valueType) {
-        return GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath();
-    }
-    
     public static String getGlyphSimplePath(Glyph glyph) {
         return getGlyphPath(glyph).replace(GLYPH_PATH + "/", "");
     }
     
+    public static String makeGlyphSimplePath(Identifier glyphIdentifier) {
+        return glyphIdentifier.getPath().replace(GLYPH_PATH + "/", "");
+    }
+
+    public static String makeGlyphTranslationKey(Identifier glyphIdentifier) {
+        return GLYPH_PATH + "." + EnergyManipulation.MOD_ID + "." + makeGlyphSimplePath(glyphIdentifier);
+    }
+    
+    public static String getGlyphTypeSpecifyPath(Glyph glyph, GlyphValueType valueType) {
+        return getGlyphPath(glyph) + "/" + getValueTypeSimplePath(valueType);
+    }
+    
+    
+
+    public static String getValueTypePath(GlyphValueType valueType) {
+        return GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath();
+    }
+
     public static String getValueTypeSimplePath(GlyphValueType valueType) {
         return getValueTypePath(valueType).replace(VALUE_TYPE_PATH + "/", "");
     }
 
-    public static String getGlyphTypeSpecifyPath(Glyph glyph, GlyphValueType valueType) {
-        return getGlyphPath(glyph) + "/" + getValueTypeSimplePath(valueType);
+    public static String makeValueTypeSimplePath(Identifier valueTypeIdentifier) {
+        return valueTypeIdentifier.getPath().replace(VALUE_TYPE_PATH + "/", "");
     }
+
+    public static String makeValueTypeTranslationKey(Identifier valueTypeIdentifier) {
+        return VALUE_TYPE_PATH + "." + EnergyManipulation.MOD_ID + "." + makeValueTypeSimplePath(valueTypeIdentifier);
+    }
+    
+    /*----------------------------------------------------------------------------------------------------------------*/
 
     public static <T extends Glyph> T registerGlyph(String name, Supplier<T> factory) {
         T glyph = factory.get();
