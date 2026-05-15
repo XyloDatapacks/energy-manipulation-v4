@@ -15,13 +15,9 @@ public class StringValueType extends GlyphValueType implements StringGlyphValueI
     static class StringGlyphValue extends BaseGlyphValue {
         public String value;
         
-        StringGlyphValue(String value) {
+        StringGlyphValue(GlyphValueType type, String value) {
+            super(type);
             this.value = value;
-        }
-
-        @Override
-        public GlyphValueType getValueType() {
-            return GlyphsRegistry.STRING_VALUE_TYPE;
         }
 
         @Override
@@ -31,7 +27,7 @@ public class StringValueType extends GlyphValueType implements StringGlyphValueI
     }
 
     public GlyphValue makeStringGlyphValue(String value) {
-        return new StringGlyphValue(value);
+        return new StringGlyphValue(this, value);
     }
     
     public String getStringGlyphValue(GlyphValue glyphValue) {

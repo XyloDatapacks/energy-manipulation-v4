@@ -13,13 +13,9 @@ public class ClassValueType extends GlyphValueType {
     static class ClassGlyphValue extends BaseGlyphValue {
         public GlyphValueType value;
 
-        ClassGlyphValue(GlyphValueType value) {
+        ClassGlyphValue(GlyphValueType type, GlyphValueType value) {
+            super(type);
             this.value = value;
-        }
-
-        @Override
-        public GlyphValueType getValueType() {
-            return GlyphsRegistry.CLASS_VALUE_TYPE;
         }
 
         @Override
@@ -32,7 +28,7 @@ public class ClassValueType extends GlyphValueType {
     }
 
     public GlyphValue makeClassGlyphValue(GlyphValueType value) {
-        return new ClassGlyphValue(value);
+        return new ClassGlyphValue(this, value);
     }
 
     public Optional<GlyphValueType> getClassGlyphValue(GlyphValue glyphValue) {

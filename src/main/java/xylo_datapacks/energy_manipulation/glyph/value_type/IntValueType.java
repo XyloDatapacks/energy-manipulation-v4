@@ -16,13 +16,9 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
     static class IntGlyphValue extends BaseGlyphValue {
         public int value;
         
-        IntGlyphValue(int value) {
+        IntGlyphValue(GlyphValueType type, int value) {
+            super(type);
             this.value = value;
-        }
-
-        @Override
-        public GlyphValueType getValueType() {
-            return GlyphsRegistry.INT_VALUE_TYPE;
         }
 
         @Override
@@ -32,7 +28,7 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
     }
 
     public GlyphValue makeIntGlyphValue(int value) {
-        return new IntGlyphValue(value);
+        return new IntGlyphValue(this, value);
     }
     
     public int getIntGlyphValue(GlyphValue glyphValue) {
@@ -80,41 +76,41 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
     public GlyphValue add(GlyphValue a, GlyphValue b) {
         int numberA = getIntGlyphValue(a);
         int numberB = getIntGlyphValue(b);
-        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(numberA + numberB);
+        return makeIntGlyphValue(numberA + numberB);
     }
 
     @Override
     public GlyphValue subtract(GlyphValue a, GlyphValue b) {
         int numberA = getIntGlyphValue(a);
         int numberB = getIntGlyphValue(b);
-        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(numberA - numberB);
+        return makeIntGlyphValue(numberA - numberB);
     }
 
     @Override
     public GlyphValue multiply(GlyphValue a, GlyphValue b) {
         int numberA = getIntGlyphValue(a);
         int numberB = getIntGlyphValue(b);
-        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(numberA * numberB);
+        return makeIntGlyphValue(numberA * numberB);
     }
 
     @Override
     public GlyphValue divide(GlyphValue a, GlyphValue b) {
         int numberA = getIntGlyphValue(a);
         int numberB = getIntGlyphValue(b);
-        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(numberA / numberB);
+        return makeIntGlyphValue(numberA / numberB);
     }
 
     @Override
     public GlyphValue power(GlyphValue value, GlyphValue exponent) {
         int numberValue = getIntGlyphValue(value);
         int numberExponent = getIntGlyphValue(exponent);
-        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue(Math.powExact(numberValue, numberExponent));
+        return makeIntGlyphValue(Math.powExact(numberValue, numberExponent));
     }
 
     @Override
     public GlyphValue sqrt(GlyphValue value) {
         int numberValue = getIntGlyphValue(value);
-        return GlyphsRegistry.INT_VALUE_TYPE.makeIntGlyphValue((int) Math.sqrt(numberValue)); // casting to int instead of flooring to round toward zero
+        return makeIntGlyphValue((int) Math.sqrt(numberValue)); // casting to int instead of flooring to round toward zero
     }
 
     @Override

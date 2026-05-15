@@ -3,7 +3,6 @@ package xylo_datapacks.energy_manipulation.glyph.value_type;
 import com.mojang.serialization.Codec;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 
 import java.util.Optional;
 
@@ -12,13 +11,9 @@ public class ExecutionValueType extends GlyphValueType {
     static class ExecutionGlyphValue extends BaseGlyphValue {
         public int value;
         
-        ExecutionGlyphValue(int value) {
+        ExecutionGlyphValue(GlyphValueType type, int value) {
+            super(type);
             this.value = value;
-        }
-
-        @Override
-        public GlyphValueType getValueType() {
-            return GlyphsRegistry.EXECUTION_VALUE_TYPE;
         }
 
         @Override
@@ -28,7 +23,7 @@ public class ExecutionValueType extends GlyphValueType {
     }
 
     public GlyphValue makeExecutionGlyphValue(int value) {
-        return new ExecutionGlyphValue(value);
+        return new ExecutionGlyphValue(this, value);
     }
     
     public int getExecutionGlyphValue(GlyphValue glyphValue) {

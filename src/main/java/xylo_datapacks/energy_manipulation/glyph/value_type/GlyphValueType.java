@@ -7,6 +7,16 @@ import java.util.Optional;
 public abstract class GlyphValueType {
     
     static abstract class BaseGlyphValue extends GlyphValue {
+        protected final GlyphValueType type;
+
+        public BaseGlyphValue(GlyphValueType type) {
+            this.type = type;
+        }
+
+        @Override
+        public GlyphValueType getValueType() {
+            return type;
+        }
 
         @Override
         public final boolean isOfType(GlyphValueType glyphValueType) {

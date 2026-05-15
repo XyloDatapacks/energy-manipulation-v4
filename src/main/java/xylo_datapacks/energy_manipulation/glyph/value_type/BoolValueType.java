@@ -3,7 +3,6 @@ package xylo_datapacks.energy_manipulation.glyph.value_type;
 import com.mojang.serialization.Codec;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.ComparableGlyphValueInterface;
 
 import java.util.Optional;
@@ -13,13 +12,9 @@ public class BoolValueType extends GlyphValueType implements ComparableGlyphValu
     static class BoolGlyphValue extends BaseGlyphValue {
         public boolean value;
         
-        BoolGlyphValue(boolean value) {
+        BoolGlyphValue(GlyphValueType type, boolean value) {
+            super(type);
             this.value = value;
-        }
-
-        @Override
-        public GlyphValueType getValueType() {
-            return GlyphsRegistry.BOOL_VALUE_TYPE;
         }
 
         @Override
@@ -29,7 +24,7 @@ public class BoolValueType extends GlyphValueType implements ComparableGlyphValu
     }
 
     public GlyphValue makeBoolGlyphValue(boolean value) {
-        return new BoolGlyphValue(value);
+        return new BoolGlyphValue(this, value);
     }
     
     public boolean getBoolGlyphValue(GlyphValue glyphValue) {

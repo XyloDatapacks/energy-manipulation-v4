@@ -17,14 +17,10 @@ public class VarNameValueType extends GlyphValueType {
         public String name;
         public GlyphValueType valueType;
 
-        VarNameGlyphValue(String name, GlyphValueType valueType) {
+        VarNameGlyphValue(GlyphValueType type, String name, GlyphValueType valueType) {
+            super(type);
             this.name = name;
             this.valueType = valueType;
-        }
-
-        @Override
-        public GlyphValueType getValueType() {
-            return GlyphsRegistry.VAR_NAME_VALUE_TYPE;
         }
 
         @Override
@@ -35,7 +31,7 @@ public class VarNameValueType extends GlyphValueType {
     }
 
     public GlyphValue makeVarNameValue(String value, GlyphValueType valueType) {
-        return new VarNameGlyphValue(value, valueType);
+        return new VarNameGlyphValue(this, value, valueType);
     }
 
     public GlyphValue makeVarNameValue(VariableDescription description) {
