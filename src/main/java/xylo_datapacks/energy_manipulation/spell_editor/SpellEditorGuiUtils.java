@@ -7,8 +7,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.contents.objects.ObjectInfo;
 import net.minecraft.world.item.ItemStack;
 import xylo_datapacks.energy_manipulation.font.EnergyManipulationFonts;
 import xylo_datapacks.energy_manipulation.glyph.Glyph;
@@ -18,13 +16,13 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinDefinition;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
+import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValue;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.VarNameValueType;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -173,16 +171,31 @@ public class SpellEditorGuiUtils {
                 .build();
     }
 
-    public static SimpleGuiElement makeVariableOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, String name, GlyphValueType glyphValueType) {
-        return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(glyphValueType))
-                .setName(Component.literal(name).setStyle(PRIMARY_TOOLTIP_STYLE))
+    public static SimpleGuiElement makeVariableOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, String varName, GlyphValueType varValueType) {
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(varValueType))
+                .setName(Component.literal(varName).setStyle(PRIMARY_TOOLTIP_STYLE))
                 .setLore(List.of(
                         Component.literal(""), 
                         makeClickActionComponent("L", "Select Variable")
                 ))
                 .setCallback(clickType -> {
                     GlyphInstance glyphInstance = multipleChoiceInputGui.getGlyphInstance();
-                    ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, GlyphsRegistry.VAR_NAME_VALUE_TYPE.makeVarNameValue(name, glyphValueType));
+                    ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, GlyphsRegistry.VAR_NAME_VALUE_TYPE.makeVarNameValue(varName, varValueType));
+                    multipleChoiceInputGui.goBackToEditor();
+                })
+                .build();
+    }
+
+    public static SimpleGuiElement makeEnumOptionElement(MultipleChoiceInputGui multipleChoiceInputGui, String name, EnumValueType<?> enumValueType) {
+        return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(enumValueType))
+                .setName(Component.literal(name).setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setLore(List.of(
+                        Component.literal(""),
+                        makeClickActionComponent("L", "Select")
+                ))
+                .setCallback(clickType -> {
+                    GlyphInstance glyphInstance = multipleChoiceInputGui.getGlyphInstance();
+                    ((RawValueGlyph) glyphInstance.glyph).setPayloadValue(glyphInstance, enumValueType.makeEnumGlyphValue(name));
                     multipleChoiceInputGui.goBackToEditor();
                 })
                 .build();

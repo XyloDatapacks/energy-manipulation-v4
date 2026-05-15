@@ -24,6 +24,7 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
+import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 import xylo_datapacks.energy_manipulation.item.spell.SpellBookItem;
@@ -33,6 +34,7 @@ import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoi
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.StringInputGui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -432,6 +434,15 @@ public class SpellEditorGui extends SimpleGui {
                             })
                             .map(entry -> {
                                 return SpellEditorGuiUtils.makeVariableOptionElement(inputGui, entry.getValue().name(), entry.getValue().valueType());
+                            })
+                            .toList();
+                }
+
+                // Options for VAR_NAME_VALUE_TYPE outputs.
+                if (inputGui.getGlyphInstance().outputPin.valueType instanceof EnumValueType<?> enumValueType) {
+                    return Arrays.stream(enumValueType.getEnumClass().getEnumConstants()).map(Enum::name)
+                            .map(name -> {
+                                return SpellEditorGuiUtils.makeEnumOptionElement(inputGui, name, enumValueType);
                             })
                             .toList();
                 }
