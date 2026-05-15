@@ -27,6 +27,13 @@
       "ascent": 6,
       "height": 6,
       "chars": ["\uE001"]
+    },
+    {
+      "type": "bitmap",
+      "file": "energy_manipulation:item/gui/icon/pin_inner.png",
+      "ascent": 6,
+      "height": 6,
+      "chars": ["\uE002"]
     }
   ]
 }

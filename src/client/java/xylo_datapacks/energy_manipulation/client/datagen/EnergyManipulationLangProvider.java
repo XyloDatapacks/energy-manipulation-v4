@@ -37,13 +37,16 @@ public class EnergyManipulationLangProvider extends FabricLanguageProvider {
                     translationKey, 
                     simplePathToDefaultTranslation(GlyphsRegistry.makeGlyphSimplePath(entry.getKey().identifier()))
             );
+            translationBuilder.add(translationKey + ".description", "");
             
             // Add all input pin names.
             entry.getValue().getInputPinDefinitions().forEach(inputPinDefinition -> {
+                String pinTranslationKey = translationKey + "." + inputPinDefinition.pinName;
                 translationBuilder.add(
-                        translationKey + "." + inputPinDefinition.pinName,
+                        pinTranslationKey,
                         simplePathToDefaultTranslation(inputPinDefinition.pinName)
                 );
+                translationBuilder.add(pinTranslationKey + ".description", "");
             });
         });
     }

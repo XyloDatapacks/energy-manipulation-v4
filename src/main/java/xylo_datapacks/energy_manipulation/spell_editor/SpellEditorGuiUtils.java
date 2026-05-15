@@ -21,6 +21,7 @@ import xylo_datapacks.energy_manipulation.glyph.value_type.*;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -69,10 +70,9 @@ public class SpellEditorGuiUtils {
         
         ItemStack buttonStack = connectedGlyphInstance != null ? SpellEditorButtonsRegistry.getGlyphButtonStack(connectedGlyphInstance.glyph, pinToDisplay.valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
-                .setName(Component.literal(connectedGlyphInstance == null ? "\uE000" : "\uE001").setStyle(ICON_TOOLTIP_STYLE).append(Component.translatable(pinDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)))
+                .setName(Component.literal(connectedGlyphInstance == null ? "\uE000" : "\uE001").setStyle(ICON_TOOLTIP_STYLE).append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE)).append(Component.translatable(pinDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)))
                 .setLore(List.of(
                         Component.literal("> ").setStyle(PRIMARY_TOOLTIP_STYLE).append(Component.translatable(connectedGlyphDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)), 
-                        Component.literal(""), 
                         makeClickActionComponent("L", "Change Glyph")
                 ))
                 .setCallback(clickType -> editorGui.openGlyphSelector(glyphInstance, pinIndex))
@@ -149,18 +149,33 @@ public class SpellEditorGuiUtils {
         
         return new GuiElementBuilder(buttonStack)
                 .setName(displayValue.setStyle(bValidValue ? PRIMARY_TOOLTIP_STYLE : ERROR_TOOLTIP_STYLE))
+                .setLore(List.of(
+                        makeClickActionComponent("L", "Change Value")
+                ))
                 .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
                 .build();
     }
 
     public static SimpleGuiElement makeGlyphOptionGuiElement(GlyphSelectorGui selectorGui, Glyph glyph, GlyphValueType valueType) {
+        List<Component> lore = new ArrayList<>();
+        
+        lore.add(Component.translatable(GlyphsRegistry.getGlyphTranslationKey(glyph) + ".description").setStyle(PRIMARY_TOOLTIP_STYLE));
+        glyph.getInputPinDefinitions().forEach(pinDefinition -> {
+            String pinTranslationKey = GlyphsRegistry.getGlyphTranslationKey(glyph) + "." + pinDefinition.pinName;
+            lore.add(Component.literal("\uE002").setStyle(ICON_TOOLTIP_STYLE)
+                    .append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE))
+                    .append(Component.translatable(pinTranslationKey).setStyle(PRIMARY_TOOLTIP_STYLE))
+                    .append(Component.literal(": ").setStyle(PRIMARY_TOOLTIP_STYLE))
+                    .append(Component.translatable(pinTranslationKey + ".description").setStyle(PRIMARY_TOOLTIP_STYLE)));
+        });
+        lore.addAll(List.of(
+                makeClickActionComponent("L", "Select Glyph")
+        ));
+        
+        
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getGlyphButtonStack(glyph, valueType))
                 .setName(Component.translatable(GlyphsRegistry.getGlyphTranslationKey(glyph)).setStyle(PRIMARY_TOOLTIP_STYLE))
-                .setLore(List.of(
-                        Component.literal("...").setStyle(PRIMARY_TOOLTIP_STYLE), 
-                        Component.literal(""), 
-                        makeClickActionComponent("L", "Select Glyph")
-                ))
+                .setLore(lore)
                 .setCallback(clickType -> {
                     GlyphUtils.connectNewGlyph(selectorGui.getGlyphInstance(), selectorGui.getPinIndex(), glyph);
                     selectorGui.goBackToEditor();
@@ -179,8 +194,6 @@ public class SpellEditorGuiUtils {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType))
                 .setName(Component.translatable(GlyphsRegistry.getValueTypeTranslationKey(valueType)).setStyle(PRIMARY_TOOLTIP_STYLE))
                 .setLore(List.of(
-                        Component.literal("...").setStyle(PRIMARY_TOOLTIP_STYLE), 
-                        Component.literal(""), 
                         makeClickActionComponent("L", "Select Value Type")
                 ))
                 .setCallback(clickType -> {
@@ -195,7 +208,6 @@ public class SpellEditorGuiUtils {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getValueTypeButtonStack(varValueType))
                 .setName(Component.literal(varName).setStyle(PRIMARY_TOOLTIP_STYLE))
                 .setLore(List.of(
-                        Component.literal(""), 
                         makeClickActionComponent("L", "Select Variable")
                 ))
                 .setCallback(clickType -> {
@@ -218,7 +230,6 @@ public class SpellEditorGuiUtils {
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getEnumValueButtonStack(enumValueType, valueId))
                 .setName(Component.translatable(GlyphsRegistry.getValueTypeTranslationKey(enumValueType) + "." + valueId).setStyle(PRIMARY_TOOLTIP_STYLE))
                 .setLore(List.of(
-                        Component.literal(""),
                         makeClickActionComponent("L", "Select")
                 ))
                 .setCallback(clickType -> {
