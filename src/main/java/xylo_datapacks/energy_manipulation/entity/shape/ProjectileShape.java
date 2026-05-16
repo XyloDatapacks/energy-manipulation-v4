@@ -47,7 +47,6 @@ public class ProjectileShape extends AbstractArrow implements PolymerEntity {
     protected void onHit(@NonNull HitResult hitResult) {
         super.onHit(hitResult);
 
-        EnergyManipulation.LOGGER.info("Executing on impact glyph");
         ExecutionContext executionContext = new ExecutionContext(level(), this.owner, getWeaponItem());
         
         if (hitResult instanceof EntityHitResult entityHitResult) {

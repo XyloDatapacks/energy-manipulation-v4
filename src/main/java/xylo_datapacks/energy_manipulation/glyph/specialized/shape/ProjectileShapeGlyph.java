@@ -78,7 +78,6 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
         Optional<ProjectileShape> spawnedShape = shoot(serverLevel, (LivingEntity) executionContext.getOwner(), InteractionHand.MAIN_HAND, executionContext.spellBookStack, List.of(new ItemStack(Items.ARROW)), 2.0F, 0.0F, false, null);
         
         spawnedShape.ifPresent(projectileShape -> {
-            EnergyManipulation.LOGGER.info("Projectile fired! (MovementType: {}", movementType.name());
             projectileShape.onImpactEffect = GlyphUtils.copyGlyphInstance(this.getInputPin(glyphInstance, EFFECT_PIN).flatMap(InputPin::getConnectedGlyph).get());
             projectileShape.onImpactProgram = GlyphUtils.copyGlyphInstance(this.getInputPin(glyphInstance, ON_IMPACT_PIN).flatMap(InputPin::getConnectedGlyph).get());
         });
