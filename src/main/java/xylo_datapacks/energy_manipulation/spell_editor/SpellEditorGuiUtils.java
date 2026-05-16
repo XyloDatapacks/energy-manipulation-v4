@@ -304,6 +304,6 @@ public class SpellEditorGuiUtils {
     public static List<Component> makeDescription(SimpleGui gui, String translationKey) {
         String playerLocale = gui.getPlayer().clientInformation().language();
         String rawText = ServerTranslator.getTranslation(playerLocale, translationKey);
-        return LoreProcessor.processLore(rawText, 35);
+        return LoreProcessor.processLore(rawText, 30);
     }
 }
