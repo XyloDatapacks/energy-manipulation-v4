@@ -204,12 +204,15 @@ public class SpellEditorGuiUtils {
         
         glyph.getInputPinDefinitions().forEach(pinDefinition -> {
             String pinTranslationKey = GlyphsRegistry.getGlyphTranslationKey(glyph) + "." + pinDefinition.pinName;
+            List<Component> translatedPinNameComponents = makeDescription(selectorGui, pinTranslationKey);
+            String translatedPinName = translatedPinNameComponents.isEmpty() ? "Missing Pin Name" : translatedPinNameComponents.getFirst().getString();
+            
             MutableComponent pinName = Component.literal("").setStyle(PRIMARY_TOOLTIP_STYLE)
                     .append(Component.literal("\uE002\uF101").setStyle(ICON_TOOLTIP_STYLE))
                     .append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE))
-                    .append(Component.translatable(pinTranslationKey).setStyle(TITLE_TOOLTIP_STYLE));
+                    .append(Component.literal(translatedPinName).setStyle(TITLE_TOOLTIP_STYLE));
             
-            List<Component> pinDescription = makeDescription(selectorGui, pinTranslationKey + ".description");
+            List<Component> pinDescription = makeDescription(selectorGui, pinTranslationKey + ".description", translatedPinName.length() + 4);
             if (!pinDescription.isEmpty() && !pinDescription.getFirst().getString().isEmpty()) {
                 pinName.append(Component.literal(": ").setStyle(PRIMARY_TOOLTIP_STYLE));
                 pinName.append(pinDescription.removeFirst());
@@ -303,8 +306,12 @@ public class SpellEditorGuiUtils {
     }
     
     public static List<Component> makeDescription(SimpleGui gui, String translationKey) {
+        return makeDescription(gui, translationKey, 0);
+    }
+    
+    public static List<Component> makeDescription(SimpleGui gui, String translationKey, int indent) {
         String playerLocale = gui.getPlayer().clientInformation().language();
         String rawText = ServerTranslator.getTranslation(playerLocale, translationKey);
-        return LoreProcessor.processLore(rawText, 30);
+        return LoreProcessor.processLore(rawText, 35, indent);
     }
 }
