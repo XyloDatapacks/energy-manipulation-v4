@@ -25,6 +25,7 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGl
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGlyph;
 import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.value_interface.StringConvertibleValueInterface;
+import xylo_datapacks.energy_manipulation.item.EnergyManipulationComponents;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 import xylo_datapacks.energy_manipulation.item.spell.SpellBookItem;
 import xylo_datapacks.energy_manipulation.item.spell.SpellScrollItem;
@@ -39,7 +40,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class SpellEditorGui extends SimpleGui {
-    protected final SimpleContainer inputInventory = new SimpleContainer(5);
+    protected boolean initializedInputInventory = false;
+    protected final SimpleContainer inputInventory = new SimpleContainer(5) {
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            
+            if (initializedInputInventory) {
+                saveItems();
+            }
+        }
+    };
+    
     static final int PAGE_SIZE = 9*5;
     protected final SpellEditor editor;
     protected int currentPage;
@@ -87,8 +99,6 @@ public class SpellEditorGui extends SimpleGui {
     }
     
     protected void setupToolbar() {
-        
-        // TODO: allow input slots to set data in item stack component
         
         int toolBarFirstIndex = 45;
         this.setSlot(toolBarFirstIndex + SpellBookItem.SPELL_UTILITY_1_INDEX, new Slot(inputInventory, SpellBookItem.SPELL_UTILITY_1_INDEX, 0, 0));
@@ -180,14 +190,17 @@ public class SpellEditorGui extends SimpleGui {
     }
     
     public void onClose() {
-        saveItems();
     }
     
     public void loadItems() {
+        initializedInputInventory = false;
+        
         ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (heldStack.getItem() instanceof SpellBookItem spellBookItem) {
             spellBookItem.getBookContent(heldStack, inputInventory.getItems());
         }
+        
+        initializedInputInventory = true;
     }
     
     public void saveItems() {
@@ -335,6 +348,8 @@ public class SpellEditorGui extends SimpleGui {
             spellScrollItem.setSpell(scrollStack, editor.getCurrentGlyphInstance());
             // Update cached version of the spell to allow reverting to this point.
             editor.saveChanges();
+            
+            saveItems();
         }
     }
 
