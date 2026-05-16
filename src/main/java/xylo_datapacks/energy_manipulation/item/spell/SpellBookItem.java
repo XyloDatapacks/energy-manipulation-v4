@@ -68,8 +68,10 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
 
             // Try cast spell.
             if (getSpell(itemStack).isPresent()) {
+
+                InteractionHand hand = player.getUsedItemHand();
                 serverPlayer.sendSystemMessage(Component.literal("Held for " + timeHeld * 0.05f + " seconds."));
-                GlyphUtils.execute(new ExecutionContext(serverPlayer), getSpell(itemStack).get());
+                GlyphUtils.execute(new ExecutionContext(level, serverPlayer, itemStack), getSpell(itemStack).get());
             }
         }
 

@@ -6,11 +6,15 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
+import xylo_datapacks.energy_manipulation.glyph.specialized.effect.FlameEffectGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperationGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.operator.SumOperatorGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.DebugGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.GenerateShape;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.PrintStringGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.runnable.ProgramGlyph;
+import xylo_datapacks.energy_manipulation.glyph.specialized.shape.MovementType;
+import xylo_datapacks.energy_manipulation.glyph.specialized.shape.ProjectileShapeGlyph;
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.*;
 import xylo_datapacks.energy_manipulation.glyph.value_type.*;
 
@@ -37,6 +41,9 @@ public class GlyphsRegistry {
     static public final VarDefinitionGlyph VAR_DEFINITION_GLYPH = registerGlyph("var_definition", VarDefinitionGlyph::new);
     static public final VarSetterGlyph VAR_SETTER_GLYPH = registerGlyph("var_setter", VarSetterGlyph::new);
     static public final VarGetterGlyph VAR_GETTER_GLYPH = registerGlyph("var_getter", VarGetterGlyph::new);
+    static public final GenerateShape GENERATE_SHAPE_GLYPH = registerGlyph("generate_shape", GenerateShape::new);
+    static public final ProjectileShapeGlyph PROJECTILE_SHAPE_GLYPH = registerGlyph("projectile_shape", ProjectileShapeGlyph::new);
+    static public final FlameEffectGlyph FLAME_EFFECT_GLYPH = registerGlyph("flame_effect", FlameEffectGlyph::new);
     
     static public final ClassValueType CLASS_VALUE_TYPE = registerValueType("class", ClassValueType::new);
     static public final StringValueType STRING_VALUE_TYPE = registerValueType("string", StringValueType::new);
@@ -45,6 +52,8 @@ public class GlyphsRegistry {
     static public final ExecutionValueType EXECUTION_VALUE_TYPE = registerValueType("execution", ExecutionValueType::new);
     static public final ExecutionErrorValueType EXECUTION_ERROR_VALUE_TYPE = registerValueType("execution_error", ExecutionErrorValueType::new);
     static public final VarNameValueType VAR_NAME_VALUE_TYPE = registerValueType("var_name", VarNameValueType::new);
+    static public final EnumValueType<MovementType> MOVEMENT_TYPE_VALUE_TYPE = registerValueType("movement_type", () -> new EnumValueType<>(MovementType.class));
+
 
     
     public static String getGlyphPath(Glyph glyph) {
