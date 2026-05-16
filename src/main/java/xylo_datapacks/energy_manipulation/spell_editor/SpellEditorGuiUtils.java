@@ -30,9 +30,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class SpellEditorGuiUtils {
-    static final Style PRIMARY_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(ChatFormatting.BLACK).withoutShadow();
-    static final Style ERROR_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(ChatFormatting.DARK_RED).withoutShadow();
-    static final Style ADVICE_TOOLTIP_STYLE = Style.EMPTY.withFont(FontDescription.DEFAULT).withColor(ChatFormatting.DARK_GRAY).withoutShadow();
+    static final Style PRIMARY_TOOLTIP_STYLE = Style.EMPTY.withFont(EnergyManipulationFonts.UNIFORM).withColor(ChatFormatting.BLACK).withoutShadow();
+    static final Style TITLE_TOOLTIP_STYLE = Style.EMPTY.withFont(EnergyManipulationFonts.UNIFORM).withColor(ChatFormatting.BLACK).withBold(true).withoutShadow();
+    static final Style ERROR_TOOLTIP_STYLE = Style.EMPTY.withFont(EnergyManipulationFonts.UNIFORM).withColor(ChatFormatting.DARK_RED).withoutShadow();
+    static final Style ADVICE_TOOLTIP_STYLE = Style.EMPTY.withFont(EnergyManipulationFonts.UNIFORM).withColor(ChatFormatting.DARK_GRAY).withoutShadow();
     static final Style ICON_TOOLTIP_STYLE = Style.EMPTY.withFont(EnergyManipulationFonts.SPELL_BOOK_ICON).withColor(ChatFormatting.WHITE).withoutShadow();
 
     /** @return true if currentSlot is out of bounds. */
@@ -206,7 +207,7 @@ public class SpellEditorGuiUtils {
             MutableComponent pinName = Component.literal("").setStyle(PRIMARY_TOOLTIP_STYLE)
                     .append(Component.literal("\uE002\uF101").setStyle(ICON_TOOLTIP_STYLE))
                     .append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE))
-                    .append(Component.translatable(pinTranslationKey).setStyle(PRIMARY_TOOLTIP_STYLE));
+                    .append(Component.translatable(pinTranslationKey).setStyle(TITLE_TOOLTIP_STYLE));
             
             List<Component> pinDescription = makeDescription(selectorGui, pinTranslationKey + ".description");
             if (!pinDescription.isEmpty() && !pinDescription.getFirst().getString().isEmpty()) {
@@ -228,7 +229,7 @@ public class SpellEditorGuiUtils {
         
         
         return new GuiElementBuilder(SpellEditorButtonsRegistry.getGlyphButtonStack(glyph, valueType))
-                .setName(Component.translatable(GlyphsRegistry.getGlyphTranslationKey(glyph)).setStyle(PRIMARY_TOOLTIP_STYLE))
+                .setName(Component.translatable(GlyphsRegistry.getGlyphTranslationKey(glyph)).setStyle(TITLE_TOOLTIP_STYLE))
                 .setLore(lore)
                 .setCallback(clickType -> {
                     GlyphUtils.connectNewGlyph(selectorGui.getGlyphInstance(), selectorGui.getPinIndex(), glyph);
