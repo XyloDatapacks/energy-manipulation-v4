@@ -422,7 +422,8 @@ public class Glyph {
     /*================================================================================================================*/
     // Execution
     
-    /** @return an object derived from GlyphValue. It must NEVER be null, instead use GlyphValue or ExecutionErrorGlyphValue in case of exceptions */
+    /** Outside this class should always be called through GlyphUtils::execute.
+     * @return an object derived from GlyphValue. It must NEVER be null, instead use ExecutionErrorGlyphValue in case of exceptions */
     public GlyphValue execute(ExecutionContext executionContext, GlyphInstance glyphInstance) {
         return GlyphsRegistry.EXECUTION_ERROR_VALUE_TYPE.makeExecutionErrorGlyphValue(this.getClass().getSimpleName() + " does not implement execute() method!");
     }
