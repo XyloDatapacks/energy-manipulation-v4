@@ -16,8 +16,10 @@ import xylo_datapacks.energy_manipulation.entity.EnergyManipulationEntities;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
+import xylo_datapacks.energy_manipulation.glyph.execution.PersistentVariablesContainer;
 
 public class ProjectileShape extends AbstractArrow implements PolymerEntity {
+    public PersistentVariablesContainer persistentVarContainer = new PersistentVariablesContainer();
     public GlyphInstance onImpactProgram;
     public GlyphInstance onImpactEffect;
     
@@ -54,10 +56,14 @@ public class ProjectileShape extends AbstractArrow implements PolymerEntity {
         }
         
         if (onImpactEffect != null) {
+            executionContext.initialize();
+            executionContext.importPersistentVariables(persistentVarContainer);
             GlyphUtils.execute(executionContext, onImpactEffect);
         }
         
         if (onImpactProgram != null) {
+            executionContext.initialize();
+            executionContext.importPersistentVariables(persistentVarContainer);
             GlyphUtils.execute(executionContext, onImpactProgram);
         }
     }

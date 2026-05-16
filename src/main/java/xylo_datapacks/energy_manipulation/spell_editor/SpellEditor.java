@@ -23,8 +23,18 @@ public class SpellEditor {
     protected final SpellEditorRootGlyphInstance rootGlyphInstance;
     protected GlyphInstance originalGlyphInstance;
     protected GlyphInstance currentGlyphInstance;
-    protected Map<GlyphInstance, VarNameValueType.VariableDescription> registeredVariables = new LinkedHashMap<>();
+    protected Map<GlyphInstance, EditorVariableDescription> registeredVariables = new LinkedHashMap<>();
 
+    protected record EditorVariableDescription(VarNameValueType.VariableDescription variableDescription, boolean isPersistent) {
+        public EditorVariableDescription(VarNameValueType.VariableDescription variableDescription, boolean isPersistent) {
+            this.variableDescription = variableDescription;
+            this.isPersistent = isPersistent;
+        }
+
+        public EditorVariableDescription(String name, GlyphValueType valueType, boolean isPersistent) {
+            this(new VarNameValueType.VariableDescription(name, valueType), isPersistent);
+        }
+    }
 
     /*================================================================================================================*/
     // RootGlyph
@@ -124,7 +134,12 @@ public class SpellEditor {
     // Variables
     
     public void registerVariable(GlyphInstance varDefGlyphInstance, String name, GlyphValueType valueType) {
-        registeredVariables.put(varDefGlyphInstance, new VarNameValueType.VariableDescription(name, valueType));
+        // A variable is persistent if the variable definition is wrapped by a persistent variable definition.
+        boolean isPersistent = varDefGlyphInstance.glyph.getParentGlyphInstance(varDefGlyphInstance)
+                .map(parentInstance -> parentInstance.glyph == GlyphsRegistry.PERSISTENT_VAR_DEF_GLYPH)
+                .orElse(false);
+        // Register the new variable.
+        registeredVariables.put(varDefGlyphInstance, new EditorVariableDescription(name, valueType, isPersistent));
     }
     
     public void unregisterVariable(GlyphInstance varDefGlyphInstance) {
@@ -135,7 +150,7 @@ public class SpellEditor {
      * them to the new name. */
     public void updateVariableUsers(GlyphInstance varDefInstance) {
         // Get old variable description.
-        VarNameValueType.VariableDescription oldVarDescription = registeredVariables.get(varDefInstance);
+        VarNameValueType.VariableDescription oldVarDescription = registeredVariables.get(varDefInstance).variableDescription;
         // Get new variable description.
         GlyphValue defVarNameValue = ((VarDefinitionGlyph) varDefInstance.glyph).getVarNameValue(varDefInstance);
         VarNameValueType.VariableDescription newVarDescription = GlyphsRegistry.VAR_NAME_VALUE_TYPE.getVarDescription(defVarNameValue);
@@ -220,8 +235,12 @@ public class SpellEditor {
             return false;
         }
         
+        boolean isPersistent = registeredVariables.get(varDefInstance).isPersistent;
         Optional<GlyphInstance> enclosingInstanceOrContextCutter = varNameSelectorInstance.glyph.getClosestParent(varNameSelectorInstance, parent -> {
-            return parent == scopeEnclosingInstance.get() || parent.glyph == GlyphsRegistry.GENERATE_SHAPE_GLYPH;
+            return parent == scopeEnclosingInstance.get() || (!isPersistent && (
+                    parent.glyph == GlyphsRegistry.GENERATE_SHAPE_GLYPH
+                    // ... other context cutters here ...
+            ));
         });
         
         // Can only be in scope if varNameSelectorInstance is a descendant of the enclosing scope, and there is no 
@@ -232,7 +251,8 @@ public class SpellEditor {
     public boolean isInScope(String varName, GlyphValueType varValueType, GlyphInstance varNameSelectorInstance) {
         GlyphInstance varDefInstance = registeredVariables.entrySet().stream()
                 .filter(entry -> {
-                    return entry.getValue().name().equals(varName) && entry.getValue().valueType() == varValueType;
+                    VarNameValueType.VariableDescription varDesc = entry.getValue().variableDescription;
+                    return varDesc.name().equals(varName) && varDesc.valueType() == varValueType;
                 })
                 .map(Map.Entry::getKey).findFirst().orElse(null);
         
@@ -244,7 +264,7 @@ public class SpellEditor {
         
         registeredVariables.forEach((varDefInstance, editorVar) -> {
             if (isInScope(varDefInstance, varNameSelectorInstance)) {
-                output.put(varDefInstance, editorVar);
+                output.put(varDefInstance, editorVar.variableDescription);
             }
         });
         

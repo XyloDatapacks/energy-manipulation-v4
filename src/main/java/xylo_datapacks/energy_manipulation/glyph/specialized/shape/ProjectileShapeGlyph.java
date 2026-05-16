@@ -16,6 +16,7 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
+import xylo_datapacks.energy_manipulation.glyph.execution.PersistentVariablesContainer;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPin;
 import xylo_datapacks.energy_manipulation.glyph.pin.InputPinMode;
 import xylo_datapacks.energy_manipulation.glyph.specialized.effect.EffectGlyphInterface;
@@ -78,6 +79,7 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
         Optional<ProjectileShape> spawnedShape = shoot(serverLevel, (LivingEntity) executionContext.getOwner(), InteractionHand.MAIN_HAND, executionContext.spellBookStack, List.of(new ItemStack(Items.ARROW)), 2.0F, 0.0F, false, null);
         
         spawnedShape.ifPresent(projectileShape -> {
+            executionContext.copyPersistentVariables(projectileShape.persistentVarContainer);
             projectileShape.onImpactEffect = GlyphUtils.copyGlyphInstance(this.getInputPin(glyphInstance, EFFECT_PIN).flatMap(InputPin::getConnectedGlyph).get());
             projectileShape.onImpactProgram = GlyphUtils.copyGlyphInstance(this.getInputPin(glyphInstance, ON_IMPACT_PIN).flatMap(InputPin::getConnectedGlyph).get());
         });

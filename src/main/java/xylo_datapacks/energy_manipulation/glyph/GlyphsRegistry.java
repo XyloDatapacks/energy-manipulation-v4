@@ -39,6 +39,7 @@ public class GlyphsRegistry {
     static public final SumOperatorGlyph SUM_OPERATOR_GLYPH = registerGlyph("sum_operator", SumOperatorGlyph::new);
     static public final FromConversionGlyph FROM_CONVERSION_GLYPH = registerGlyph("from_conversion", FromConversionGlyph::new);
     static public final VarDefinitionGlyph VAR_DEFINITION_GLYPH = registerGlyph("var_definition", VarDefinitionGlyph::new);
+    static public final PersistentVarDefGlyph PERSISTENT_VAR_DEF_GLYPH = registerGlyph("persistent_var_definition", PersistentVarDefGlyph::new);
     static public final VarSetterGlyph VAR_SETTER_GLYPH = registerGlyph("var_setter", VarSetterGlyph::new);
     static public final VarGetterGlyph VAR_GETTER_GLYPH = registerGlyph("var_getter", VarGetterGlyph::new);
     static public final GenerateShape GENERATE_SHAPE_GLYPH = registerGlyph("generate_shape", GenerateShape::new);
