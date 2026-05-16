@@ -63,16 +63,20 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makePinGuiElement(SpellEditorGui editorGui, GlyphInstance glyphInstance, int pinIndex) {
         InputPin pinToDisplay = glyphInstance.glyph.getInputPin(glyphInstance, pinIndex).get();
         GlyphInstance connectedGlyphInstance = pinToDisplay.getConnectedGlyph().orElse(null);
-        String connectedGlyphDisplayName = connectedGlyphInstance != null ? GlyphsRegistry.getGlyphTranslationKey(connectedGlyphInstance.glyph) : "None";
+        String connectedGlyphDisplayName = connectedGlyphInstance != null ? GlyphsRegistry.getGlyphTranslationKey(connectedGlyphInstance.glyph) : "";
 
         InputPinDefinition pinDefinitionToDisplay = glyphInstance.glyph.getInputPinDefinition(pinIndex).get();
         String pinDisplayName = GlyphsRegistry.getGlyphTranslationKey(glyphInstance.glyph) + "." + pinDefinitionToDisplay.pinName;
         
         ItemStack buttonStack = connectedGlyphInstance != null ? SpellEditorButtonsRegistry.getGlyphButtonStack(connectedGlyphInstance.glyph, pinToDisplay.valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         return new GuiElementBuilder(buttonStack)
-                .setName(Component.literal(connectedGlyphInstance == null ? "\uE000" : "\uE001").setStyle(ICON_TOOLTIP_STYLE).append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE)).append(Component.translatable(pinDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)))
+                .setName(Component.literal(connectedGlyphInstance == null ? "\uE000" : "\uE001").setStyle(ICON_TOOLTIP_STYLE)
+                        .append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE))
+                        .append(Component.translatable(pinDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)))
                 .setLore(List.of(
-                        Component.literal("> ").setStyle(PRIMARY_TOOLTIP_STYLE).append(Component.translatable(connectedGlyphDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)), 
+                        Component.literal(">").setStyle(ICON_TOOLTIP_STYLE)
+                                .append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE))
+                                .append(Component.translatable(connectedGlyphDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)), 
                         makeClickActionComponent("L", "Change Glyph")
                 ))
                 .setCallback(clickType -> editorGui.openGlyphSelector(glyphInstance, pinIndex))
@@ -147,6 +151,34 @@ public class SpellEditorGuiUtils {
             buttonStack = valueType != null ? SpellEditorButtonsRegistry.getValueTypeButtonStack(valueType) : SpellEditorButtonsRegistry.EMPTY_PIN_BUTTON.get();
         }
         
+        GlyphInstance parentInstance = glyphInstance.glyph.getParentGlyphInstance(glyphInstance).orElse(null);
+        int parentInputPinIndex = glyphInstance.glyph.getParentInputPinIndex(glyphInstance);
+        boolean hasValidParent = parentInstance != null && parentInputPinIndex != -1;
+        
+        if (hasValidParent) {
+            boolean isParentPinHidden = parentInstance.glyph.getInputPinEditorData(parentInputPinIndex)
+                    .map(editorData -> editorData.bHiddenInEditor)
+                    .orElse(false);
+            
+            if (isParentPinHidden) {
+                InputPinDefinition parentInputPinDefinition = parentInstance.glyph.getInputPinDefinition(parentInputPinIndex).orElse(null);
+                String pinDisplayName = GlyphsRegistry.getGlyphTranslationKey(parentInstance.glyph) + "." + parentInputPinDefinition.pinName;
+                
+                return new GuiElementBuilder(buttonStack)
+                        .setName(Component.literal("\uE001").setStyle(ICON_TOOLTIP_STYLE)
+                                .append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE))
+                                .append(Component.translatable(pinDisplayName).setStyle(PRIMARY_TOOLTIP_STYLE)))
+                        .setLore(List.of(
+                                Component.literal(">").setStyle(ICON_TOOLTIP_STYLE)
+                                        .append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE))
+                                        .append(displayValue.setStyle(bValidValue ? PRIMARY_TOOLTIP_STYLE : ERROR_TOOLTIP_STYLE)),
+                                makeClickActionComponent("L", "Change Value")
+                        ))
+                        .setCallback(clickType -> editorGui.openValueSelector(glyphInstance))
+                        .build();
+            }
+        }
+
         return new GuiElementBuilder(buttonStack)
                 .setName(displayValue.setStyle(bValidValue ? PRIMARY_TOOLTIP_STYLE : ERROR_TOOLTIP_STYLE))
                 .setLore(List.of(
@@ -162,7 +194,7 @@ public class SpellEditorGuiUtils {
         lore.add(Component.translatable(GlyphsRegistry.getGlyphTranslationKey(glyph) + ".description").setStyle(PRIMARY_TOOLTIP_STYLE));
         glyph.getInputPinDefinitions().forEach(pinDefinition -> {
             String pinTranslationKey = GlyphsRegistry.getGlyphTranslationKey(glyph) + "." + pinDefinition.pinName;
-            lore.add(Component.literal("\uE002").setStyle(ICON_TOOLTIP_STYLE)
+            lore.add(Component.literal("\uE002\uF101").setStyle(ICON_TOOLTIP_STYLE)
                     .append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE))
                     .append(Component.translatable(pinTranslationKey).setStyle(PRIMARY_TOOLTIP_STYLE))
                     .append(Component.literal(": ").setStyle(PRIMARY_TOOLTIP_STYLE))
@@ -241,7 +273,9 @@ public class SpellEditorGuiUtils {
     }
     
     public static Component makeClickActionComponent(String click, String action) {
-        return Component.literal(click).setStyle(ICON_TOOLTIP_STYLE)
+        return Component.literal("\uF002").setStyle(ICON_TOOLTIP_STYLE)
+                .append(Component.literal(click).setStyle(ICON_TOOLTIP_STYLE))
+                .append(Component.literal("\uF101").setStyle(ICON_TOOLTIP_STYLE))
                 .append(Component.literal(" " + action).setStyle(ADVICE_TOOLTIP_STYLE));
     }
 }

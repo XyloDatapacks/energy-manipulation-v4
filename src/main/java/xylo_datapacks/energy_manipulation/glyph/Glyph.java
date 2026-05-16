@@ -249,6 +249,12 @@ public class Glyph {
         return parentInputPin.map(pin -> pin.owner.get());
     }
     
+    public int getParentInputPinIndex(GlyphInstance glyphInstance) {
+        Optional<InputPin> parentInputPin = glyphInstance.outputPin.getConnectedPin();
+        Optional<GlyphInstance> parentGlyphInstance = parentInputPin.map(pin -> pin.owner.get());
+        return parentGlyphInstance.map(instance -> instance.inputPins.indexOf(parentInputPin.get())).orElse(-1);
+    }
+    
     public void getDescendants(GlyphInstance glyphInstance, List<GlyphInstance> destination, Predicate<GlyphInstance> glyphFilter) {
         for (InputPin inputPin : glyphInstance.inputPins) {
             if (inputPin != null) {

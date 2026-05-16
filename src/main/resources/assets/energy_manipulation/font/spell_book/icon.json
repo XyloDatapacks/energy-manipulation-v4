@@ -15,6 +15,32 @@
       "chars": ["L"]
     },
     {
+      "type": "space",
+      "advances": {
+        "\uF001": -1,
+        "\uF002": -2,
+        "\uF003": -3,
+        "\uF004": -4,
+        "\uF005": -5,
+        "\uF006": -6,
+        "\uF007": -7,
+        "\uF008": -8
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "\uF101": 1,
+        "\uF102": 2,
+        "\uF103": 3,
+        "\uF104": 4,
+        "\uF105": 5,
+        "\uF106": 6,
+        "\uF107": 7,
+        "\uF108": 8
+      }
+    },
+    {
       "type": "bitmap",
       "file": "energy_manipulation:item/gui/icon/pin_empty.png",
       "ascent": 6,
@@ -34,6 +60,13 @@
       "ascent": 6,
       "height": 6,
       "chars": ["\uE002"]
+    },
+    {
+      "type": "bitmap",
+      "file": "energy_manipulation:item/gui/icon/pin_connection.png",
+      "ascent": 6,
+      "height": 6,
+      "chars": [">"]
     }
   ]
 }
