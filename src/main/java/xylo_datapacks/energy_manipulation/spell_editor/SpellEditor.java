@@ -220,12 +220,13 @@ public class SpellEditor {
             return false;
         }
         
-        // TODO: to account for new execution contexts like a GenerateShape glyph, when getting the parent of 
-        //  varNameSelectorInstance, get either the enclosing scope or any context-changing glyph.
-        //  Then we return true only if the found parent IS the enclosing scope.
+        Optional<GlyphInstance> enclosingInstanceOrContextCutter = varNameSelectorInstance.glyph.getClosestParent(varNameSelectorInstance, parent -> {
+            return parent == scopeEnclosingInstance.get() || parent.glyph == GlyphsRegistry.GENERATE_SHAPE_GLYPH;
+        });
         
-        // Check if the variable name selector instance is in the scope of the variable definition instance.
-        return varNameSelectorInstance.glyph.getClosestParent(varNameSelectorInstance, parent -> parent == scopeEnclosingInstance.get()).isPresent();
+        // Can only be in scope if varNameSelectorInstance is a descendant of the enclosing scope, and there is no 
+        // context cutter in between.
+        return enclosingInstanceOrContextCutter.isPresent() && enclosingInstanceOrContextCutter.get() == scopeEnclosingInstance.get();   
     }
 
     public boolean isInScope(String varName, GlyphValueType varValueType, GlyphInstance varNameSelectorInstance) {
