@@ -20,6 +20,8 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.variable.RawValueGly
 import xylo_datapacks.energy_manipulation.glyph.value_type.*;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.GlyphSelectorGui;
 import xylo_datapacks.energy_manipulation.spell_editor.modal_menues.MultipleChoiceInputGui;
+import xylo_datapacks.energy_manipulation.utils.LoreProcessor;
+import xylo_datapacks.energy_manipulation.utils.ServerTranslator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,14 +193,34 @@ public class SpellEditorGuiUtils {
     public static SimpleGuiElement makeGlyphOptionGuiElement(GlyphSelectorGui selectorGui, Glyph glyph, GlyphValueType valueType) {
         List<Component> lore = new ArrayList<>();
         
-        lore.add(Component.translatable(GlyphsRegistry.getGlyphTranslationKey(glyph) + ".description").setStyle(PRIMARY_TOOLTIP_STYLE));
+        List<Component> glyphDescription = makeDescription(selectorGui, GlyphsRegistry.getGlyphTranslationKey(glyph) + ".description");
+        if (!glyphDescription.isEmpty() && !glyphDescription.getFirst().getString().isEmpty()) {
+            lore.add(Component.literal("").setStyle(PRIMARY_TOOLTIP_STYLE).append(glyphDescription.removeFirst()));
+            glyphDescription.forEach(component -> {
+                lore.add(Component.literal("").setStyle(PRIMARY_TOOLTIP_STYLE).append(component));
+            });
+        }
+        
         glyph.getInputPinDefinitions().forEach(pinDefinition -> {
             String pinTranslationKey = GlyphsRegistry.getGlyphTranslationKey(glyph) + "." + pinDefinition.pinName;
-            lore.add(Component.literal("\uE002\uF101").setStyle(ICON_TOOLTIP_STYLE)
+            MutableComponent pinName = Component.literal("").setStyle(PRIMARY_TOOLTIP_STYLE)
+                    .append(Component.literal("\uE002\uF101").setStyle(ICON_TOOLTIP_STYLE))
                     .append(Component.literal(" ").setStyle(PRIMARY_TOOLTIP_STYLE))
-                    .append(Component.translatable(pinTranslationKey).setStyle(PRIMARY_TOOLTIP_STYLE))
-                    .append(Component.literal(": ").setStyle(PRIMARY_TOOLTIP_STYLE))
-                    .append(Component.translatable(pinTranslationKey + ".description").setStyle(PRIMARY_TOOLTIP_STYLE)));
+                    .append(Component.translatable(pinTranslationKey).setStyle(PRIMARY_TOOLTIP_STYLE));
+            
+            List<Component> pinDescription = makeDescription(selectorGui, pinTranslationKey + ".description");
+            if (!pinDescription.isEmpty() && !pinDescription.getFirst().getString().isEmpty()) {
+                pinName.append(Component.literal(": ").setStyle(PRIMARY_TOOLTIP_STYLE));
+                pinName.append(pinDescription.removeFirst());
+                
+                lore.add(pinName);
+                pinDescription.forEach(component -> {
+                    lore.add(Component.literal("").setStyle(PRIMARY_TOOLTIP_STYLE).append(component));
+                });
+            }
+            else {
+                lore.add(pinName);   
+            }
         });
         lore.addAll(List.of(
                 makeClickActionComponent("L", "Select Glyph")
@@ -277,5 +299,11 @@ public class SpellEditorGuiUtils {
                 .append(Component.literal(click).setStyle(ICON_TOOLTIP_STYLE))
                 .append(Component.literal("\uF101").setStyle(ICON_TOOLTIP_STYLE))
                 .append(Component.literal(" " + action).setStyle(ADVICE_TOOLTIP_STYLE));
+    }
+    
+    public static List<Component> makeDescription(SimpleGui gui, String translationKey) {
+        String playerLocale = gui.getPlayer().clientInformation().language();
+        String rawText = ServerTranslator.getTranslation(playerLocale, translationKey);
+        return LoreProcessor.processLore(rawText, 35);
     }
 }
