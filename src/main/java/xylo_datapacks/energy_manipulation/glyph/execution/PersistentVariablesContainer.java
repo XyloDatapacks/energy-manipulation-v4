@@ -20,7 +20,6 @@ public record PersistentVariablesContainer(Map<String, @Nullable GlyphValue> var
     
     public void copyFrom(PersistentVariablesContainer other) {
         other.variables.forEach((name, value) -> {
-            EnergyManipulation.LOGGER.warn("copying persistent variable: {} -> {}", name, value != null ? value.getDebugString() : "null");
             this.variables.put(name, value != null ? value.copy() : null);
         });
     }
