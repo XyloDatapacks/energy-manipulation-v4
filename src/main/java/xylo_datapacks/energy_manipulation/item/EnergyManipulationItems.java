@@ -16,7 +16,7 @@ import xylo_datapacks.energy_manipulation.item.spell.SpellScrollItem;
 import java.util.function.Function;
 
 public class EnergyManipulationItems {
-    public static final SpellBookItem SPELL_BOOK = registerItem("spell_book", SpellBookItem::new, new Item.Properties());
+    public static final SpellBookItem SPELL_BOOK = registerItem("spell_book", SpellBookItem::new, new Item.Properties().stacksTo(1));
     public static final SpellScrollItem SPELL_SCROLL = registerItem("spell_scroll", SpellScrollItem::new, new Item.Properties());
     public static final GuiButtonItem GUI_BUTTON = registerItem("gui_button", GuiButtonItem::new, new Item.Properties());
 
