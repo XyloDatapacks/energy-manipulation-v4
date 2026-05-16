@@ -50,19 +50,21 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         ItemModel.Unbaked flatModel = ItemModelUtils.plainModel(generator.createFlatItemModel(item, ModelTemplates.FLAT_ITEM));
         ItemModel.Unbaked inHandModel = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_closed"));
         
+        ItemModel.Unbaked open = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_open"));
         ItemModel.Unbaked charging0 = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_charging0"));
         ItemModel.Unbaked charging1 = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_charging1"));
         ItemModel.Unbaked charging2 = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_charging2"));
         ItemModel.Unbaked inHandWithCharge = ItemModelUtils.conditional(
                 ItemModelUtils.isUsingItem(),
-                ItemModelUtils.rangeSelect(new UseDuration(false), 0.05F, charging0, 
-                        ItemModelUtils.override(charging1, 0.65F), 
+                ItemModelUtils.rangeSelect(new UseDuration(false), 0.05F, open,
+                        ItemModelUtils.override(charging0, 0.2F),
+                        ItemModelUtils.override(charging1, 0.55F), 
                         ItemModelUtils.override(charging2, 0.9F)),
                 inHandModel
         );
 
         List<SelectItemModel.SwitchCase<String>> switchCases = new ArrayList<>();
-        switchCases.add(ItemModelUtils.when("open_book", ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_open"))));
+        switchCases.add(ItemModelUtils.when("open_book", open));
         ItemModel.Unbaked inHandWithCustomModelData = ItemModelUtils.select(new CustomModelDataProperty(0), inHandWithCharge, switchCases);
         
         generator.itemModelOutput.accept(item, ItemModelGenerators.createFlatModelDispatch(flatModel, inHandWithCustomModelData));

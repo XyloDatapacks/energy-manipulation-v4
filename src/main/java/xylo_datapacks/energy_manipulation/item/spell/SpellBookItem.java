@@ -62,6 +62,9 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
 
         if (entity instanceof ServerPlayer serverPlayer) {
             int timeHeld = this.getUseDuration(itemStack, entity) - remainingTime;
+            if (timeHeld < getMinChargeTicks()) {
+                return false;
+            }
 
             // Try cast spell.
             if (getSpell(itemStack).isPresent()) {
@@ -71,6 +74,10 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
         }
 
         return false;
+    }
+    
+    public int getMinChargeTicks() {
+        return 4; // 0.2 seconds
     }
 
     @Override
