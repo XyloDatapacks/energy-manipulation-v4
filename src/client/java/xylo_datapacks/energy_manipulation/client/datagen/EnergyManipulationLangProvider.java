@@ -5,10 +5,13 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.NonNull;
+import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -21,6 +24,13 @@ public class EnergyManipulationLangProvider extends FabricLanguageProvider {
 
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider registryLookup, @NonNull TranslationBuilder translationBuilder) {
+        try {
+            Path existingFilePath = this.packOutput.getModContainer().findPath("assets/" + EnergyManipulation.MOD_ID + "/lang/en_us.existing.json").get();
+            translationBuilder.add(existingFilePath);
+        } catch (IOException e) {
+            EnergyManipulation.LOGGER.error("Failed to merge manual language files!", e);
+        }
+
         translationBuilder.add(EnergyManipulationItems.SPELL_BOOK, "Spell Book");
         translationBuilder.add(EnergyManipulationItems.SPELL_SCROLL, "Spell Scroll");
 
@@ -37,7 +47,7 @@ public class EnergyManipulationLangProvider extends FabricLanguageProvider {
                     translationKey, 
                     simplePathToDefaultTranslation(GlyphsRegistry.makeGlyphSimplePath(entry.getKey().identifier()))
             );
-            translationBuilder.add(translationKey + ".description", "");
+            //translationBuilder.add(translationKey + ".description", "");
             
             // Add all input pin names.
             entry.getValue().getInputPinDefinitions().forEach(inputPinDefinition -> {
@@ -46,7 +56,7 @@ public class EnergyManipulationLangProvider extends FabricLanguageProvider {
                         pinTranslationKey,
                         simplePathToDefaultTranslation(inputPinDefinition.pinName)
                 );
-                translationBuilder.add(pinTranslationKey + ".description", "");
+                //translationBuilder.add(pinTranslationKey + ".description", "");
             });
         });
     }
