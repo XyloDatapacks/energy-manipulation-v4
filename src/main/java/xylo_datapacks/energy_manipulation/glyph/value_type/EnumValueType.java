@@ -23,6 +23,11 @@ public class EnumValueType<T extends Enum<T>> extends GlyphValueType {
         }
 
         @Override
+        public GlyphValue copy() {
+            return new EnumGlyphValue<T>((EnumValueType) this.getValueType(), this.value);
+        }
+
+        @Override
         public String getDebugString() {
             return value.name();
         }

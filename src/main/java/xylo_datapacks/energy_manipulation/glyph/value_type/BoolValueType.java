@@ -18,6 +18,11 @@ public class BoolValueType extends GlyphValueType implements ComparableGlyphValu
         }
 
         @Override
+        public GlyphValue copy() {
+            return new BoolGlyphValue(this.getValueType(), this.value);
+        }
+
+        @Override
         public String getDebugString() {
             return value ? "true" : "false";
         }

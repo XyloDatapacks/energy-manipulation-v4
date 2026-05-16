@@ -7,4 +7,6 @@ public abstract class GlyphValue {
     public GlyphValueType getValueType() { return null; }
     
     public String getDebugString() { return ""; }
+    
+    public abstract GlyphValue copy();
 }

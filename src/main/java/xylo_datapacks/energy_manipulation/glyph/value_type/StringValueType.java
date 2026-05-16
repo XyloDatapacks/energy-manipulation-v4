@@ -21,6 +21,11 @@ public class StringValueType extends GlyphValueType implements StringGlyphValueI
         }
 
         @Override
+        public GlyphValue copy() {
+            return new StringGlyphValue(this.getValueType(), this.value);
+        }
+
+        @Override
         public String getDebugString() {
             return value;
         }

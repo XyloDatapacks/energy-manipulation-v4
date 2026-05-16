@@ -17,6 +17,11 @@ public class ExecutionErrorValueType extends GlyphValueType {
         }
 
         @Override
+        public GlyphValue copy() {
+            return new ExecutionErrorGlyphValue(this.getValueType(), this.message);
+        }
+
+        @Override
         public String getDebugString() {
             return message;
         }

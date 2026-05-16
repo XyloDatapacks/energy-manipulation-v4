@@ -19,6 +19,11 @@ public class ClassValueType extends GlyphValueType {
         }
 
         @Override
+        public GlyphValue copy() {
+            return new ClassGlyphValue(this.getValueType(), this.value);
+        }
+
+        @Override
         public String getDebugString() {
             if (value == null) {
                 return "None";

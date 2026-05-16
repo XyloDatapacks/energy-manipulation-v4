@@ -17,6 +17,11 @@ public class ExecutionValueType extends GlyphValueType {
         }
 
         @Override
+        public GlyphValue copy() {
+            return new ExecutionGlyphValue(this.getValueType(), this.value);
+        }
+
+        @Override
         public String getDebugString() {
             return value > 0 ? "success (" + value + ")" : "failure";
         }

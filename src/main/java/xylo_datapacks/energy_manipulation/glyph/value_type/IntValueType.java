@@ -22,6 +22,11 @@ public class IntValueType extends GlyphValueType implements NumericGlyphValueInt
         }
 
         @Override
+        public GlyphValue copy() {
+            return new IntGlyphValue(this.getValueType(), this.value);
+        }
+
+        @Override
         public String getDebugString() {
             return String.valueOf(value);
         }

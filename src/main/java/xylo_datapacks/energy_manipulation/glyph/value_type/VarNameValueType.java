@@ -24,6 +24,11 @@ public class VarNameValueType extends GlyphValueType {
         }
 
         @Override
+        public GlyphValue copy() {
+            return new VarNameGlyphValue(this.getValueType(), this.name, this.valueType);
+        }
+
+        @Override
         public String getDebugString() {
             String valueTypeName = valueType != null ? valueType.getClass().getSimpleName() : "null";
             return name + " (" + valueTypeName + ")";
