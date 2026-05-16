@@ -5,10 +5,12 @@ import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,6 +27,7 @@ import xylo_datapacks.energy_manipulation.item.EnergyManipulationItemsUtils;
 import xylo_datapacks.energy_manipulation.item.ItemDoubleSwapInterface;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
+import xylo_datapacks.energy_manipulation.utils.DataComponentsUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,26 +46,42 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
 
     @Override
     public Item getPolymerItem(ItemStack itemStack, PacketContext context) {
-        return Items.WRITABLE_BOOK;
+        return Items.BOOK;
     }
 
     @Override
     public @NonNull InteractionResult use(@NonNull Level level, @NonNull Player player, @NonNull InteractionHand hand) {
-        if (player instanceof ServerPlayer serverPlayer) {
-            ItemStack itemStack = player.getItemInHand(hand);
-            
+        return super.use(level, player, hand);
+    }
+
+    @Override
+    public boolean releaseUsing(@NonNull ItemStack itemStack, @NonNull Level level, @NonNull LivingEntity entity, int remainingTime) {
+        if (!(entity instanceof Player player)) {
+            return false;
+        }
+
+        if (entity instanceof ServerPlayer serverPlayer) {
+            int timeHeld = this.getUseDuration(itemStack, entity) - remainingTime;
+
             // Try cast spell.
             if (getSpell(itemStack).isPresent()) {
+                serverPlayer.sendSystemMessage(Component.literal("Held for " + timeHeld * 0.05f + " seconds."));
                 GlyphUtils.execute(new ExecutionContext(serverPlayer), getSpell(itemStack).get());
-                return InteractionResult.SUCCESS;
             }
         }
-        return InteractionResult.PASS;
+
+        return false;
     }
 
     @Override
     public void onDoubleSwap(@NonNull Level level, @NonNull Player player, @NonNull ItemStack stack) {
+        openBookGui(player, stack);
+    }
+    
+    public void openBookGui(@NonNull Player player, @NonNull ItemStack stack) {
         if (player instanceof ServerPlayer serverPlayer) {
+            DataComponentsUtils.setCustomModelDataString(stack, "open_book");
+           
             // Force send inventory data to prevent visual artifacts.
             serverPlayer.containerMenu.sendAllDataToRemote();
             
@@ -71,6 +90,10 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
             SpellEditorGui gui = new SpellEditorGui(serverPlayer, spellEditor);
             gui.open();
         }
+    }
+    
+    public void closeBookGui(@NonNull Player player, @NonNull ItemStack stack) {
+        DataComponentsUtils.setCustomModelDataString(stack, "closed_book");
     }
     
     @Deprecated

@@ -14,6 +14,7 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
 import xylo_datapacks.energy_manipulation.glyph.value_type.GlyphValueType;
 import xylo_datapacks.energy_manipulation.item.EnergyManipulationItems;
+import xylo_datapacks.energy_manipulation.utils.DataComponentsUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,44 +44,26 @@ public class SpellEditorButtonsRegistry {
     public static ItemStack getGlyphButtonStack(Glyph glyph, GlyphValueType outputValueType) {
         ItemStack glyphButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
         String customModelDataName = glyph.getEditorData().bHasTypeDependentTexture ?  GlyphsRegistry.getGlyphTypeSpecifyPath(glyph, outputValueType) : GlyphsRegistry.getGlyphPath(glyph);
-        setCustomModelData(glyphButtonStack, customModelDataName);
+        DataComponentsUtils.setCustomModelDataString(glyphButtonStack, customModelDataName);
         return glyphButtonStack;
     }
 
     public static ItemStack getValueTypeButtonStack(GlyphValueType valueType) {
         ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(valueType));
+        DataComponentsUtils.setCustomModelDataString(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(valueType));
         return valueSelectorButtonStack;
     }
 
     public static ItemStack getEnumValueButtonStack(EnumValueType<?> enumValueType, String enumValueId) {
         ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        setCustomModelData(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(enumValueType) + "/" + enumValueId);
+        DataComponentsUtils.setCustomModelDataString(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(enumValueType) + "/" + enumValueId);
         return valueSelectorButtonStack;
     }
 
     public static ItemStack getOperatorSeparatorButtonStack(Glyph glyph) {
         ItemStack operatorSeparatorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        setCustomModelData(operatorSeparatorButtonStack, GlyphsRegistry.getGlyphPath(glyph) + "_separator");
+        DataComponentsUtils.setCustomModelDataString(operatorSeparatorButtonStack, GlyphsRegistry.getGlyphPath(glyph) + "_separator");
         return operatorSeparatorButtonStack;
-    }
-
-    protected static void setCustomModelData(ItemStack stack, String name) {
-        stack.update(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY, customModelData -> {
-            List<String> strings = new ArrayList<>(customModelData.strings());
-
-            if (strings.size() <= 0) {
-                strings.add("");
-            }
-            strings.set(0, name);
-
-            return new CustomModelData(
-                    customModelData.floats(),
-                    customModelData.flags(),
-                    strings,
-                    customModelData.colors()
-            );
-        });
     }
     
     public static ItemStack setTooltipStyle(ItemStack stack) {
@@ -93,7 +76,7 @@ public class SpellEditorButtonsRegistry {
     public static Supplier<ItemStack> registerGlyphButton(String name, Supplier<ItemStack> factory) {
         Supplier<ItemStack> output = () -> {
             ItemStack stack = factory.get();
-            setCustomModelData(stack, name);
+            DataComponentsUtils.setCustomModelDataString(stack, name);
             return stack;
         };
         Registry.register(SPELL_EDITOR_GLYPH_BUTTON, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, name), output);
@@ -103,7 +86,7 @@ public class SpellEditorButtonsRegistry {
     public static Supplier<ItemStack> registerButton(String name, Supplier<ItemStack> factory) {
         Supplier<ItemStack> output = () -> {
             ItemStack stack = factory.get();
-            setCustomModelData(stack, name);
+            DataComponentsUtils.setCustomModelDataString(stack, name);
             return stack;
         };
         Registry.register(SPELL_EDITOR_BUTTON, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, name), output);

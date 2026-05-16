@@ -4,13 +4,11 @@ import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
-import net.minecraft.client.data.models.model.ItemModelUtils;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.item.ClientItem;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.SelectItemModel;
+import net.minecraft.client.renderer.item.properties.numeric.UseDuration;
 import net.minecraft.client.renderer.item.properties.select.CustomModelDataProperty;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.resources.Identifier;
@@ -42,9 +40,32 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(@NonNull ItemModelGenerators itemModelGenerators) {
-        itemModelGenerators.generateFlatItem(EnergyManipulationItems.SPELL_BOOK, ModelTemplates.FLAT_ITEM);
+        generateSpellBookItemModel(itemModelGenerators, EnergyManipulationItems.SPELL_BOOK);
         itemModelGenerators.generateFlatItem(EnergyManipulationItems.SPELL_SCROLL, ModelTemplates.FLAT_ITEM);
+        
         generateDynamicGuiItemModels(itemModelGenerators, EnergyManipulationItems.GUI_BUTTON);
+    }
+
+    public void generateSpellBookItemModel(ItemModelGenerators generator, Item item) {
+        ItemModel.Unbaked flatModel = ItemModelUtils.plainModel(generator.createFlatItemModel(item, ModelTemplates.FLAT_ITEM));
+        ItemModel.Unbaked inHandModel = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_closed"));
+        
+        ItemModel.Unbaked charging0 = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_charging0"));
+        ItemModel.Unbaked charging1 = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_charging1"));
+        ItemModel.Unbaked charging2 = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_charging2"));
+        ItemModel.Unbaked inHandWithCharge = ItemModelUtils.conditional(
+                ItemModelUtils.isUsingItem(),
+                ItemModelUtils.rangeSelect(new UseDuration(false), 0.05F, charging0, 
+                        ItemModelUtils.override(charging1, 0.65F), 
+                        ItemModelUtils.override(charging2, 0.9F)),
+                inHandModel
+        );
+
+        List<SelectItemModel.SwitchCase<String>> switchCases = new ArrayList<>();
+        switchCases.add(ItemModelUtils.when("open_book", ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_open"))));
+        ItemModel.Unbaked inHandWithCustomModelData = ItemModelUtils.select(new CustomModelDataProperty(0), inHandWithCharge, switchCases);
+        
+        generator.itemModelOutput.accept(item, ItemModelGenerators.createFlatModelDispatch(flatModel, inHandWithCustomModelData));
     }
 
     public void generateDynamicGuiItemModels(ItemModelGenerators generator, Item baseItem) {

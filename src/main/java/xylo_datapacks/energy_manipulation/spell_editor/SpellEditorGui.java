@@ -172,6 +172,11 @@ public class SpellEditorGui extends SimpleGui {
     public void onPlayerClose(boolean success) {
         super.onPlayerClose(success);
         onClose();
+
+        ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if (heldStack.getItem() instanceof SpellBookItem spellBookItem) {
+            spellBookItem.closeBookGui(player, heldStack);
+        }
     }
     
     public void onClose() {
