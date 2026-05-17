@@ -18,17 +18,15 @@ import xylo_datapacks.energy_manipulation.glyph.specialized.shape.ProjectileShap
 import xylo_datapacks.energy_manipulation.glyph.specialized.variable.*;
 import xylo_datapacks.energy_manipulation.glyph.value_type.*;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class GlyphsRegistry {
-    public static final String GLYPH_PATH = "glyph";
-    public static final String VALUE_TYPE_PATH = "value_type";
-    
     // Glyph registry
-    public static final ResourceKey<Registry<Glyph>> GLYPH_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "glyph_registry"));
+    public static final ResourceKey<Registry<Glyph>> GLYPH_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "glyph"));
     public static final Registry<Glyph> GLYPH = FabricRegistryBuilder.create(GLYPH_REGISTRY_KEY).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
     // Value Type registry
-    public static final ResourceKey<Registry<GlyphValueType>> VALUE_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "glyph_value_type_registry"));
+    public static final ResourceKey<Registry<GlyphValueType>> VALUE_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "glyph_value_type"));
     public static final Registry<GlyphValueType> VALUE_TYPE = FabricRegistryBuilder.create(VALUE_TYPE_REGISTRY_KEY).attribute(RegistryAttribute.OPTIONAL).buildAndRegister();
     
     static public final RawValueGlyph RAW_VALUE_GLYPH = registerGlyph("raw_value", RawValueGlyph::new);
@@ -58,62 +56,68 @@ public class GlyphsRegistry {
 
     
     public static String getGlyphPath(Glyph glyph) {
-        return GlyphsRegistry.GLYPH.getKey(glyph).getPath();
-    }
-    
-    public static String getGlyphSimplePath(Glyph glyph) {
-        return getGlyphPath(glyph).replace(GLYPH_PATH + "/", "");
+        return Objects.requireNonNull(GlyphsRegistry.GLYPH.getKey(glyph)).getPath();
     }
 
-    public static String getGlyphTranslationKey(Glyph glyph) {
-        return GLYPH_PATH + "." + EnergyManipulation.MOD_ID + "." + getGlyphSimplePath(glyph);   
+    public static String getGlyphResourcePath(Glyph glyph) {
+        return GLYPH_REGISTRY_KEY.identifier().getPath() + "/" + getGlyphPath(glyph);
     }
     
-    public static String makeGlyphSimplePath(Identifier glyphIdentifier) {
-        return glyphIdentifier.getPath().replace(GLYPH_PATH + "/", "");
+    public static String addGlyphResourcePath(String path) {
+        return GLYPH_REGISTRY_KEY.identifier().getPath() + "/" + path;
+    }
+    
+    public static String getGlyphTranslationKey(Glyph glyph) {
+        return GLYPH_REGISTRY_KEY.identifier().getPath() + "." + EnergyManipulation.MOD_ID + "." + getGlyphPath(glyph);   
     }
 
     public static String makeGlyphTranslationKey(Identifier glyphIdentifier) {
-        return GLYPH_PATH + "." + EnergyManipulation.MOD_ID + "." + makeGlyphSimplePath(glyphIdentifier);
+        return GLYPH_REGISTRY_KEY.identifier().getPath() + "." + EnergyManipulation.MOD_ID + "." + glyphIdentifier.getPath();
     }
     
     public static String getGlyphTypeSpecifyPath(Glyph glyph, GlyphValueType valueType) {
-        return getGlyphPath(glyph) + "/" + getValueTypeSimplePath(valueType);
+        return getGlyphPath(glyph) + "/" + getValueTypePath(valueType);
     }
     
     
 
     public static String getValueTypePath(GlyphValueType valueType) {
-        return GlyphsRegistry.VALUE_TYPE.getKey(valueType).getPath();
+        return Objects.requireNonNull(GlyphsRegistry.VALUE_TYPE.getKey(valueType)).getPath();
     }
 
-    public static String getValueTypeSimplePath(GlyphValueType valueType) {
-        return getValueTypePath(valueType).replace(VALUE_TYPE_PATH + "/", "");
+    public static String getValueTypeResourcePath(GlyphValueType valueType) {
+        return VALUE_TYPE_REGISTRY_KEY.identifier().getPath() + "/" + getValueTypePath(valueType);
+    }
+
+    public static String addValueTypeResourcePath(String path) {
+        return VALUE_TYPE_REGISTRY_KEY.identifier().getPath() + "/" + path;
     }
     
     public static String getValueTypeTranslationKey(GlyphValueType valueType) {
-        return VALUE_TYPE_PATH + "." + EnergyManipulation.MOD_ID + "." + getValueTypeSimplePath(valueType);
-    }
-
-    public static String makeValueTypeSimplePath(Identifier valueTypeIdentifier) {
-        return valueTypeIdentifier.getPath().replace(VALUE_TYPE_PATH + "/", "");
+        return VALUE_TYPE_REGISTRY_KEY.identifier().getPath() + "." + EnergyManipulation.MOD_ID + "." + getValueTypePath(valueType);
     }
 
     public static String makeValueTypeTranslationKey(Identifier valueTypeIdentifier) {
-        return VALUE_TYPE_PATH + "." + EnergyManipulation.MOD_ID + "." + makeValueTypeSimplePath(valueTypeIdentifier);
+        return VALUE_TYPE_REGISTRY_KEY.identifier().getPath() + "." + EnergyManipulation.MOD_ID + "." + valueTypeIdentifier.getPath();
     }
     
     /*----------------------------------------------------------------------------------------------------------------*/
 
     public static <T extends Glyph> T registerGlyph(String name, Supplier<T> factory) {
+        Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, name);
+        ResourceKey<Glyph> glyphKey = ResourceKey.create(GLYPH_REGISTRY_KEY, identifier);
+        
         T glyph = factory.get();
-        Registry.register(GLYPH, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, GLYPH_PATH + "/" + name), glyph);
+        Registry.register(GLYPH, glyphKey, glyph);
         return glyph;
     }
 
     public static <T extends GlyphValueType> T registerValueType(String name, Supplier<T> factory) {
+        Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, name);
+        ResourceKey<GlyphValueType> valueTypeKey = ResourceKey.create(VALUE_TYPE_REGISTRY_KEY, identifier);
+        
         T valueType = factory.get();
-        Registry.register(VALUE_TYPE, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, VALUE_TYPE_PATH + "/" + name), valueType);
+        Registry.register(VALUE_TYPE, valueTypeKey, valueType);
         return valueType;
     }
     

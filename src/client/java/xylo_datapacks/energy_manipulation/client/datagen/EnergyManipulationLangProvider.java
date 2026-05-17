@@ -45,7 +45,7 @@ public class EnergyManipulationLangProvider extends FabricLanguageProvider {
             // Add the glyph itself.
             translationBuilder.add(
                     translationKey, 
-                    simplePathToDefaultTranslation(GlyphsRegistry.makeGlyphSimplePath(entry.getKey().identifier()))
+                    simplePathToDefaultTranslation(entry.getKey().identifier().getPath())
             );
             //translationBuilder.add(translationKey + ".description", "");
             
@@ -68,7 +68,7 @@ public class EnergyManipulationLangProvider extends FabricLanguageProvider {
             // Add the value type.
             translationBuilder.add(
                     translationKey,
-                    simplePathToDefaultTranslation(GlyphsRegistry.makeValueTypeSimplePath(entry.getKey().identifier()))
+                    simplePathToDefaultTranslation(entry.getKey().identifier().getPath())
             );
 
             // If enum, add its values.

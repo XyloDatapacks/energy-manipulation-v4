@@ -81,19 +81,7 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         
         
         // Glyphs
-        allGlyphs.addAll(GlyphsRegistry.GLYPH.keySet().stream().map(Identifier::getPath).toList());
-        // Value types
-        allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.keySet().stream().map(Identifier::getPath).toList());
-        // Enum values
-        List<EnumValueType<?>> enumValueTypes = new ArrayList<>(GlyphsRegistry.VALUE_TYPE.stream()
-                .filter(EnumValueType.class::isInstance)
-                .map(element -> (EnumValueType<?>) element)
-                .toList());
-        enumValueTypes.forEach(enumValueType -> {
-            allGlyphs.addAll(enumValueType.getValuesId().stream()
-                    .map(enumValue -> GlyphsRegistry.getValueTypePath(enumValueType) + "/" + enumValue)
-                    .toList());
-        });
+        allGlyphs.addAll(GlyphsRegistry.GLYPH.keySet().stream().map(Identifier::getPath).map(GlyphsRegistry::addGlyphResourcePath).toList());
         // Type-specific glyphs
         GlyphsRegistry.GLYPH.stream()
                 .filter(glyph -> glyph.getEditorData().bHasTypeDependentTexture)
@@ -101,15 +89,32 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
                     allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.stream()
                             .filter(GlyphValueType::hasValueSelector)
                             .map(valueType -> GlyphsRegistry.getGlyphTypeSpecifyPath(typeSpecificGlyph, valueType))
-                            .toList());
+                            .map(GlyphsRegistry::addGlyphResourcePath)
+                            .toList()
+                    );
                 });
         // Operator glyphs pin separator
         allGlyphs.addAll(GlyphsRegistry.GLYPH.stream()
                 .filter(OperatorGlyphInterface.class::isInstance)
-                .map(glyph -> GlyphsRegistry.getGlyphPath(glyph) + "_separator")
+                .map(glyph -> GlyphsRegistry.getGlyphResourcePath(glyph) + "_separator")
                 .toList());
         // Glyph buttons (treating them as glyphs since they need to be scaled too)
         allGlyphs.addAll(SpellEditorButtonsRegistry.SPELL_EDITOR_GLYPH_BUTTON.keySet().stream().map(Identifier::getPath).toList());
+
+
+        // Value types
+        allGlyphs.addAll(GlyphsRegistry.VALUE_TYPE.keySet().stream().map(Identifier::getPath).map(GlyphsRegistry::addValueTypeResourcePath).toList());
+        // Enum values
+        List<EnumValueType<?>> enumValueTypes = new ArrayList<>(GlyphsRegistry.VALUE_TYPE.stream()
+                .filter(EnumValueType.class::isInstance)
+                .map(element -> (EnumValueType<?>) element)
+                .toList());
+        enumValueTypes.forEach(enumValueType -> {
+            allGlyphs.addAll(enumValueType.getValuesId().stream()
+                    .map(enumValue -> GlyphsRegistry.getValueTypeResourcePath(enumValueType) + "/" + enumValue)
+                    .toList()
+            );
+        });
 
         
         // generate switch cases and their models

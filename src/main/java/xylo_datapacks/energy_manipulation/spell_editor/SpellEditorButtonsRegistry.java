@@ -43,26 +43,26 @@ public class SpellEditorButtonsRegistry {
     
     public static ItemStack getGlyphButtonStack(Glyph glyph, GlyphValueType outputValueType) {
         ItemStack glyphButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        String customModelDataName = glyph.getEditorData().bHasTypeDependentTexture ?  GlyphsRegistry.getGlyphTypeSpecifyPath(glyph, outputValueType) : GlyphsRegistry.getGlyphPath(glyph);
+        String customModelDataName = GlyphsRegistry.addGlyphResourcePath(glyph.getEditorData().bHasTypeDependentTexture ?  GlyphsRegistry.getGlyphTypeSpecifyPath(glyph, outputValueType) : GlyphsRegistry.getGlyphPath(glyph));
         DataComponentsUtils.setCustomModelDataString(glyphButtonStack, customModelDataName);
         return glyphButtonStack;
     }
 
     public static ItemStack getValueTypeButtonStack(GlyphValueType valueType) {
         ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        DataComponentsUtils.setCustomModelDataString(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(valueType));
+        DataComponentsUtils.setCustomModelDataString(valueSelectorButtonStack, GlyphsRegistry.getValueTypeResourcePath(valueType));
         return valueSelectorButtonStack;
     }
 
     public static ItemStack getEnumValueButtonStack(EnumValueType<?> enumValueType, String enumValueId) {
         ItemStack valueSelectorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        DataComponentsUtils.setCustomModelDataString(valueSelectorButtonStack, GlyphsRegistry.getValueTypePath(enumValueType) + "/" + enumValueId);
+        DataComponentsUtils.setCustomModelDataString(valueSelectorButtonStack, GlyphsRegistry.getValueTypeResourcePath(enumValueType) + "/" + enumValueId);
         return valueSelectorButtonStack;
     }
 
     public static ItemStack getOperatorSeparatorButtonStack(Glyph glyph) {
         ItemStack operatorSeparatorButtonStack = setTooltipStyle(EnergyManipulationItems.GUI_BUTTON.getDefaultInstance());
-        DataComponentsUtils.setCustomModelDataString(operatorSeparatorButtonStack, GlyphsRegistry.getGlyphPath(glyph) + "_separator");
+        DataComponentsUtils.setCustomModelDataString(operatorSeparatorButtonStack, GlyphsRegistry.getGlyphResourcePath(glyph) + "_separator");
         return operatorSeparatorButtonStack;
     }
     
