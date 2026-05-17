@@ -76,7 +76,8 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
         GlyphValue movementTypeValue = this.evaluatePin(executionContext, glyphInstance, MOVEMENT_TYPE_PIN);
         MovementType movementType = GlyphsRegistry.MOVEMENT_TYPE_VALUE_TYPE.getEnumGlyphValue(movementTypeValue);
         
-        Optional<ProjectileShape> spawnedShape = shoot(executionContext, List.of(new ItemStack(Items.ARROW)), 2.0F, 0.0F, false, null);
+        ServerLevel level = (ServerLevel) executionContext.getLevel();
+        Optional<ProjectileShape> spawnedShape = shoot(level, executionContext, List.of(new ItemStack(Items.ARROW)), 2.0F, 0.0F, false, null);
         
         spawnedShape.ifPresent(projectileShape -> {
             executionContext.copyPersistentVariables(projectileShape.persistentVarContainer);
@@ -88,6 +89,7 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
     }
 
     protected Optional<ProjectileShape> shoot(
+            ServerLevel level,
             ExecutionContext executionContext,
             final List<ItemStack> projectiles,
             final float power,
@@ -95,13 +97,10 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
             final boolean isCrit,
             @Nullable final LivingEntity targetOverride
     ) {
-        ServerLevel level = executionContext.getServerPlayer().get().level();
-        LivingEntity shooter = (LivingEntity) executionContext.getOwner();
         ItemStack weapon = executionContext.spellBookStack;
-        
         ProjectileShape projectileEntityToSpawn = null;
         
-        float maxAngle = EnchantmentHelper.processProjectileSpread(level, weapon, shooter, 0.0F);
+        float maxAngle = 0.F;
         float angleStep = projectiles.size() == 1 ? 0.0F : 2.0F * maxAngle / (projectiles.size() - 1);
         float angleOffset = (projectiles.size() - 1) % 2 * angleStep / 2.0F;
         float direction = 1.0F;

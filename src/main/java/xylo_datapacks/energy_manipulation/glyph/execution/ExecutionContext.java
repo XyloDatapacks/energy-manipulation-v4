@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -21,7 +22,7 @@ import java.util.Optional;
 
 public class ExecutionContext {
     protected Level level;
-    protected final EntityReference<Entity> owner;
+    protected final EntityReference<LivingEntity> owner;
     public final ItemStack spellBookStack;
     public final float power;
 
@@ -37,14 +38,14 @@ public class ExecutionContext {
     protected final PersistentVariablesContainer persistentVarContainer = new PersistentVariablesContainer();
 
     
-    public ExecutionContext(Level level, EntityReference<Entity> owner, ItemStack spellBookStack, float power) {
+    public ExecutionContext(Level level, EntityReference<LivingEntity> owner, ItemStack spellBookStack, float power) {
         this.level = level;
         this.owner = owner;
         this.spellBookStack = spellBookStack;
         this.power = power;
     }
     
-    public ExecutionContext(Level level, Entity owner, ItemStack spellBookStack, float power) {
+    public ExecutionContext(Level level, LivingEntity owner, ItemStack spellBookStack, float power) {
         this(level, EntityReference.of(owner), spellBookStack, power);
     }
     
@@ -61,15 +62,20 @@ public class ExecutionContext {
         this.persistentVarContainer.variables().clear();
     }
     
-    public @Nullable Entity getOwner() {
-        return EntityReference.getEntity(this.owner, this.level);
+    public Level getLevel() {
+        return level;
+    }
+    
+    public EntityReference<LivingEntity> getOwnerReference() {
+        return owner;
+    }
+
+    public Optional<LivingEntity> getOwner() {
+        return Optional.ofNullable(EntityReference.getLivingEntity(this.owner, this.level));
     }
     
     public Optional<ServerPlayer> getServerPlayer() {
-        if (this.getOwner() instanceof ServerPlayer player) {
-            return Optional.of(player);
-        }
-        return Optional.empty();
+        return this.getOwner().filter(ServerPlayer.class::isInstance).map(ServerPlayer.class::cast);
     }
 
     public float getXRot() {

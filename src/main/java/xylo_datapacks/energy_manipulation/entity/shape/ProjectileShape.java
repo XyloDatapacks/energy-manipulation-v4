@@ -3,6 +3,7 @@ package xylo_datapacks.energy_manipulation.entity.shape;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
@@ -24,6 +25,8 @@ import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.execution.PersistentVariablesContainer;
 
+import java.util.Objects;
+
 public class ProjectileShape extends AbstractArrow implements PolymerEntity {
     public PersistentVariablesContainer persistentVarContainer = new PersistentVariablesContainer();
     public GlyphInstance onImpactProgram;
@@ -35,18 +38,14 @@ public class ProjectileShape extends AbstractArrow implements PolymerEntity {
         super(type, level);
     }
 
-    public ProjectileShape(Level level, double x, double y, double z, ItemStack pickupItemStack, @Nullable ItemStack firedFromWeapon) {
+    protected ProjectileShape(Level level, double x, double y, double z, ItemStack pickupItemStack, @Nullable ItemStack firedFromWeapon) {
         super(EnergyManipulationEntities.PROJECTILE_SHAPE, x, y, z, level, pickupItemStack, firedFromWeapon);
     }
 
-    public ProjectileShape(Level level, LivingEntity owner, ItemStack pickupItemStack, @Nullable ItemStack firedFromWeapon) {
-        super(EnergyManipulationEntities.PROJECTILE_SHAPE, owner, level, pickupItemStack, firedFromWeapon);
-    }
-
     public ProjectileShape(Level level, ExecutionContext executionContext, ItemStack pickupItemStack, @Nullable ItemStack firedFromWeapon) {
-        LivingEntity owner = (LivingEntity) executionContext.getOwner();
+        EntityReference<LivingEntity> contextOwner = executionContext.getOwnerReference();
         this(level, executionContext.position.x, executionContext.position.y, executionContext.position.z, pickupItemStack, firedFromWeapon);
-        this.setOwner(owner);
+        this.owner = EntityReference.of(contextOwner.getUUID());
     }
 
     @Override
@@ -87,7 +86,8 @@ public class ProjectileShape extends AbstractArrow implements PolymerEntity {
             lastXRot = Mth.wrapDegrees(xRot);
         }
 
-        ExecutionContext executionContext = new ExecutionContext(level(), this.owner, getWeaponItem(), 1.f);
+        EntityReference<LivingEntity> caster = EntityReference.of(Objects.requireNonNull(this.owner).getUUID());
+        ExecutionContext executionContext = new ExecutionContext(level(), caster, getWeaponItem(), 1.f);
         executionContext.setHitResult(hitResult);
         
         if (onImpactEffect != null) {
