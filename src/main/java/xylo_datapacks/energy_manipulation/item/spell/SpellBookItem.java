@@ -3,6 +3,7 @@ package xylo_datapacks.energy_manipulation.item.spell;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -90,6 +91,7 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
     public void openBookGui(@NonNull Player player, @NonNull ItemStack stack) {
         if (player instanceof ServerPlayer serverPlayer) {
             DataComponentsUtils.setCustomModelDataString(stack, "open_book");
+            stack.set(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "spell_book_open"));
            
             // Force send inventory data to prevent visual artifacts.
             serverPlayer.containerMenu.sendAllDataToRemote();
@@ -103,6 +105,7 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
     
     public void closeBookGui(@NonNull Player player, @NonNull ItemStack stack) {
         DataComponentsUtils.setCustomModelDataString(stack, "closed_book");
+        stack.set(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "spell_book"));
     }
     
     @Deprecated
