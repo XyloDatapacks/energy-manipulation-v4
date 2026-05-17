@@ -75,19 +75,15 @@ public class ProjectileShape extends AbstractArrow implements PolymerEntity {
     protected void addAdditionalSaveData(@NonNull ValueOutput output) {
         super.addAdditionalSaveData(output);
         
-        output.store("on_impact_program", CustomData.CODEC, CustomData.of(GlyphUtils.serializeInstance(onImpactProgram)));
-        output.store("on_impact_effect", CustomData.CODEC, CustomData.of(GlyphUtils.serializeInstance(onImpactEffect)));
+        output.storeNullable("on_impact_program", GlyphInstance.CODEC, onImpactProgram);
+        output.storeNullable("on_impact_effect", GlyphInstance.CODEC, onImpactEffect);
     }
 
     @Override
     protected void readAdditionalSaveData(@NonNull ValueInput input) {
         super.readAdditionalSaveData(input);
 
-        input.read("on_impact_program", CustomData.CODEC).map(CustomData::copyTag).ifPresent(tag -> {
-            onImpactProgram = GlyphUtils.deserializeInstance(tag, GlyphsRegistry.EXECUTION_VALUE_TYPE).orElse(null);
-        });
-        input.read("on_impact_effect", CustomData.CODEC).map(CustomData::copyTag).ifPresent(tag -> {
-            onImpactEffect = GlyphUtils.deserializeInstance(tag, GlyphsRegistry.EXECUTION_VALUE_TYPE).orElse(null);
-        });
+        onImpactProgram = input.read("on_impact_program", GlyphInstance.CODEC).orElse(null);
+        onImpactEffect = input.read("on_impact_effect", GlyphInstance.CODEC).orElse(null);
     }
 }
