@@ -75,6 +75,7 @@ public class ProjectileShape extends AbstractArrow implements PolymerEntity {
     protected void addAdditionalSaveData(@NonNull ValueOutput output) {
         super.addAdditionalSaveData(output);
         
+        output.store("persistent_var_container", PersistentVariablesContainer.CODEC, persistentVarContainer);
         output.storeNullable("on_impact_program", GlyphInstance.CODEC, onImpactProgram);
         output.storeNullable("on_impact_effect", GlyphInstance.CODEC, onImpactEffect);
     }
@@ -83,6 +84,7 @@ public class ProjectileShape extends AbstractArrow implements PolymerEntity {
     protected void readAdditionalSaveData(@NonNull ValueInput input) {
         super.readAdditionalSaveData(input);
 
+        persistentVarContainer = input.read("persistent_var_container", PersistentVariablesContainer.CODEC).orElse(new PersistentVariablesContainer());
         onImpactProgram = input.read("on_impact_program", GlyphInstance.CODEC).orElse(null);
         onImpactEffect = input.read("on_impact_effect", GlyphInstance.CODEC).orElse(null);
     }
