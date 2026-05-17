@@ -6,15 +6,18 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.entity.EnergyManipulationEntities;
 import xylo_datapacks.energy_manipulation.glyph.GlyphInstance;
 import xylo_datapacks.energy_manipulation.glyph.GlyphUtils;
+import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
 import xylo_datapacks.energy_manipulation.glyph.execution.PersistentVariablesContainer;
 
@@ -66,5 +69,25 @@ public class ProjectileShape extends AbstractArrow implements PolymerEntity {
             executionContext.importPersistentVariables(persistentVarContainer);
             GlyphUtils.execute(executionContext, onImpactProgram);
         }
+    }
+
+    @Override
+    protected void addAdditionalSaveData(@NonNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        
+        output.store("on_impact_program", CustomData.CODEC, CustomData.of(GlyphUtils.serializeInstance(onImpactProgram)));
+        output.store("on_impact_effect", CustomData.CODEC, CustomData.of(GlyphUtils.serializeInstance(onImpactEffect)));
+    }
+
+    @Override
+    protected void readAdditionalSaveData(@NonNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+
+        input.read("on_impact_program", CustomData.CODEC).map(CustomData::copyTag).ifPresent(tag -> {
+            onImpactProgram = GlyphUtils.deserializeInstance(tag, GlyphsRegistry.EXECUTION_VALUE_TYPE).orElse(null);
+        });
+        input.read("on_impact_effect", CustomData.CODEC).map(CustomData::copyTag).ifPresent(tag -> {
+            onImpactEffect = GlyphUtils.deserializeInstance(tag, GlyphsRegistry.EXECUTION_VALUE_TYPE).orElse(null);
+        });
     }
 }
