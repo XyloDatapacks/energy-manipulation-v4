@@ -24,7 +24,8 @@ public class EnumValueType<T extends Enum<T>> extends GlyphValueType {
 
         @Override
         public GlyphValue copy() {
-            return new EnumGlyphValue<T>((EnumValueType) this.getValueType(), this.value);
+            //noinspection unchecked
+            return new EnumGlyphValue<T>((EnumValueType<T>) this.getValueType(), this.value);
         }
 
         @Override
