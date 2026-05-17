@@ -4,10 +4,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
@@ -26,6 +28,10 @@ public class ExecutionContext {
     protected InteractionHand interactionHand;
     protected EntityReference<Entity> targetEntity;
     protected HitResult hitResult;
+
+    public Vec3 position;
+    public float yRot;
+    public float xRot;
     
     public final Map<String, @NonNull GlyphValue> executionVariables = new LinkedHashMap<>();
     protected final PersistentVariablesContainer persistentVarContainer = new PersistentVariablesContainer();
@@ -42,10 +48,17 @@ public class ExecutionContext {
         this(level, EntityReference.of(owner), spellBookStack, power);
     }
     
+    public void setTransform(Vec3 position, float yRot, float xRot) {
+        this.position = position;
+        this.yRot = yRot;
+        this.xRot = xRot;
+    }
+    
     /** To be called if this execution context needs to be recycled for a new execution. */
-    public void initialize() {
-        executionVariables.clear();
-        persistentVarContainer.variables().clear();
+    public void initialize(Vec3 position, float yRot, float xRot) {
+        this.setTransform(position, yRot, xRot);
+        this.executionVariables.clear();
+        this.persistentVarContainer.variables().clear();
     }
     
     public @Nullable Entity getOwner() {
@@ -57,6 +70,14 @@ public class ExecutionContext {
             return Optional.of(player);
         }
         return Optional.empty();
+    }
+
+    public float getXRot() {
+        return this.xRot;
+    }
+
+    public float getYRot() {
+        return this.yRot;
     }
 
     protected void setTargetEntity(@Nullable final EntityReference<Entity> targetEntity) {

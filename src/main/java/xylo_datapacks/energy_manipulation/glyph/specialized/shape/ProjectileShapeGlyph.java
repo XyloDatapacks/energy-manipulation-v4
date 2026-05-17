@@ -1,6 +1,7 @@
 package xylo_datapacks.energy_manipulation.glyph.specialized.shape;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -75,8 +76,7 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
         GlyphValue movementTypeValue = this.evaluatePin(executionContext, glyphInstance, MOVEMENT_TYPE_PIN);
         MovementType movementType = GlyphsRegistry.MOVEMENT_TYPE_VALUE_TYPE.getEnumGlyphValue(movementTypeValue);
         
-        ServerLevel serverLevel = executionContext.getServerPlayer().get().level();
-        Optional<ProjectileShape> spawnedShape = shoot(serverLevel, (LivingEntity) executionContext.getOwner(), InteractionHand.MAIN_HAND, executionContext.spellBookStack, List.of(new ItemStack(Items.ARROW)), 2.0F, 0.0F, false, null);
+        Optional<ProjectileShape> spawnedShape = shoot(executionContext, List.of(new ItemStack(Items.ARROW)), 2.0F, 0.0F, false, null);
         
         spawnedShape.ifPresent(projectileShape -> {
             executionContext.copyPersistentVariables(projectileShape.persistentVarContainer);
@@ -88,16 +88,17 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
     }
 
     protected Optional<ProjectileShape> shoot(
-            final ServerLevel level,
-            final LivingEntity shooter,
-            final InteractionHand hand,
-            final ItemStack weapon,
+            ExecutionContext executionContext,
             final List<ItemStack> projectiles,
             final float power,
             final float uncertainty,
             final boolean isCrit,
             @Nullable final LivingEntity targetOverride
     ) {
+        ServerLevel level = executionContext.getServerPlayer().get().level();
+        LivingEntity shooter = (LivingEntity) executionContext.getOwner();
+        ItemStack weapon = executionContext.spellBookStack;
+        
         ProjectileShape projectileEntityToSpawn = null;
         
         float maxAngle = EnchantmentHelper.processProjectileSpread(level, weapon, shooter, 0.0F);
@@ -113,10 +114,10 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
                 int index = i;
 
                 projectileEntityToSpawn = Projectile.spawnProjectile(
-                        this.createProjectile(level, shooter, weapon, projectile, isCrit),
+                        this.createProjectile(level, executionContext, weapon, projectile, isCrit),
                         level,
                         projectile,
-                        projectileEntity -> this.shootProjectile(shooter, projectileEntity, index, power, uncertainty, angle, targetOverride)
+                        projectileEntity -> this.shootProjectile(executionContext, projectileEntity, index, power, uncertainty, angle, targetOverride)
                 );
                 
                 if (weapon.isEmpty()) {
@@ -128,8 +129,8 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
         return Optional.ofNullable(projectileEntityToSpawn);
     }
 
-    protected ProjectileShape createProjectile(final Level level, final LivingEntity shooter, final ItemStack weapon, final ItemStack projectile, final boolean isCrit) {
-        ProjectileShape projectileShape = new ProjectileShape(level, shooter, projectile.copyWithCount(1), weapon);
+    protected ProjectileShape createProjectile(final Level level, final ExecutionContext executionContext, final ItemStack weapon, final ItemStack projectile, final boolean isCrit) {
+        ProjectileShape projectileShape = new ProjectileShape(level, executionContext, projectile.copyWithCount(1), weapon);
         if (isCrit) {
             projectileShape.setCritArrow(true);
         }
@@ -138,7 +139,7 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
     }
     
     protected void shootProjectile(
-            final LivingEntity shooter,
+            ExecutionContext executionContext,
             final Projectile projectileEntity,
             final int index,
             final float power,
@@ -146,6 +147,13 @@ public class ProjectileShapeGlyph extends Glyph implements ShapeGlyphInterface {
             final float angle,
             @Nullable final LivingEntity targetOverride
     ) {
-        projectileEntity.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot() + angle, 0.0F, power, uncertainty);
+        float xRot = executionContext.getXRot();
+        float yRot = executionContext.getYRot() + angle;
+        float yOffset = 0.f;
+        
+        float xd = -Mth.sin(yRot * (float) (Math.PI / 180.0)) * Mth.cos(xRot * (float) (Math.PI / 180.0));
+        float yd = -Mth.sin((xRot + yOffset) * (float) (Math.PI / 180.0));
+        float zd = Mth.cos(yRot * (float) (Math.PI / 180.0)) * Mth.cos(xRot * (float) (Math.PI / 180.0));
+        projectileEntity.shoot(xd, yd, zd, power, uncertainty);
     }
 }

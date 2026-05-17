@@ -75,6 +75,7 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
             if (getSpell(itemStack).isPresent()) {
                 // Create execution context.
                 ExecutionContext executionContext = new ExecutionContext(level, serverPlayer, itemStack, getPowerFromChargeTicks(timeHeld));
+                executionContext.setTransform(entity.getEyePosition(), entity.getYRot(), entity.getXRot());
                 
                 // Set hit result
                 double reachDistance = serverPlayer.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
