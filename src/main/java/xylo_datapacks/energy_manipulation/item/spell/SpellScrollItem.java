@@ -33,12 +33,15 @@ public class SpellScrollItem extends Item implements PolymerItem {
         return Items.PAPER;
     }
 
+    /** @return A copy of the GlyphInstance contained in the scroll. */
     public GlyphInstance getSpell(ItemStack itemStack) {
         return Optional.ofNullable(itemStack.get(EnergyManipulationComponents.SPELL_CONTAINER))
+                .map(GlyphUtils::copyGlyphInstance)
                 .orElse(GlyphsRegistry.PROGRAM_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE));
     }
 
+    /** Saves a copy of the given GlyphInstance into the scroll. */
     public void setSpell(ItemStack itemStack, @NonNull GlyphInstance glyphInstance) {
-        itemStack.set(EnergyManipulationComponents.SPELL_CONTAINER, glyphInstance);
+        itemStack.set(EnergyManipulationComponents.SPELL_CONTAINER, GlyphUtils.copyGlyphInstance(glyphInstance));
     }
 }
