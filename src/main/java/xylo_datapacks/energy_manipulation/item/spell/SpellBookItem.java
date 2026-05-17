@@ -12,12 +12,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.glyph.execution.ExecutionContext;
@@ -30,6 +33,7 @@ import xylo_datapacks.energy_manipulation.spell_editor.SpellEditor;
 import xylo_datapacks.energy_manipulation.spell_editor.SpellEditorGui;
 import xylo_datapacks.energy_manipulation.utils.DataComponentsUtils;
 
+import javax.management.Attribute;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,23 +73,42 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
 
             // Try cast spell.
             if (getSpell(itemStack).isPresent()) {
-
-                InteractionHand hand = player.getUsedItemHand();
-                serverPlayer.sendSystemMessage(Component.literal("Held for " + timeHeld * 0.05f + " seconds."));
-                GlyphUtils.execute(new ExecutionContext(level, serverPlayer, itemStack), getSpell(itemStack).get());
+                // Create execution context.
+                ExecutionContext executionContext = new ExecutionContext(level, serverPlayer, itemStack, getPowerFromChargeTicks(timeHeld));
+                
+                // Set hit result
+                double reachDistance = serverPlayer.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE);
+                executionContext.setHitResult(ProjectileUtil.getHitResultOnViewVector(
+                        entity,
+                        target -> !target.isSpectator() && target.canBeHitByProjectile(),
+                        reachDistance
+                ));
+                // Set interaction hand
+                executionContext.setInteractionHand(player.getUsedItemHand());
+                
+                // Execute spell.
+                GlyphUtils.execute(executionContext, getSpell(itemStack).get());
             }
         }
 
         return false;
     }
-    
-    public int getMinChargeTicks() {
-        return 4; // 0.2 seconds
-    }
 
     @Override
     public void onDoubleSwap(@NonNull Level level, @NonNull Player player, @NonNull ItemStack stack) {
         openBookGui(player, stack);
+    }
+
+    public int getMinChargeTicks() {
+        return 4; // 0.2 seconds
+    }
+
+    public int getFullChargeTicks() {
+        return 20; // 1 second
+    }
+    
+    protected float getPowerFromChargeTicks(int chargeTicks) {
+        return (float) chargeTicks / (float) getFullChargeTicks();
     }
     
     public void openBookGui(@NonNull Player player, @NonNull ItemStack stack) {

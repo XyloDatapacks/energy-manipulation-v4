@@ -1,10 +1,13 @@
 package xylo_datapacks.energy_manipulation.glyph.execution;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
@@ -18,21 +21,25 @@ public class ExecutionContext {
     protected Level level;
     protected final EntityReference<Entity> owner;
     public final ItemStack spellBookStack;
+    public final float power;
 
-    protected EntityReference<Entity> target;
+    protected InteractionHand interactionHand;
+    protected EntityReference<Entity> targetEntity;
+    protected HitResult hitResult;
     
     public final Map<String, @NonNull GlyphValue> executionVariables = new LinkedHashMap<>();
     protected final PersistentVariablesContainer persistentVarContainer = new PersistentVariablesContainer();
 
     
-    public ExecutionContext(Level level, EntityReference<Entity> owner, ItemStack spellBookStack) {
+    public ExecutionContext(Level level, EntityReference<Entity> owner, ItemStack spellBookStack, float power) {
         this.level = level;
         this.owner = owner;
         this.spellBookStack = spellBookStack;
+        this.power = power;
     }
     
-    public ExecutionContext(Level level, Entity owner, ItemStack spellBookStack) {
-        this(level, EntityReference.of(owner), spellBookStack);
+    public ExecutionContext(Level level, Entity owner, ItemStack spellBookStack, float power) {
+        this(level, EntityReference.of(owner), spellBookStack, power);
     }
     
     /** To be called if this execution context needs to be recycled for a new execution. */
@@ -52,19 +59,41 @@ public class ExecutionContext {
         return Optional.empty();
     }
 
-    protected void setTarget(@Nullable final EntityReference<Entity> target) {
-        this.target = target;
+    protected void setTargetEntity(@Nullable final EntityReference<Entity> targetEntity) {
+        this.targetEntity = targetEntity;
     }
 
-    public void setTarget(@Nullable final Entity target) {
-        this.setTarget(EntityReference.of(target));
+    public void setTargetEntity(@Nullable final Entity target) {
+        this.setTargetEntity(EntityReference.of(target));
     }
 
-    public @Nullable Entity getTarget() {
-        return EntityReference.getEntity(this.target, this.level);
+    public @Nullable Entity getTargetEntity() {
+        return EntityReference.getEntity(this.targetEntity, this.level);
     }
     
+    /** If it is an EntityHitResult, it also updates targetEntity. */
+    public void setHitResult(@NonNull final HitResult hitResult) {
+        this.hitResult = hitResult;
+        
+        if (hitResult instanceof EntityHitResult entityHitResult) {
+            this.setTargetEntity(entityHitResult.getEntity());
+        }
+    }
     
+    public @Nullable HitResult getHitResult() {
+        return this.hitResult;
+    }
+    
+    public void setInteractionHand(@NonNull final InteractionHand hand) {
+        this.interactionHand = hand;
+    }
+    
+    public @Nullable InteractionHand getInteractionHand() {
+        return this.interactionHand;
+    }
+    
+    /*================================================================================================================*/
+    // Variables
     
     public void setVariable(String name, @NonNull GlyphValue value) {
         this.executionVariables.put(name, value);
@@ -120,4 +149,7 @@ public class ExecutionContext {
             }
         });
     }
+
+    // ~Variables
+    /*================================================================================================================*/
 }

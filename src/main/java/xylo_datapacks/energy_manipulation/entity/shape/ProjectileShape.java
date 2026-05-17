@@ -10,6 +10,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.NonNull;
@@ -52,11 +53,8 @@ public class ProjectileShape extends AbstractArrow implements PolymerEntity {
     protected void onHit(@NonNull HitResult hitResult) {
         super.onHit(hitResult);
 
-        ExecutionContext executionContext = new ExecutionContext(level(), this.owner, getWeaponItem());
-        
-        if (hitResult instanceof EntityHitResult entityHitResult) {
-            executionContext.setTarget(entityHitResult.getEntity());
-        }
+        ExecutionContext executionContext = new ExecutionContext(level(), this.owner, getWeaponItem(), 1.f);
+        executionContext.setHitResult(hitResult);
         
         if (onImpactEffect != null) {
             executionContext.initialize();

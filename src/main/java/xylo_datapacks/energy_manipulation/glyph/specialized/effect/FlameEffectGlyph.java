@@ -36,7 +36,7 @@ public class FlameEffectGlyph extends Glyph implements EffectGlyphInterface {
         GlyphValue durationValue = this.evaluatePin(executionContext, glyphInstance, DURATION_PIN);
         int duration = GlyphsRegistry.INT_VALUE_TYPE.getIntGlyphValue(durationValue);
         
-        Entity target = executionContext.getTarget();
+        Entity target = executionContext.getTargetEntity();
         if (target != null) {
             target.setRemainingFireTicks(target.getRemainingFireTicks() + duration);
             return GlyphsRegistry.EXECUTION_VALUE_TYPE.makeExecutionGlyphValue(1);
