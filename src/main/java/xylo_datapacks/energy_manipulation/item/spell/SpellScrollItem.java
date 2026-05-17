@@ -57,11 +57,10 @@ public class SpellScrollItem extends Item implements PolymerItem {
 
     public GlyphInstance getSpell(ItemStack itemStack) {
         return Optional.ofNullable(itemStack.get(EnergyManipulationComponents.SPELL_CONTAINER))
-                .flatMap(spellTag -> GlyphUtils.deserializeInstance(spellTag.copyTag(), GlyphsRegistry.EXECUTION_VALUE_TYPE))
                 .orElse(GlyphsRegistry.PROGRAM_GLYPH.instantiate(GlyphsRegistry.EXECUTION_VALUE_TYPE));
     }
 
     public void setSpell(ItemStack itemStack, GlyphInstance glyphInstance) {
-        itemStack.set(EnergyManipulationComponents.SPELL_CONTAINER, CustomData.of(GlyphUtils.serializeInstance(glyphInstance)));
+        itemStack.set(EnergyManipulationComponents.SPELL_CONTAINER, glyphInstance);
     }
 }
