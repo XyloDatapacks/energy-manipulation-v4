@@ -48,6 +48,7 @@ dependencies {
 	implementation include("eu.pb4:polymer-core:0.16.4+26.1.2")
 	implementation include("eu.pb4:polymer-resource-pack:0.16.4+26.1.2")
 	implementation include("eu.pb4:polymer-autohost:0.16.4+26.1.2")
+	implementation include("eu.pb4:polymer-virtual-entity:0.16.5+26.1.2")
 }
 
 processResources {
