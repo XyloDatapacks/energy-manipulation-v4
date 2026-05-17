@@ -77,8 +77,10 @@ public class ExecutionContext {
         return Optional.empty();
     }
 
+    /** The correlated execution variable must already exist. */
     public void registerPersistentVariable(String name) {
-        this.persistentVarContainer.variables().put(name, null);
+        this.persistentVarContainer.variables().put(name, getVariable(name)
+                .orElseThrow(() -> new RuntimeException("Cannot register a persistent variable if no execution variable exists with that name! (" + name + ")")));
     }
     
     public Optional<GlyphValue> getCachedPersistentVariable(String name) {
@@ -113,6 +115,7 @@ public class ExecutionContext {
                 executionVariables.put(name, value.copy());
             }
             else {
+                // Should not happen, since variables are NotNull
                 EnergyManipulation.LOGGER.error("loadCachedPersistentVariables >> Persistent variable {} is null", name);
             }
         });

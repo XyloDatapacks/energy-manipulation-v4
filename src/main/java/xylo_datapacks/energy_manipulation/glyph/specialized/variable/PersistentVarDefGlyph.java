@@ -53,8 +53,10 @@ public class PersistentVarDefGlyph extends Glyph {
         }
 
         // Otherwise, register the persistent variable and evaluate the variable definition.
+        GlyphValue output = this.evaluatePin(executionContext, glyphInstance, VAR_DEF_PIN);
         executionContext.registerPersistentVariable(varName);
-        return this.evaluatePin(executionContext, glyphInstance, VAR_DEF_PIN);
+        
+        return output;
     }
     
 }
