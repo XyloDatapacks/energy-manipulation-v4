@@ -34,11 +34,7 @@ public abstract class GlyphValueType {
 
     public boolean hasValueSelector() { return getValueSelectorType() != ValueSelectorType.NONE; }
 
-    public Optional<Tag> serialize(GlyphValue value) {
-        return Optional.empty();
-    }
+    public abstract Optional<Tag> serialize(GlyphValue value);
 
-    public Optional<GlyphValue> deserialize(Tag value) {
-        return Optional.empty();
-    }
+    public abstract Optional<GlyphValue> deserialize(Tag value);
 }
