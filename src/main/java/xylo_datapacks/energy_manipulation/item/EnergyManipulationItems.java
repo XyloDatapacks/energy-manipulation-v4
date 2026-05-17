@@ -22,6 +22,7 @@ public class EnergyManipulationItems {
     public static final SpellBookItem SPELL_BOOK = registerItem("spell_book", SpellBookItem::new, new Item.Properties().stacksTo(1).component(DataComponents.CONSUMABLE, Consumable.builder().animation(ItemUseAnimation.NONE).consumeSeconds(10000).build()));
     public static final SpellScrollItem SPELL_SCROLL = registerItem("spell_scroll", SpellScrollItem::new, new Item.Properties());
     public static final GuiButtonItem GUI_BUTTON = registerItem("gui_button", GuiButtonItem::new, new Item.Properties());
+    public static final GuiButtonItem SHAPE_DISPLAY = registerItem("shape_display", GuiButtonItem::new, new Item.Properties());
 
 
     public static <T extends Item> T registerItem(String name, Function<Item.Properties, T> itemFactory, Item.Properties settings) {

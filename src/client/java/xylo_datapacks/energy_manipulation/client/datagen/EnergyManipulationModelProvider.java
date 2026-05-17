@@ -17,6 +17,7 @@ import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 import xylo_datapacks.energy_manipulation.EnergyManipulation;
 import xylo_datapacks.energy_manipulation.client.utils.EnergyManipulationModelTemplate;
+import xylo_datapacks.energy_manipulation.entity.EnergyManipulationEntities;
 import xylo_datapacks.energy_manipulation.glyph.GlyphsRegistry;
 import xylo_datapacks.energy_manipulation.glyph.specialized.operation.OperatorGlyphInterface;
 import xylo_datapacks.energy_manipulation.glyph.value_type.EnumValueType;
@@ -44,6 +45,7 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         itemModelGenerators.generateFlatItem(EnergyManipulationItems.SPELL_SCROLL, ModelTemplates.FLAT_ITEM);
         
         generateDynamicGuiItemModels(itemModelGenerators, EnergyManipulationItems.GUI_BUTTON);
+        generateDynamicShapeItemModels(itemModelGenerators, EnergyManipulationItems.SHAPE_DISPLAY);
     }
 
     public void generateSpellBookItemModel(ItemModelGenerators generator, Item item) {
@@ -112,8 +114,8 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         
         // generate switch cases and their models
         List<SelectItemModel.SwitchCase<String>> switchCases = new ArrayList<>();
-        createAndAddModelInstanceCases(generator, switchCases, allButtons, new Vector3f(1.f, 1.f, 1.f));
-        createAndAddModelInstanceCases(generator, switchCases, allGlyphs, new Vector3f(2.f, 2.f, 1.f));
+        createAndAddButtonModelInstanceCases(generator, switchCases, allButtons, new Vector3f(1.f, 1.f, 1.f));
+        createAndAddButtonModelInstanceCases(generator, switchCases, allGlyphs, new Vector3f(2.f, 2.f, 1.f));
 
         // Add fallback model for unknown buttons.
         ItemModel.Unbaked fallbackModel = ItemModelUtils.plainModel(Identifier.withDefaultNamespace("item/barrier"));
@@ -122,7 +124,7 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         generator.itemModelOutput.accept(baseItem, ItemModelUtils.select(new CustomModelDataProperty(0), fallbackModel, switchCases), new ClientItem.Properties(true, true, 1.F));
     }
     
-    private void createAndAddModelInstanceCases(ItemModelGenerators generator, List<SelectItemModel.SwitchCase<String>> destination, List<String> buttonNames, Vector3f scale) {
+    private void createAndAddButtonModelInstanceCases(ItemModelGenerators generator, List<SelectItemModel.SwitchCase<String>> destination, List<String> buttonNames, Vector3f scale) {
         for (String buttonName : buttonNames) {
             Identifier modelIdentifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "item/gui/button/" + buttonName);
 
@@ -137,4 +139,31 @@ public class EnergyManipulationModelProvider extends FabricModelProvider {
         }
     }
     
+    public void generateDynamicShapeItemModels(ItemModelGenerators generator, Item baseItem) {
+        List<String> allShapes = new ArrayList<>();
+
+        // Add all shapes
+        allShapes.addAll(EnergyManipulationEntities.SHAPE.keySet().stream().map(Identifier::getPath).toList());
+        
+        // generate switch cases and their models
+        List<SelectItemModel.SwitchCase<String>> switchCases = new ArrayList<>();
+        createAndAddShapeModelInstanceCases(generator, switchCases, allShapes, new Vector3f(1.f, 1.f, 1.f));
+
+        // Add fallback model for unknown buttons.
+        ItemModel.Unbaked fallbackModel = ItemModelUtils.plainModel(Identifier.withDefaultNamespace("item/barrier"));
+
+        // Create the main model for GuiButtonItem. It checks for custom data property 0.
+        generator.itemModelOutput.accept(baseItem, ItemModelUtils.select(new CustomModelDataProperty(0), fallbackModel, switchCases), new ClientItem.Properties(true, true, 1.F));
+    }
+
+    private void createAndAddShapeModelInstanceCases(ItemModelGenerators generator, List<SelectItemModel.SwitchCase<String>> destination, List<String> shapeNames, Vector3f scale) {
+        for (String shapeName : shapeNames) {
+            Identifier modelIdentifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "item/shape/" + shapeName);
+
+            //ModelTemplates.FLAT_ITEM.create(modelIdentifier, TextureMapping.singleSlot(TextureSlot.LAYER0, new Material(modelIdentifier)), generator.modelOutput);
+
+            ItemModel.Unbaked caseModel = ItemModelUtils.plainModel(modelIdentifier);
+            destination.add(ItemModelUtils.when(shapeName, caseModel));
+        }
+    }
 }
