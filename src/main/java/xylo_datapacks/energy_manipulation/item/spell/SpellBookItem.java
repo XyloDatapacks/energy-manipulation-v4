@@ -108,37 +108,6 @@ public class SpellBookItem extends Item implements PolymerItem, ItemDoubleSwapIn
         stack.set(DataComponents.ITEM_MODEL, Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, "spell_book"));
     }
     
-    @Deprecated
-    public void getBookContentFromCustomData(ItemStack itemStack, NonNullList<ItemStack> destination) {
-        Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, BookContentNbtKey);
-        Optional<Tag> tag = EnergyManipulationItemsUtils.getTag(itemStack, identifier);
-        
-        // If no item stored then empty destination
-        if (tag.isEmpty()) {
-            destination.clear();
-            return;
-        }
-        
-        // Fill destination
-        ItemContainerContents.CODEC.parse(NbtOps.INSTANCE, tag.get())
-                .resultOrPartial(err -> System.err.println("Failed to parse container: " + err))
-                .ifPresent(contents -> {
-                    contents.copyInto(destination);
-                });
-    }
-    
-    @Deprecated
-    public void setBookContentToCustomData(ItemStack itemStack, List<ItemStack> bookContent) {
-        ItemContainerContents contents = ItemContainerContents.fromItems(bookContent);
-        
-        ItemContainerContents.CODEC.encodeStart(NbtOps.INSTANCE, contents)
-                .resultOrPartial(err -> System.err.println("Failed to encode container: " + err))
-                .ifPresent(tag -> {
-                    Identifier identifier = Identifier.fromNamespaceAndPath(EnergyManipulation.MOD_ID, BookContentNbtKey);
-                    EnergyManipulationItemsUtils.setTag(itemStack, identifier, tag);
-                });
-    }
-    
     public void getBookContent(ItemStack itemStack, NonNullList<ItemStack> destination) {
         Optional.ofNullable(itemStack.get(EnergyManipulationComponents.SPELL_BOOK_STORAGE)).ifPresent(itemContainer -> {
             itemContainer.copyInto(destination);
